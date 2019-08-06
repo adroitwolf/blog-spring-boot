@@ -1,0 +1,38 @@
+server:
+  port: 8099
+
+spring:
+  datasource:
+    name: dev
+    url: jdbc:mysql://127.0.0.1:3306/eblog?useUnicode=true&characterEncoding=UTF-8
+    username: root
+    password: 123
+    driver-class-name: com.mysql.jdbc.Driver
+  redis:
+    database: 0
+    host: 127.0.0.1
+    port: 6379
+    password: 123
+
+# pagehepler
+
+# log
+logging:
+  level:
+    run.app: DEBUG
+
+mybatis:
+  mapper-locations: classpath:/mappering/*.xml
+
+jwt:
+  # 发行者
+  name: WHOAMI
+  # 密钥, 经过Base64加密, 可自行替换
+  base64Secret: SGlsb3g=
+  #jwt中过期时间设置(分)
+  jwtExpires: 1440
+
+
+whoami:
+  auto-scan: false
+  auto-del: true

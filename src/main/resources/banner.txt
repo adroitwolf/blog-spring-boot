@@ -1,0 +1,10 @@
+${AnsiColor.BLUE}
+ __          ___    _  ____          __  __ _____
+ \ \        / / |  | |/ __ \   /\   |  \/  |_   _|
+  \ \  /\  / /| |__| | |  | | /  \  | \  / | | |
+   \ \/  \/ / |  __  | |  | |/ /\ \ | |\/| | | |
+    \  /\  /  | |  | | |__| / ____ \| |  | |_| |_
+     \/  \/   |_|  |_|\____/_/    \_\_|  |_|_____|
+ ${AnsiColor.BRIGHT_YELLOW}
+::: spring-Boot ${spring-boot.version}  :: APP  (Version:${application.formatted-version})
+

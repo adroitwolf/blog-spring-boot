@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import run.app.entity.DTO.BaseResponse;
+import run.app.entity.DTO.BlogDetail;
 import run.app.entity.DTO.DataGrid;
 import run.app.entity.params.ArticleParams;
 import run.app.security.log.MethodLog;
@@ -55,6 +56,17 @@ public class BlogController {
         updateStatus.put("status",status);
         baseResponse.setData(updateStatus);
         return baseResponse;
+    }
+
+
+    @ApiOperation("查看博客详细内容")
+    @GetMapping("detail/{BlogId:\\d+}")
+    public BaseResponse getBlogDetail(@PathVariable("BlogId")Integer blogId){
+        BlogDetail articleDetail = articleService.getArticleDetail(blogId);
+        BaseResponse baseResponse = new BaseResponse();
+        baseResponse.setStatus(HttpStatus.OK.value());
+        baseResponse.setData(articleDetail);
+        return  baseResponse;
     }
 
     @MethodLog

@@ -4,7 +4,6 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 import run.app.entity.model.Blog;
 import run.app.entity.model.BlogExample;
-import run.app.entity.model.BlogWithBLOBs;
 
 public interface BlogMapper {
     long countByExample(BlogExample example);
@@ -13,25 +12,19 @@ public interface BlogMapper {
 
     int deleteByPrimaryKey(Integer id);
 
-    int insert(BlogWithBLOBs record);
+    int insert(Blog record);
 
-    int insertSelective(BlogWithBLOBs record);
-
-    List<BlogWithBLOBs> selectByExampleWithBLOBs(BlogExample example);
+    int insertSelective(Blog record);
 
     List<Blog> selectByExample(BlogExample example);
 
-    BlogWithBLOBs selectByPrimaryKey(Integer id);
+    Blog selectByPrimaryKey(Integer id);
 
-    int updateByExampleSelective(@Param("record") BlogWithBLOBs record, @Param("example") BlogExample example);
-
-    int updateByExampleWithBLOBs(@Param("record") BlogWithBLOBs record, @Param("example") BlogExample example);
+    int updateByExampleSelective(@Param("record") Blog record, @Param("example") BlogExample example);
 
     int updateByExample(@Param("record") Blog record, @Param("example") BlogExample example);
 
-    int updateByPrimaryKeySelective(BlogWithBLOBs record);
-
-    int updateByPrimaryKeyWithBLOBs(BlogWithBLOBs record);
+    int updateByPrimaryKeySelective(Blog record);
 
     int updateByPrimaryKey(Blog record);
 }

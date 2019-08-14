@@ -1,21 +1,18 @@
 package run.app.entity.model;
 
-import java.util.Date;
+public class BlogContent {
+    private Integer id;
 
-public class BlogWithBLOBs extends Blog {
     private String content;
 
     private String contentMd;
 
-
-    public BlogWithBLOBs() {
+    public Integer getId() {
+        return id;
     }
 
-
-    public BlogWithBLOBs(Integer id, String status, String title, String summary, Date releaseDate, Date nearestModifyDate, String tagTitle, String content, String contentMd) {
-        super(id, status, title, summary, releaseDate, nearestModifyDate, tagTitle);
-        this.content = content;
-        this.contentMd = contentMd;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getContent() {

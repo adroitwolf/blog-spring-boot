@@ -6,16 +6,19 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import run.app.entity.DTO.BlogDetail;
 import run.app.entity.DTO.DataGrid;
 import run.app.entity.model.Blog;
+import run.app.entity.model.BlogContent;
 import run.app.entity.model.BlogExample;
-import run.app.entity.model.BlogWithBLOBs;
 import run.app.entity.params.ArticleParams;
 import run.app.exception.BadRequestException;
+import run.app.exception.ServiceException;
+import run.app.mapper.BlogContentMapper;
 import run.app.mapper.BlogMapper;
 import run.app.service.ArticleService;
 import run.app.service.UserService;
-import run.app.util.AppUtil;
 
 import java.util.Date;
 import java.util.List;
@@ -37,10 +40,14 @@ public class ArtcileServiceImpl implements ArticleService {
     @Autowired
     UserService userService;
 
+    @Autowired
+    BlogContentMapper blogContentMapper;
+
     @Override
+    @Transactional
     public @NonNull boolean submitArticle(@NonNull ArticleParams articleParams,@NonNull String token) {
 
-        BlogWithBLOBs blog = new BlogWithBLOBs();
+        Blog blog = new Blog();
         Integer bloggerId;
         if((bloggerId =userService.getUserIdByToken(token)) == -1){
             throw  new BadRequestException("用户信息错误！");
@@ -51,18 +58,29 @@ public class ArtcileServiceImpl implements ArticleService {
         blog.setSummary(articleParams.getSummary());
         blog.setTitle(articleParams.getTitle());
         blog.setTagTitle(articleParams.getTag());
-        blog.setContent(articleParams.getHtmlContent());
-        blog.setContentMd(articleParams.getContent());
+
         blog.setStatus("PUBLISHED");
         int id = blogMapper.insertSelective(blog);
 
+        if(id == 0){
+            throw new ServiceException("服务器出现错误，请重试");
+        }
+
+        BlogContent blogContent = new BlogContent();
+
+        blogContent.setId(id);
+        blogContent.setContent(articleParams.getHtmlContent());
+        blogContent.setContentMd(articleParams.getContent());
+
+        blogContentMapper.insert(blogContent);
         return true;
     }
 
     @Override
+    @Transactional
     public boolean updateArticle(@NonNull ArticleParams articleParams, @NonNull Integer blogId, @NonNull String token) {
 
-        BlogWithBLOBs blog = new BlogWithBLOBs();
+        Blog blog = new Blog();
         if((userService.getUserIdByToken(token)) == -1){
             throw  new BadRequestException("用户信息错误！");
         }
@@ -71,26 +89,54 @@ public class ArtcileServiceImpl implements ArticleService {
         blog.setSummary(articleParams.getSummary());
         blog.setTitle(articleParams.getTitle());
         blog.setTagTitle(articleParams.getTag());
-        blog.setContent(articleParams.getHtmlContent());
-        blog.setContentMd(articleParams.getContent());
+
 
         blogMapper.updateByPrimaryKeySelective(blog);
 
+        BlogContent blogContent = new BlogContent();
+
+        blogContent.setId(blogId);
+        blogContent.setContentMd(articleParams.getContent());
+        blogContent.setContent(articleParams.getHtmlContent());
+        blogContentMapper.insert(blogContent);
         return true;
     }
 
     @Override
     public boolean updateArticleStatus(@NonNull Integer blogId, @NonNull String status) {
 
-        BlogWithBLOBs blogWithBLOBs = new BlogWithBLOBs();
-        blogWithBLOBs.setStatus(status);
-        blogWithBLOBs.setId(blogId);
-
-        blogMapper.updateByPrimaryKeySelective(blogWithBLOBs);
+        Blog blog = new Blog();
+        blog.setStatus(status);
+        blog.setId(blogId);
+        blogMapper.updateByPrimaryKeySelective(blog);
         return true;
     }
 
     @Override
+    public BlogDetail getArticleDetail(@NonNull Integer blogId) {
+
+        Blog blog = blogMapper.selectByPrimaryKey(blogId);
+
+
+        BlogContent blogContent = blogContentMapper.selectByPrimaryKey(blogId);
+
+        BlogDetail blogDetail = new BlogDetail();
+
+        blogDetail.setId(blog.getId());
+        blogDetail.setContent(blogContent.getContent());
+        blogDetail.setContentMd(blogContent.getContentMd());
+        blogDetail.setNearestModifyDate(blog.getNearestModifyDate());
+        blogDetail.setReleaseDate(blog.getReleaseDate());
+        blogDetail.setStatus(blog.getStatus());
+        blogDetail.setTagTitle(blog.getTagTitle());
+        blogDetail.setTitle(blog.getTitle());
+        blogDetail.setSummary(blog.getSummary());
+
+        return blogDetail;
+    }
+
+    @Override
+
     public @NonNull DataGrid getArticleList(@NonNull int pageNum, @NonNull int pageSize,@NonNull String token) {
 
         Integer blogger_id = userService.getUserIdByToken(token);
@@ -100,26 +146,24 @@ public class ArtcileServiceImpl implements ArticleService {
         criteria.andBloggerIdEqualTo(blogger_id);
 
         PageHelper.startPage(pageNum,pageSize);
-        List<BlogWithBLOBs> blogWithBLOBs = blogMapper.selectByExampleWithBLOBs(blogExample);
+        List<Blog> blogs = blogMapper.selectByExample(blogExample);
 
 
-        PageInfo<BlogWithBLOBs> list = new PageInfo<>(blogWithBLOBs);
+        PageInfo<Blog> list = new PageInfo<>(blogs);
 
         DataGrid dataGrid = new DataGrid();
 
         dataGrid.setTotal(list.getTotal());
 
-        List<BlogWithBLOBs> result = list.getList();
+        List<Blog> result = list.getList();
 
-        result = result.stream().map(item->{return new BlogWithBLOBs(item.getId()
+        result = result.stream().map(item->{return new Blog(item.getId()
                 ,item.getStatus(),
                 item.getTitle(),
                 item.getSummary(),
                 item.getReleaseDate(),
                 item.getNearestModifyDate(),
-                item.getTagTitle(),
-                item.getContent(),
-                item.getContentMd());}).collect(Collectors.toList());
+                item.getTagTitle());}).collect(Collectors.toList());
 
 
         dataGrid.setRows(result);
@@ -134,26 +178,24 @@ public class ArtcileServiceImpl implements ArticleService {
         blogExample.setOrderByClause("release_date");
 
         PageHelper.startPage(pageNum,pageSize);
-        List<BlogWithBLOBs> blogWithBLOBs = blogMapper.selectByExampleWithBLOBs(blogExample);
+        List<Blog> blogs = blogMapper.selectByExample(blogExample);
 
 
-        PageInfo<BlogWithBLOBs> list = new PageInfo<>(blogWithBLOBs);
+        PageInfo<Blog> list = new PageInfo<>(blogs);
 
         DataGrid dataGrid = new DataGrid();
 
         dataGrid.setTotal(list.getTotal());
 
-        List<BlogWithBLOBs> result = list.getList();
+        List<Blog> result = list.getList();
 
-        result = result.stream().map(item->{return new BlogWithBLOBs(item.getId()
+        result = result.stream().map(item->{return new Blog(item.getId()
                 ,item.getStatus(),
                 item.getTitle(),
                 item.getSummary(),
                 item.getReleaseDate(),
                 item.getNearestModifyDate(),
-                item.getTagTitle(),
-                item.getContent(),
-                item.getContentMd());}).collect(Collectors.toList());
+                item.getTagTitle());}).collect(Collectors.toList());
 
 
         dataGrid.setRows(result);
@@ -162,8 +204,11 @@ public class ArtcileServiceImpl implements ArticleService {
     }
 
     @Override
+    @Transactional
     public void deleteBlog(@NonNull Integer blogId) {
         blogMapper.deleteByPrimaryKey(blogId);
+        blogContentMapper.deleteByPrimaryKey(blogId);
+
     }
 
     @Override

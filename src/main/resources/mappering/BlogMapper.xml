@@ -11,10 +11,6 @@
     <result column="nearest_modify_date" jdbcType="TIMESTAMP" property="nearestModifyDate" />
     <result column="tag_title" jdbcType="VARCHAR" property="tagTitle" />
   </resultMap>
-  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="run.app.entity.model.BlogWithBLOBs">
-    <result column="content" jdbcType="LONGVARCHAR" property="content" />
-    <result column="content_md" jdbcType="LONGVARCHAR" property="contentMd" />
-  </resultMap>
   <sql id="Example_Where_Clause">
     <where>
       <foreach collection="oredCriteria" item="criteria" separator="or">
@@ -76,25 +72,6 @@
   <sql id="Base_Column_List">
     id, blogger_id, status, title, summary, release_date, nearest_modify_date, tag_title
   </sql>
-  <sql id="Blob_Column_List">
-    content, content_md
-  </sql>
-  <select id="selectByExampleWithBLOBs" parameterType="run.app.entity.model.BlogExample" resultMap="ResultMapWithBLOBs">
-    select
-    <if test="distinct">
-      distinct
-    </if>
-    <include refid="Base_Column_List" />
-    ,
-    <include refid="Blob_Column_List" />
-    from blog
-    <if test="_parameter != null">
-      <include refid="Example_Where_Clause" />
-    </if>
-    <if test="orderByClause != null">
-      order by ${orderByClause}
-    </if>
-  </select>
   <select id="selectByExample" parameterType="run.app.entity.model.BlogExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
@@ -109,11 +86,9 @@
       order by ${orderByClause}
     </if>
   </select>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    ,
-    <include refid="Blob_Column_List" />
     from blog
     where id = #{id,jdbcType=INTEGER}
   </select>
@@ -127,17 +102,15 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="run.app.entity.model.BlogWithBLOBs">
+  <insert id="insert" parameterType="run.app.entity.model.Blog">
     insert into blog (id, blogger_id, status, 
       title, summary, release_date, 
-      nearest_modify_date, tag_title, content, 
-      content_md)
+      nearest_modify_date, tag_title)
     values (#{id,jdbcType=INTEGER}, #{bloggerId,jdbcType=INTEGER}, #{status,jdbcType=VARCHAR}, 
       #{title,jdbcType=VARCHAR}, #{summary,jdbcType=VARCHAR}, #{releaseDate,jdbcType=TIMESTAMP}, 
-      #{nearestModifyDate,jdbcType=TIMESTAMP}, #{tagTitle,jdbcType=VARCHAR}, #{content,jdbcType=LONGVARCHAR}, 
-      #{contentMd,jdbcType=LONGVARCHAR})
+      #{nearestModifyDate,jdbcType=TIMESTAMP}, #{tagTitle,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="run.app.entity.model.BlogWithBLOBs">
+  <insert id="insertSelective" parameterType="run.app.entity.model.Blog">
     insert into blog
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -164,12 +137,6 @@
       <if test="tagTitle != null">
         tag_title,
       </if>
-      <if test="content != null">
-        content,
-      </if>
-      <if test="contentMd != null">
-        content_md,
-      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -195,12 +162,6 @@
       </if>
       <if test="tagTitle != null">
         #{tagTitle,jdbcType=VARCHAR},
-      </if>
-      <if test="content != null">
-        #{content,jdbcType=LONGVARCHAR},
-      </if>
-      <if test="contentMd != null">
-        #{contentMd,jdbcType=LONGVARCHAR},
       </if>
     </trim>
   </insert>
@@ -237,29 +198,7 @@
       <if test="record.tagTitle != null">
         tag_title = #{record.tagTitle,jdbcType=VARCHAR},
       </if>
-      <if test="record.content != null">
-        content = #{record.content,jdbcType=LONGVARCHAR},
-      </if>
-      <if test="record.contentMd != null">
-        content_md = #{record.contentMd,jdbcType=LONGVARCHAR},
-      </if>
     </set>
-    <if test="_parameter != null">
-      <include refid="Update_By_Example_Where_Clause" />
-    </if>
-  </update>
-  <update id="updateByExampleWithBLOBs" parameterType="map">
-    update blog
-    set id = #{record.id,jdbcType=INTEGER},
-      blogger_id = #{record.bloggerId,jdbcType=INTEGER},
-      status = #{record.status,jdbcType=VARCHAR},
-      title = #{record.title,jdbcType=VARCHAR},
-      summary = #{record.summary,jdbcType=VARCHAR},
-      release_date = #{record.releaseDate,jdbcType=TIMESTAMP},
-      nearest_modify_date = #{record.nearestModifyDate,jdbcType=TIMESTAMP},
-      tag_title = #{record.tagTitle,jdbcType=VARCHAR},
-      content = #{record.content,jdbcType=LONGVARCHAR},
-      content_md = #{record.contentMd,jdbcType=LONGVARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -278,7 +217,7 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="run.app.entity.model.BlogWithBLOBs">
+  <update id="updateByPrimaryKeySelective" parameterType="run.app.entity.model.Blog">
     update blog
     <set>
       <if test="bloggerId != null">
@@ -302,26 +241,7 @@
       <if test="tagTitle != null">
         tag_title = #{tagTitle,jdbcType=VARCHAR},
       </if>
-      <if test="content != null">
-        content = #{content,jdbcType=LONGVARCHAR},
-      </if>
-      <if test="contentMd != null">
-        content_md = #{contentMd,jdbcType=LONGVARCHAR},
-      </if>
     </set>
-    where id = #{id,jdbcType=INTEGER}
-  </update>
-  <update id="updateByPrimaryKeyWithBLOBs" parameterType="run.app.entity.model.BlogWithBLOBs">
-    update blog
-    set blogger_id = #{bloggerId,jdbcType=INTEGER},
-      status = #{status,jdbcType=VARCHAR},
-      title = #{title,jdbcType=VARCHAR},
-      summary = #{summary,jdbcType=VARCHAR},
-      release_date = #{releaseDate,jdbcType=TIMESTAMP},
-      nearest_modify_date = #{nearestModifyDate,jdbcType=TIMESTAMP},
-      tag_title = #{tagTitle,jdbcType=VARCHAR},
-      content = #{content,jdbcType=LONGVARCHAR},
-      content_md = #{contentMd,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="run.app.entity.model.Blog">

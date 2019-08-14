@@ -2,6 +2,7 @@ package run.app.service;
 
 import io.swagger.models.auth.In;
 import lombok.NonNull;
+import run.app.entity.DTO.BlogDetail;
 import run.app.entity.DTO.DataGrid;
 import run.app.entity.params.ArticleParams;
 
@@ -19,8 +20,12 @@ public interface ArticleService {
     boolean updateArticle(@NonNull ArticleParams articleParams,@NonNull Integer blogId,@NonNull String token);
 
     boolean updateArticleStatus(@NonNull Integer blogId,@NonNull String status);
+
+    BlogDetail getArticleDetail(@NonNull Integer blogId);
+
     @NonNull
     DataGrid getArticleList(@NonNull int pageNum,@NonNull int pageSize,@NonNull String token);
+
 
 
     @NonNull

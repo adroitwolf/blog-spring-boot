@@ -15,6 +15,30 @@ import java.util.Date;
 @ToString
 public class BlogDetail {
 
+    public BlogDetail() {
+    }
+
+//    准对前台将status属性去掉
+    public BlogDetail(Integer id, String title,  Date releaseDate,  String tagTitle, String content) {
+        this.id = id;
+        this.title = title;
+        this.releaseDate = releaseDate;
+        this.tagTitle = tagTitle;
+        this.content = content;
+    }
+
+    public BlogDetail(Integer id, String status, String title, String summary, Date releaseDate, Date nearestModifyDate, String tagTitle, String content, String contentMd) {
+        this.id = id;
+        this.status = status;
+        this.title = title;
+        this.summary = summary;
+        this.releaseDate = releaseDate;
+        this.nearestModifyDate = nearestModifyDate;
+        this.tagTitle = tagTitle;
+        this.content = content;
+        this.contentMd = contentMd;
+    }
+
     private Integer id;
 
 

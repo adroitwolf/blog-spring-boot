@@ -69,7 +69,7 @@ public class PostServiceImpl implements PostService {
         DataGrid dataGrid = new DataGrid();
 
         dataGrid.setRows(result);
-        dataGrid.setTotal(blogs.size());
+        dataGrid.setTotal(list.getTotal());
 
 
         return dataGrid;

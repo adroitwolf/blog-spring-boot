@@ -29,7 +29,7 @@ public class ReceptionController {
     }
 
     @ApiOperation("获取博客详细内容")
-    @GetMapping("/{BlogId:\\d+}")
+    @GetMapping("/detail/{BlogId:\\d+}")
     public BaseResponse getBlogDetail(@PathVariable("BlogId")Integer blogId){
 
         BaseResponse baseResponse = new BaseResponse();

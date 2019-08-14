@@ -1,7 +1,9 @@
 package run.app.entity.DTO;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.ToString;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
@@ -48,8 +50,12 @@ public class BlogDetail {
 
     private String summary;
 
+    @DateTimeFormat(pattern="yyyy-mm-dd hh:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date releaseDate;
 
+    @DateTimeFormat(pattern="yyyy-mm-dd hh:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date nearestModifyDate;
 
     private String tagTitle;

@@ -23,11 +23,9 @@ public class ArticleParams {
 
 
     @NotBlank(message = "文章内容不能为空")
-    @Size(max=1000,message = "文章内容不能超过{maxz}")
     private String htmlContent;
 
     @NotBlank(message = "文章内容不能为空")
-    @Size(max=1000,message = "文章内容不能超过{maxz}")
     private String content;
 
 

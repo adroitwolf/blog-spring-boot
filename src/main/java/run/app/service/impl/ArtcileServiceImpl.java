@@ -61,14 +61,14 @@ public class ArtcileServiceImpl implements ArticleService {
 
         blog.setStatus("PUBLISHED");
         int id = blogMapper.insertSelective(blog);
-
+        
         if(id == 0){
             throw new ServiceException("服务器出现错误，请重试");
         }
 
         BlogContent blogContent = new BlogContent();
 
-        blogContent.setId(id);
+        blogContent.setId(blog.getId());
         blogContent.setContent(articleParams.getHtmlContent());
         blogContent.setContentMd(articleParams.getContent());
 

@@ -110,7 +110,7 @@
       #{title,jdbcType=VARCHAR}, #{summary,jdbcType=VARCHAR}, #{releaseDate,jdbcType=TIMESTAMP}, 
       #{nearestModifyDate,jdbcType=TIMESTAMP}, #{tagTitle,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="run.app.entity.model.Blog" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+  <insert id="insertSelective" parameterType="run.app.entity.model.Blog" useGeneratedKeys="true" keyProperty="id" >
     insert into blog
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">

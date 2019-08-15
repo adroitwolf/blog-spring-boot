@@ -61,7 +61,7 @@ public class ArtcileServiceImpl implements ArticleService {
 
         blog.setStatus("PUBLISHED");
         int id = blogMapper.insertSelective(blog);
-        
+
         if(id == 0){
             throw new ServiceException("服务器出现错误，请重试");
         }

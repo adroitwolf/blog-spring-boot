@@ -45,7 +45,7 @@ public class PostServiceImpl implements PostService {
 
         BlogExample blogExample = new BlogExample();
 
-        blogExample.setOrderByClause("release_date");
+        blogExample.setOrderByClause("release_date desc");
         BlogExample.Criteria criteria = blogExample.createCriteria();
         criteria.andStatusEqualTo("PUBLISHED");
 

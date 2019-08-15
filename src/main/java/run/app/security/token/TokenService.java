@@ -1,5 +1,7 @@
 package run.app.security.token;
 
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.interfaces.Claim;
 import org.springframework.stereotype.Service;
 import run.app.entity.DTO.UserDetail;
 import run.app.entity.model.BloggerAccount;
@@ -13,6 +15,18 @@ import run.app.entity.model.BloggerProfile;
  */
 public interface TokenService {
 
+    String getToken(BloggerAccount bloggerAccount);
+
+    boolean verifierToken(String token);
+
+    boolean isExpire(String token);
+
+
+    JWTVerifier getVerifierWithToken(String token);
+
+
+    int getUserIdWithToken(String token);
+
     void storage(String token,String username);
 
     String generateToken(String username);
@@ -23,7 +37,7 @@ public interface TokenService {
     Boolean islogined(String username);
 
 
-    Boolean isToken(String token);
+//    Boolean isToken(String token);
 
     UserDetail findUserDetailsByToken(String token);
 
@@ -32,5 +46,8 @@ public interface TokenService {
 
 
     boolean logout(String token);
+
+
+
 
 }

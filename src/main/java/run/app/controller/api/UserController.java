@@ -34,8 +34,8 @@ public class UserController {
 
     @ApiOperation("用户登陆")
     @PostMapping("/login")
-    public AuthToken login(@RequestBody @Valid LoginParams loginParams){
-        return userService.loginService(loginParams);
+    public String  login(@RequestBody @Valid LoginParams loginParams){
+        return userService.loginService(loginParams).get();
     }
 
 
@@ -51,7 +51,8 @@ public class UserController {
     @ApiOperation("更改用户密码")
     @PutMapping("/changePassword")
     public BaseResponse updatePassword(@Valid @RequestBody PasswordParams passwordParams,HttpServletRequest request){
-        String token = userService.getUsernameByToken(request.getHeader("Authentication"));
+//        String token = userService.getUsernameByToken(request.getHeader("Authentication"));
+        String token = request.getHeader("Authentication");
         BaseResponse baseResponse = new BaseResponse();
         if(userService.updatePassword(passwordParams.getOldPassword(),passwordParams.getNewPassword(),token)){
             baseResponse.setStatus(HttpStatus.OK.value());
@@ -75,20 +76,20 @@ public class UserController {
         return baseResponse;
     }
 
-    @MethodLog
-    @PostMapping("/logout")
-    @ApiOperation("用户登出")
-    public BaseResponse logout(HttpServletRequest request){
-        BaseResponse baseResponse = new BaseResponse();
-
-        String token = request.getHeader("Authentication");
-
-        if(userService.logout(token)){
-            baseResponse.setStatus(HttpStatus.BAD_REQUEST.value());
-        }
-        baseResponse.setStatus(HttpStatus.OK.value());
-        return baseResponse;
-    }
+//    @MethodLog
+//    @PostMapping("/logout")
+//    @ApiOperation("用户登出")
+//    public BaseResponse logout(HttpServletRequest request){
+//        BaseResponse baseResponse = new BaseResponse();
+//
+//        String token = request.getHeader("Authentication");
+//
+//        if(userService.logout(token)){
+//            baseResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+//        }
+//        baseResponse.setStatus(HttpStatus.OK.value());
+//        return baseResponse;
+//    }
 
 
 

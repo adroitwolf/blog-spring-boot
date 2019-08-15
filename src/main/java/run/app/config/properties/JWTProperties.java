@@ -25,7 +25,7 @@ public class JWTProperties {
     private String base64Secret;
 
     /**
-     * jwt中过期时间设置(分)
+     * jwt中过期时间设置(s)
      */
     private long jwtExpires;
 

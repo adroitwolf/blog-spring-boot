@@ -1,6 +1,9 @@
 package run.app.service.impl;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.interfaces.Claim;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import run.app.entity.DTO.UserDetail;
@@ -26,6 +29,7 @@ import java.util.concurrent.TimeUnit;
  * Time: 2019 2019/6/26 21:34
  * Description: ://用户服务层
  */
+@Slf4j
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -41,11 +45,11 @@ public class UserServiceImpl implements UserService {
     TokenService tokenService;
 
     @Override
-    public @NonNull AuthToken loginService(@NonNull LoginParams loginParams) {
+    public @NonNull Optional<String> loginService(@NonNull LoginParams loginParams) {
 
-        if(tokenService.islogined(loginParams.getUsername())){
-            throw new BadRequestException("用户已经在别处登陆！");
-        }
+//        if(tokenService.islogined(loginParams.getUsername())){
+////            throw new BadRequestException("用户已经在别处登陆！");
+////        }
 
         BloggerAccountExample bloggerAccountExample = new BloggerAccountExample();
 
@@ -65,22 +69,28 @@ public class UserServiceImpl implements UserService {
         for (BloggerAccount bloggerAccount:bloggerAccounts) {
             if(bloggerAccount.getPassword().equals(loginParams.getPassword())){
 
-                  token = Optional.ofNullable(Optional.ofNullable(tokenService.generateToken(loginParams.getUsername())).orElseThrow(() -> new ServiceException("系统服务错误")));
-                 tokenService.storage(token.get(),loginParams.getUsername());
+//                  token = Optional.ofNullable(Optional.ofNullable(tokenService.generateToken(loginParams.getUsername())).orElseThrow(() -> new ServiceException("系统服务错误")));
+//                 tokenService.storage(token.get(),loginParams.getUsername());
+                    token  =Optional.ofNullable(Optional.ofNullable( tokenService.getToken(bloggerAccount))).orElseThrow(() -> new ServiceException("服务异常"));
             }else{
                 throw new BadRequestException("密码不正确");
             }
         }
 
+//        return tokenService.creatAuthToken(token.get());
 
-        return tokenService.creatAuthToken(token.get());
-
+        return token;
     }
 
     @Override
     public String getUsernameByToken(@NonNull String token) {
 
-        return tokenService.getUsernameByToken(token);
+        Integer id = tokenService.getUserIdWithToken(token);
+
+
+        BloggerAccount bloggerAccount = bloggerAccountMapper.selectByPrimaryKey(id);
+
+        return bloggerAccount.getUsername();
     }
 
     @Override
@@ -119,7 +129,8 @@ public class UserServiceImpl implements UserService {
     public @NonNull UserDetail updateProfileById(@NonNull UserParams userParams, @NonNull String token) {
 
 
-        Integer userId = getUserIdByToken(token);
+//        Integer userId = getUserIdByToken(token);
+        Integer userId = tokenService.getUserIdWithToken(token);
         BloggerProfileWithBLOBs bloggerProfileWithBLOBs = new BloggerProfileWithBLOBs();
 
         BloggerProfileExample bloggerProfileExample = new BloggerProfileExample();
@@ -128,7 +139,7 @@ public class UserServiceImpl implements UserService {
 
         criteria.andBloggerIdEqualTo(userId);
 
-
+//    这个才是昵称
         bloggerProfileWithBLOBs.setIntro(userParams.getUsername());
 
         bloggerProfileWithBLOBs.setAboutMe(userParams.getAboutMe());
@@ -153,16 +164,30 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDetail getUserDetailByToken(@NonNull String token) {
-        return tokenService.findUserDetailsByToken(token);
+        int id = tokenService.getUserIdWithToken(token);
+
+        @NonNull BloggerProfileWithBLOBs bloggerProfile = findUserDetailByBloggerId(id);
+
+
+        UserDetail userDetail = new UserDetail();
+        userDetail.setAvatarId(bloggerProfile.getAvatarId());
+        userDetail.setUsername(bloggerProfile.getIntro());
+        userDetail.setEmail(bloggerProfile.getEmail());
+        userDetail.setPhone(bloggerProfile.getPhone());
+        userDetail.setAboutMe(bloggerProfile.getAboutMe());
+
+        return userDetail;
+
+//        return tokenService.findUserDetailsByToken(token);
 
     }
 
     @Override
-    public boolean updatePassword(@NonNull String oldPassword, @NonNull String newPassword, String username) {
+    public boolean updatePassword(@NonNull String oldPassword, @NonNull String newPassword, String token) {
         BloggerAccountExample bloggerAccountExample = new BloggerAccountExample();
 
         BloggerAccountExample.Criteria criteria = bloggerAccountExample.createCriteria();
-        criteria.andUsernameEqualTo(username);
+        criteria.andIdEqualTo(tokenService.getUserIdWithToken(token));
         criteria.andPasswordEqualTo(oldPassword);
 
         List<BloggerAccount> bloggerAccounts = bloggerAccountMapper.selectByExample(bloggerAccountExample);
@@ -181,26 +206,27 @@ public class UserServiceImpl implements UserService {
         return false;
     }
 
-    @Override
-    public Integer getUserIdByToken(@NonNull String token) {
-
-        String username = tokenService.getUsernameByToken(token);
-
-        BloggerAccountExample bloggerAccountExample = new BloggerAccountExample();
-        BloggerAccountExample.Criteria criteria = bloggerAccountExample.createCriteria();
-        criteria.andUsernameEqualTo(username);
-        List<BloggerAccount> bloggerAccounts = bloggerAccountMapper.selectByExample(bloggerAccountExample);
-
-        if(bloggerAccounts.isEmpty()){
-            throw new BadRequestException("用户信息错误，请重试！");
-        }
-
-        for (BloggerAccount bloggerAccount:bloggerAccounts) {
-            return bloggerAccount.getId();
-        }
-
-        return -1;
-    }
+//    @Override
+//    public Integer getUserIdByToken(@NonNull String token) {
+//
+//        String username = tokenService.getUsernameByToken(token);
+//
+//
+//        BloggerAccountExample bloggerAccountExample = new BloggerAccountExample();
+//        BloggerAccountExample.Criteria criteria = bloggerAccountExample.createCriteria();
+//        criteria.andUsernameEqualTo(username);
+//        List<BloggerAccount> bloggerAccounts = bloggerAccountMapper.selectByExample(bloggerAccountExample);
+//
+//        if(bloggerAccounts.isEmpty()){
+//            throw new BadRequestException("用户信息错误，请重试！");
+//        }
+//
+//        for (BloggerAccount bloggerAccount:bloggerAccounts) {
+//            return bloggerAccount.getId();
+//        }
+//
+//        return -1;
+//    }
 
     @Override
     public boolean logout(String token) {

@@ -17,6 +17,7 @@ import run.app.exception.BadRequestException;
 import run.app.exception.ServiceException;
 import run.app.mapper.BlogContentMapper;
 import run.app.mapper.BlogMapper;
+import run.app.security.token.TokenService;
 import run.app.service.ArticleService;
 import run.app.service.UserService;
 
@@ -37,8 +38,10 @@ public class ArtcileServiceImpl implements ArticleService {
     @Autowired
     BlogMapper blogMapper;
 
+//    @Autowired
+//    UserService userService;
     @Autowired
-    UserService userService;
+    TokenService tokenService;
 
     @Autowired
     BlogContentMapper blogContentMapper;
@@ -49,7 +52,8 @@ public class ArtcileServiceImpl implements ArticleService {
 
         Blog blog = new Blog();
         Integer bloggerId;
-        if((bloggerId =userService.getUserIdByToken(token)) == -1){
+//        if((bloggerId =userService.getUserIdByToken(token)) == -1){
+        if((bloggerId =tokenService.getUserIdWithToken(token)) == -1){
             throw  new BadRequestException("用户信息错误！");
         }
         blog.setBloggerId(bloggerId);
@@ -81,7 +85,8 @@ public class ArtcileServiceImpl implements ArticleService {
     public boolean updateArticle(@NonNull ArticleParams articleParams, @NonNull Integer blogId, @NonNull String token) {
 
         Blog blog = new Blog();
-        if((userService.getUserIdByToken(token)) == -1){
+//        if((userService.getUserIdByToken(token)) == -1){
+        if((tokenService.getUserIdWithToken(token)) == -1){
             throw  new BadRequestException("用户信息错误！");
         }
         blog.setId(blogId);
@@ -139,8 +144,8 @@ public class ArtcileServiceImpl implements ArticleService {
 
     public @NonNull DataGrid getArticleList(@NonNull int pageNum, @NonNull int pageSize,@NonNull String token) {
 
-        Integer blogger_id = userService.getUserIdByToken(token);
-
+//        Integer blogger_id = userService.getUserIdByToken(token);
+        Integer blogger_id = tokenService.getUserIdWithToken(token);
         BlogExample blogExample = new BlogExample();
         BlogExample.Criteria criteria = blogExample.createCriteria();
         criteria.andBloggerIdEqualTo(blogger_id);
@@ -213,8 +218,9 @@ public class ArtcileServiceImpl implements ArticleService {
 
     @Override
     public long getArticleCount(@NonNull String token) {
-        Integer bloggerId = userService.getUserIdByToken(token);
+//        Integer bloggerId = userService.getUserIdByToken(token);
 
+        Integer bloggerId = tokenService.getUserIdWithToken(token);
         BlogExample blogExample = new BlogExample();
 
         BlogExample.Criteria criteria = blogExample.createCriteria();

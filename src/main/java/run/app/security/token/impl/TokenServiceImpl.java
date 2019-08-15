@@ -1,19 +1,21 @@
 package run.app.security.token.impl;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTDecodeException;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
+import run.app.config.properties.JWTProperties;
 import run.app.entity.DTO.UserDetail;
 import run.app.entity.model.BloggerAccount;
-import run.app.entity.model.BloggerAccountExample;
-import run.app.entity.model.BloggerProfile;
 import run.app.entity.model.BloggerProfileWithBLOBs;
-import run.app.exception.BadRequestException;
 import run.app.exception.ServiceException;
 import run.app.exception.UnAuthenticationException;
 import run.app.security.token.AuthToken;
@@ -22,6 +24,7 @@ import run.app.service.UserService;
 import run.app.util.AppUtil;
 import run.app.util.RedisUtil;
 
+import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -42,6 +45,72 @@ public class TokenServiceImpl implements TokenService {
 
     @Autowired
     RedisUtil redisUtil;
+
+
+    @Autowired
+    JWTProperties jwtProperties;
+
+
+//    利用Jwt生成token
+    @Override
+    public String getToken(BloggerAccount bloggerAccount) {
+
+        long currentTimeMillis = System.currentTimeMillis();
+
+        return JWT.create()
+                .withIssuer(jwtProperties.getName())
+                .withExpiresAt(new Date(currentTimeMillis+jwtProperties.getJwtExpires()))
+                .withClaim("userId",bloggerAccount.getId())
+                .withAudience(bloggerAccount.getId().toString(),bloggerAccount.getUsername())
+                .sign(Algorithm.HMAC256(jwtProperties.getBase64Secret()));
+    }
+
+    @Override
+    public boolean verifierToken(String token) {
+
+        try {
+            JWTVerifier build = JWT.require(Algorithm.HMAC256(jwtProperties.getBase64Secret()))
+                    .withIssuer(jwtProperties.getName())
+                    .build();
+
+            build.verify(token);
+            return  true;
+        }catch (JWTVerificationException e){
+            log.error(e.getMessage());
+            e.printStackTrace();
+            return false;
+        }catch (Exception e){
+            return false;
+        }
+    }
+
+    @Override
+    public boolean isExpire(String token) {
+        try{
+            DecodedJWT decode = JWT.decode(token);
+
+            return decode.getExpiresAt().compareTo(new Date()) <= 0? true:false;
+        }catch (JWTDecodeException e){
+            return false;
+        }catch (Exception e){
+
+            return false;
+        }
+
+    }
+
+    @Override
+    public JWTVerifier getVerifierWithToken(String token) {
+        return JWT.require(Algorithm.HMAC256(jwtProperties.getBase64Secret())).build();
+    }
+
+    @Override
+    public int getUserIdWithToken(String token) {
+
+       return  JWT.decode(token).getClaim("userId").asInt();
+
+    }
+
 
     @Override
     public void storage(String token, String username) {
@@ -76,13 +145,14 @@ public class TokenServiceImpl implements TokenService {
         return redisUtil.get(username).isPresent();
     }
 
-    @Override
-    public Boolean isToken(String token) {
-        return redisUtil.get(token).isPresent();
-    }
+//    @Override
+//    public Boolean isToken(String token) {
+//        return redisUtil.get(token).isPresent();
+//    }
 
     @Override
-    public UserDetail findUserDetailsByToken(String token) {
+    public UserDetail findUserDetailsByToken(String token)
+    {
         Optional<String> username = redisUtil.get(token);
 
        Integer id = userService.findBloggerIdByUsername(username.get());
@@ -107,6 +177,9 @@ public class TokenServiceImpl implements TokenService {
 
         return userDetail;
     }
+
+
+
 
     @Override
     public String getUsernameByToken(String token) {

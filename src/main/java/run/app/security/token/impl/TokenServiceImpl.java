@@ -20,6 +20,7 @@ import run.app.exception.ServiceException;
 import run.app.exception.UnAuthenticationException;
 import run.app.security.token.AuthToken;
 import run.app.security.token.TokenService;
+import run.app.service.AccountService;
 import run.app.service.UserService;
 import run.app.util.AppUtil;
 import run.app.util.RedisUtil;
@@ -39,9 +40,12 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Service
 public class TokenServiceImpl implements TokenService {
-
     @Autowired
     UserService userService;
+
+
+    @Autowired
+    AccountService accountService;
 
     @Autowired
     RedisUtil redisUtil;
@@ -155,7 +159,7 @@ public class TokenServiceImpl implements TokenService {
     {
         Optional<String> username = redisUtil.get(token);
 
-       Integer id = userService.findBloggerIdByUsername(username.get());
+       Integer id = accountService.findBloggerIdByUsername(username.get());
 
        if(id.equals(-1)){
            throw new UnAuthenticationException("用户信息异常！请联系管理员处理");

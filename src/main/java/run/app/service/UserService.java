@@ -21,15 +21,9 @@ import java.util.Optional;
  */
 
 public interface UserService {
-//     登陆服务
-     @NonNull
-     Optional<String> loginService(@NonNull LoginParams loginParams);
-
-     String getUsernameByToken(@NonNull String token);
 
 
-     @NonNull
-     Integer findBloggerIdByUsername(@NonNull String username);
+
 
 
      @NonNull
@@ -40,7 +34,7 @@ public interface UserService {
 
      UserDetail getUserDetailByToken(@NonNull String token);
 
-     boolean updatePassword(@NonNull String oldPassword,@NonNull String newPassword,String token);
+
 
 
 //     Integer getUserIdByToken(@NonNull String token);

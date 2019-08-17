@@ -81,7 +81,6 @@ public class TokenServiceImpl implements TokenService {
             return  true;
         }catch (JWTVerificationException e){
             log.error(e.getMessage());
-            e.printStackTrace();
             return false;
         }catch (Exception e){
             return false;

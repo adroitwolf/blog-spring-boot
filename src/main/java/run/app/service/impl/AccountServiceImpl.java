@@ -3,16 +3,24 @@ package run.app.service.impl;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import run.app.entity.DTO.BaseResponse;
 import run.app.entity.model.BloggerAccount;
 import run.app.entity.model.BloggerAccountExample;
+import run.app.entity.model.BloggerProfile;
+import run.app.entity.model.BloggerProfileWithBLOBs;
 import run.app.entity.params.LoginParams;
+import run.app.entity.params.RegisterParams;
 import run.app.exception.BadRequestException;
 import run.app.exception.ServiceException;
 import run.app.mapper.BloggerAccountMapper;
+import run.app.mapper.BloggerProfileMapper;
 import run.app.security.token.TokenService;
 import run.app.service.AccountService;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,10 +32,14 @@ import java.util.Optional;
  */
 @Service
 @Slf4j
+@Transactional
 public class AccountServiceImpl implements AccountService {
 
     @Autowired
     BloggerAccountMapper bloggerAccountMapper;
+
+    @Autowired
+    BloggerProfileMapper bloggerProfileMapper;
 
     @Autowired
     TokenService tokenService;
@@ -120,6 +132,42 @@ public class AccountServiceImpl implements AccountService {
             return bloggerAccount.getId();
         }
         return new Integer(-1);
+    }
+
+    @Override
+    public BaseResponse registerUser(@NonNull RegisterParams registerParams) {
+        BaseResponse baseResponse = new BaseResponse();
+
+//        先查询是否账号是否可用
+
+        if(findBloggerIdByUsername(registerParams.getAccount()) != -1){
+            baseResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+            baseResponse.setMessage("此账号已被人抢先注册了！");
+            return baseResponse;
+        }
+
+        BloggerAccount bloggerAccount = new BloggerAccount();
+        bloggerAccount.setUsername(registerParams.getAccount());
+        bloggerAccount.setPassword(registerParams.getPassword());
+        bloggerAccount.setRegisterDate(new Date());
+
+        if(bloggerAccountMapper.insertSelective(bloggerAccount) == 0){
+            baseResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+            baseResponse.setData("服务异常，请稍后重试");
+            return baseResponse;
+        }
+
+        BloggerProfileWithBLOBs bloggerProfileWithBLOBs = new BloggerProfileWithBLOBs();
+
+        bloggerProfileWithBLOBs.setIntro(registerParams.getUsername());
+        bloggerProfileWithBLOBs.setBloggerId(bloggerAccount.getId());
+
+        bloggerProfileMapper.insertSelective(bloggerProfileWithBLOBs);
+
+
+        baseResponse.setStatus(HttpStatus.OK.value());
+
+        return baseResponse;
     }
 
 

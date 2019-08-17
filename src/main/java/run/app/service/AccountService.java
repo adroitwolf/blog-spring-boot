@@ -1,7 +1,9 @@
 package run.app.service;
 
 import lombok.NonNull;
+import run.app.entity.DTO.BaseResponse;
 import run.app.entity.params.LoginParams;
+import run.app.entity.params.RegisterParams;
 
 import java.util.Optional;
 
@@ -26,5 +28,7 @@ public interface AccountService {
     @NonNull
     Integer findBloggerIdByUsername(@NonNull String username);
 
+
+    BaseResponse registerUser(@NonNull RegisterParams registerParams);
 
 }

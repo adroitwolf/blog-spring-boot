@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import run.app.entity.DTO.BaseResponse;
 import run.app.entity.params.LoginParams;
 import run.app.entity.params.PasswordParams;
+import run.app.entity.params.RegisterParams;
 import run.app.security.log.MethodLog;
 import run.app.service.AccountService;
 
@@ -50,6 +51,12 @@ public class AdminController {
         }
 
         return baseResponse;
+    }
+
+    @ApiOperation("注册新用户")
+    @PostMapping("/register")
+    public BaseResponse register(@Valid @RequestBody RegisterParams registerParams){
+        return accountService.registerUser(registerParams);
     }
 
 

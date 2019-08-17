@@ -38,11 +38,11 @@ public class TokenInterceptor {
 
         String authentication = servletRequest.getHeader("Authentication");
 
-        if(!StringUtils.isEmpty(authentication)){
-            if(tokenService.isToken(authentication)){
-
-            }
-        }
+//        if(!StringUtils.isEmpty(authentication)){
+//            if(tokenService.isToken(authentication)){
+//
+//            }
+//        }
 
         Signature signature = joinPoint.getSignature();
 

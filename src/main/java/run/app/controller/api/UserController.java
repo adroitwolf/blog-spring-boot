@@ -32,11 +32,7 @@ public class UserController {
     @Autowired
     UserService userService;
 
-    @ApiOperation("用户登陆")
-    @PostMapping("/login")
-    public AuthToken login(@RequestBody @Valid LoginParams loginParams){
-        return userService.loginService(loginParams);
-    }
+
 
 
     @MethodLog
@@ -47,20 +43,6 @@ public class UserController {
         return userService.getUserDetailByToken(request.getHeader("Authentication"));
     }
 
-    @MethodLog
-    @ApiOperation("更改用户密码")
-    @PutMapping("/changePassword")
-    public BaseResponse updatePassword(@Valid @RequestBody PasswordParams passwordParams,HttpServletRequest request){
-        String token = userService.getUsernameByToken(request.getHeader("Authentication"));
-        BaseResponse baseResponse = new BaseResponse();
-        if(userService.updatePassword(passwordParams.getOldPassword(),passwordParams.getNewPassword(),token)){
-            baseResponse.setStatus(HttpStatus.OK.value());
-        }else{
-            baseResponse.setStatus(HttpStatus.BAD_REQUEST.value());
-        }
-
-        return baseResponse;
-    }
 
     @MethodLog
     @ApiOperation("更新用户资料")
@@ -75,20 +57,6 @@ public class UserController {
         return baseResponse;
     }
 
-    @MethodLog
-    @PostMapping("/logout")
-    @ApiOperation("用户登出")
-    public BaseResponse logout(HttpServletRequest request){
-        BaseResponse baseResponse = new BaseResponse();
-
-        String token = request.getHeader("Authentication");
-
-        if(userService.logout(token)){
-            baseResponse.setStatus(HttpStatus.BAD_REQUEST.value());
-        }
-        baseResponse.setStatus(HttpStatus.OK.value());
-        return baseResponse;
-    }
 
 
 

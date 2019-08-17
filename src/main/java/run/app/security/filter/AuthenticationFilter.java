@@ -63,7 +63,14 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         }
 
 
-        if(!tokenService.isToken(authentication)){
+
+
+        if(!tokenService.verifierToken(authentication)){
+            handlerOnFailure(httpServletRequest,httpServletResponse, new UnAuthenticationException("用户Token无效，请重新登陆！"));
+            return;
+        }
+
+        if(tokenService.isExpire(authentication)){
             handlerOnFailure(httpServletRequest,httpServletResponse, new UnAuthenticationException("用户Token已经过期，请重新登录！"));
             return;
         }

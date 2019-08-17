@@ -14,6 +14,8 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import run.app.entity.model.BlogLog;
 import run.app.security.token.TokenService;
+import run.app.service.AccountService;
+import run.app.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
@@ -30,8 +32,11 @@ import java.util.Date;
 @Component
 public class LogManager {
 
+//    @Autowired
+//    TokenService tokenService;
+
     @Autowired
-    TokenService tokenService;
+    AccountService accountService;
 
     @Autowired
     LogService logService;
@@ -46,7 +51,8 @@ public class LogManager {
         BlogLog blogLog = new BlogLog();
 
         String token = request.getHeader("Authentication");
-        blogLog.setUsername(tokenService.getUsernameByToken(token));
+//        blogLog.setUsername(tokenService.getUsernameByToken(token));
+        blogLog.setUsername(accountService.getUsernameByToken(token));
         blogLog.setRomoteip(ip);
         blogLog.setRomotetime(new Date());
         blogLog.setOperation(targetName+"."+methodName);

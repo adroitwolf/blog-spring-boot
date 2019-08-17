@@ -21,13 +21,10 @@ import java.util.Optional;
  */
 
 public interface UserService {
-     @NonNull
-     AuthToken loginService(@NonNull LoginParams loginParams);
 
-     String getUsernameByToken(@NonNull String token);
 
-     @NonNull
-     Integer findBloggerIdByUsername(@NonNull String username);
+
+
 
      @NonNull
      BloggerProfileWithBLOBs findUserDetailByBloggerId(@NonNull Integer bloggerId);
@@ -37,10 +34,10 @@ public interface UserService {
 
      UserDetail getUserDetailByToken(@NonNull String token);
 
-     boolean updatePassword(@NonNull String oldPassword,@NonNull String newPassword,String username);
 
 
-     Integer getUserIdByToken(@NonNull String token);
+
+//     Integer getUserIdByToken(@NonNull String token);
 
      boolean logout(String token);
 

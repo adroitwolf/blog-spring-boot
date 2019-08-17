@@ -56,7 +56,7 @@ public class FilterConfiguration {
         FilterRegistrationBean<AuthenticationFilter> authenticationFilterFilter = new FilterRegistrationBean<>();
         AuthenticationFilter authenticationFilter = new AuthenticationFilter(tokenService);
 
-        authenticationFilter.addExcludePatterns("/api/user/login","/post/");
+        authenticationFilter.addExcludePatterns("/api/admin/login","/api/admin/register","/post/");
 
         authenticationFilterFilter.setFilter(authenticationFilter);
 

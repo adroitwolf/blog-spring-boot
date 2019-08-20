@@ -6,6 +6,7 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import run.app.entity.DTO.UserDetail;
 import run.app.entity.model.*;
 import run.app.entity.params.LoginParams;
@@ -122,6 +123,19 @@ public class UserServiceImpl implements UserService {
 
     }
 
+    @Transactional
+    @Override
+    public void uploadAvatarId(@NonNull String avatar, @NonNull String token) {
+        int id = tokenService.getUserIdWithToken(token);
+
+        BloggerProfileExample bloggerProfileExample = new BloggerProfileExample();
+        BloggerProfileExample.Criteria criteria = bloggerProfileExample.createCriteria();
+        criteria.andBloggerIdEqualTo(id);
+
+        BloggerProfileWithBLOBs bloggerProfileWithBLOBs = new BloggerProfileWithBLOBs();
+        bloggerProfileWithBLOBs.setAvatarId(avatar);
+        bloggerProfileMapper.updateByExampleSelective(bloggerProfileWithBLOBs,bloggerProfileExample);
+    }
 
 
 //    @Override

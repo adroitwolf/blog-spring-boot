@@ -24,8 +24,6 @@ public interface UserService {
 
 
 
-
-
      @NonNull
      BloggerProfileWithBLOBs findUserDetailByBloggerId(@NonNull Integer bloggerId);
 
@@ -35,7 +33,7 @@ public interface UserService {
      UserDetail getUserDetailByToken(@NonNull String token);
 
 
-
+     void uploadAvatarId(@NonNull String avatar,@NonNull String token);
 
 //     Integer getUserIdByToken(@NonNull String token);
 

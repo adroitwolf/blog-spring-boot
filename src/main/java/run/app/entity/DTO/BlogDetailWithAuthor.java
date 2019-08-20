@@ -17,7 +17,7 @@ public class BlogDetailWithAuthor extends BlogDetail {
 
     private String username;
 
-    private Integer avatarId;
+    private String avatarId;
 
 
     public BlogDetailWithAuthor() {
@@ -26,7 +26,7 @@ public class BlogDetailWithAuthor extends BlogDetail {
     public BlogDetailWithAuthor(Integer id,String title,
                                  Date releaseDate,
                                  String tagTitle,
-                                String content,  String username, Integer avatarId) {
+                                String content,  String username, String avatarId) {
         super(id, title, releaseDate, tagTitle, content);
         this.username = username;
         this.avatarId = avatarId;

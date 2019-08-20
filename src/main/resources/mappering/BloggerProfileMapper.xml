@@ -6,7 +6,7 @@
     <result column="blogger_id" jdbcType="INTEGER" property="bloggerId" />
     <result column="phone" jdbcType="VARCHAR" property="phone" />
     <result column="email" jdbcType="VARCHAR" property="email" />
-    <result column="avatar_id" jdbcType="INTEGER" property="avatarId" />
+    <result column="avatar_id" jdbcType="VARCHAR" property="avatarId" />
   </resultMap>
   <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="run.app.entity.model.BloggerProfileWithBLOBs">
     <result column="about_me" jdbcType="LONGVARCHAR" property="aboutMe" />
@@ -129,7 +129,7 @@
       email, avatar_id, about_me, 
       intro)
     values (#{id,jdbcType=INTEGER}, #{bloggerId,jdbcType=INTEGER}, #{phone,jdbcType=VARCHAR}, 
-      #{email,jdbcType=VARCHAR}, #{avatarId,jdbcType=INTEGER}, #{aboutMe,jdbcType=LONGVARCHAR}, 
+      #{email,jdbcType=VARCHAR}, #{avatarId,jdbcType=VARCHAR}, #{aboutMe,jdbcType=LONGVARCHAR}, 
       #{intro,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="run.app.entity.model.BloggerProfileWithBLOBs">
@@ -171,7 +171,7 @@
         #{email,jdbcType=VARCHAR},
       </if>
       <if test="avatarId != null">
-        #{avatarId,jdbcType=INTEGER},
+        #{avatarId,jdbcType=VARCHAR},
       </if>
       <if test="aboutMe != null">
         #{aboutMe,jdbcType=LONGVARCHAR},
@@ -203,7 +203,7 @@
         email = #{record.email,jdbcType=VARCHAR},
       </if>
       <if test="record.avatarId != null">
-        avatar_id = #{record.avatarId,jdbcType=INTEGER},
+        avatar_id = #{record.avatarId,jdbcType=VARCHAR},
       </if>
       <if test="record.aboutMe != null">
         about_me = #{record.aboutMe,jdbcType=LONGVARCHAR},
@@ -222,7 +222,7 @@
       blogger_id = #{record.bloggerId,jdbcType=INTEGER},
       phone = #{record.phone,jdbcType=VARCHAR},
       email = #{record.email,jdbcType=VARCHAR},
-      avatar_id = #{record.avatarId,jdbcType=INTEGER},
+      avatar_id = #{record.avatarId,jdbcType=VARCHAR},
       about_me = #{record.aboutMe,jdbcType=LONGVARCHAR},
       intro = #{record.intro,jdbcType=LONGVARCHAR}
     <if test="_parameter != null">
@@ -235,7 +235,7 @@
       blogger_id = #{record.bloggerId,jdbcType=INTEGER},
       phone = #{record.phone,jdbcType=VARCHAR},
       email = #{record.email,jdbcType=VARCHAR},
-      avatar_id = #{record.avatarId,jdbcType=INTEGER}
+      avatar_id = #{record.avatarId,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -253,7 +253,7 @@
         email = #{email,jdbcType=VARCHAR},
       </if>
       <if test="avatarId != null">
-        avatar_id = #{avatarId,jdbcType=INTEGER},
+        avatar_id = #{avatarId,jdbcType=VARCHAR},
       </if>
       <if test="aboutMe != null">
         about_me = #{aboutMe,jdbcType=LONGVARCHAR},
@@ -269,7 +269,7 @@
     set blogger_id = #{bloggerId,jdbcType=INTEGER},
       phone = #{phone,jdbcType=VARCHAR},
       email = #{email,jdbcType=VARCHAR},
-      avatar_id = #{avatarId,jdbcType=INTEGER},
+      avatar_id = #{avatarId,jdbcType=VARCHAR},
       about_me = #{aboutMe,jdbcType=LONGVARCHAR},
       intro = #{intro,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=INTEGER}
@@ -279,7 +279,7 @@
     set blogger_id = #{bloggerId,jdbcType=INTEGER},
       phone = #{phone,jdbcType=VARCHAR},
       email = #{email,jdbcType=VARCHAR},
-      avatar_id = #{avatarId,jdbcType=INTEGER}
+      avatar_id = #{avatarId,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

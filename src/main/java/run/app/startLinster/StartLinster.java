@@ -10,6 +10,8 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import run.app.security.token.TokenService;
 
+import java.io.File;
+
 /**
  * Created with IntelliJ IDEA.
  * User: WHOAMI
@@ -26,6 +28,12 @@ public class StartLinster implements ApplicationListener<ApplicationEvent> {
 
     @Override
     public void onApplicationEvent(ApplicationEvent applicationEvent) {
+        String filePath = System.getProperty("user.dir") + File.separator + "avatar";
+
+        File file = new File(filePath);
+        if(!file.exists()){
+            file.mkdirs();
+        }
         log.info("提前注入token");
     }
 }

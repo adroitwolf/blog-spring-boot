@@ -16,7 +16,7 @@ public class UserDetail {
 
     private String email;
 
-    private Integer avatarId;
+    private String avatarId;
 
     private String aboutMe;
 }

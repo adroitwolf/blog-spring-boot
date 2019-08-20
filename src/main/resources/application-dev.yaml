@@ -13,6 +13,8 @@ spring:
     host: 127.0.0.1
     port: 6379
     password: 123
+  resources:
+    static-locations: classpath:/META-INF/resources/,classpath:/resources/, classpath:/static/, classpath:/public/,file:${web.upload-path}
 
 # pagehepler
 
@@ -23,6 +25,11 @@ logging:
 
 mybatis:
   mapper-locations: classpath:/mappering/*.xml
+
+# 图片上传下载
+web:
+  upload-path: ${user.dir}/avatar
+
 
 jwt:
   # 发行者

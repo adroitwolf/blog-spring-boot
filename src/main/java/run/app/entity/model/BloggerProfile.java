@@ -9,7 +9,7 @@ public class BloggerProfile {
 
     private String email;
 
-    private Integer avatarId;
+    private String avatarId;
 
     public Integer getId() {
         return id;
@@ -43,11 +43,11 @@ public class BloggerProfile {
         this.email = email == null ? null : email.trim();
     }
 
-    public Integer getAvatarId() {
+    public String getAvatarId() {
         return avatarId;
     }
 
-    public void setAvatarId(Integer avatarId) {
-        this.avatarId = avatarId;
+    public void setAvatarId(String avatarId) {
+        this.avatarId = avatarId == null ? null : avatarId.trim();
     }
 }

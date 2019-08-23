@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.ToString;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -23,11 +24,11 @@ public class BlogDetailWithAuthor extends BlogDetail {
     public BlogDetailWithAuthor() {
     }
 
-    public BlogDetailWithAuthor(Integer id,String title,
+    public BlogDetailWithAuthor(Integer id,String title, String summary,
                                  Date releaseDate,
-                                 String tagTitle,
+                                 List<String> tagTitle,
                                 String content,  String username, String avatarId) {
-        super(id, title, releaseDate, tagTitle, content);
+        super(id, title, summary,releaseDate, tagTitle, content);
         this.username = username;
         this.avatarId = avatarId;
     }

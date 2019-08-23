@@ -19,12 +19,12 @@ import java.io.IOException;
 public class LogFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
+        long startTime = System.currentTimeMillis();
         String remoteAddr = httpServletRequest.getRemoteAddr();
         log.debug("");
         log.debug("ip:[{}] url:[{}]",remoteAddr,httpServletRequest.getRequestURL());
         filterChain.doFilter(httpServletRequest,httpServletResponse);
 
-        long startTime = System.currentTimeMillis();
 
         log.debug("ip:[{}] url:[{}] using:[{}] ms",remoteAddr,httpServletRequest.getRequestURL(),(System.currentTimeMillis() - startTime));
 

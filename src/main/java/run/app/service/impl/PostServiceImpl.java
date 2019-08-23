@@ -3,6 +3,7 @@ package run.app.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import run.app.entity.DTO.BlogDetailWithAuthor;
@@ -11,12 +12,13 @@ import run.app.entity.model.Blog;
 import run.app.entity.model.BlogContent;
 import run.app.entity.model.BlogExample;
 import run.app.entity.model.BloggerProfileWithBLOBs;
-import run.app.mapper.BlogContentMapper;
-import run.app.mapper.BlogMapper;
-import run.app.mapper.BloggerProfileMapper;
+import run.app.mapper.*;
 import run.app.service.PostService;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -28,6 +30,22 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class PostServiceImpl implements PostService {
+
+
+    /**
+     * 功能描述: 新增两个标签服务的mapper层
+     * @Author: WHOAMI
+     * @Date: 2019/8/23 17:37
+     */
+    @Autowired
+    BlogTagMapMapper blogTagMapMapper;
+
+    @Autowired
+    BlogLabelMapper blogLabelMapper;
+
+    @Autowired
+    TagServiceImpl tagService;
+    /*代码修改结束*/
 
     @Autowired
     BlogMapper blogMapper;
@@ -57,18 +75,21 @@ public class PostServiceImpl implements PostService {
 
         List<Blog> result = list.getList();
 
-        result = result.stream().map(item->{return new Blog(item.getId()
-                ,item.getStatus(),
-                item.getTitle(),
-                item.getSummary(),
-                item.getReleaseDate(),
-                item.getNearestModifyDate(),
-                item.getTagTitle());}).collect(Collectors.toList());
+        List<run.app.entity.DTO.Blog> resultX= result.stream().map(item->{
+            List<String> tagsTitle = new ArrayList<>();
+            if(!StringUtils.isBlank(item.getTagTitle())){
 
+                tagsTitle = tagService.selectTagTitleByIdString(item.getTagTitle());
+            }
 
+            return new run.app.entity.DTO.Blog(item.getId(),
+                    item.getTitle(),
+                    item.getSummary(),
+                    item.getReleaseDate(),
+                    tagsTitle);}).collect(Collectors.toList());
         DataGrid dataGrid = new DataGrid();
 
-        dataGrid.setRows(result);
+        dataGrid.setRows(resultX);
         dataGrid.setTotal(list.getTotal());
 
 
@@ -85,7 +106,21 @@ public class PostServiceImpl implements PostService {
         BloggerProfileWithBLOBs bloggerProfileWithBLOBs = bloggerProfileMapper.selectByPrimaryKey(blog.getBloggerId());
 
 
-        BlogDetailWithAuthor blogDetailWithAuthor = new BlogDetailWithAuthor(blogId,blog.getTitle(),blog.getReleaseDate(),blog.getTagTitle(),blogContent.getContent(),bloggerProfileWithBLOBs.getIntro(),bloggerProfileWithBLOBs.getAvatarId());
+        //todo: tags
+
+        String nowTagsId = blog.getTagTitle();
+
+
+        List<String> nowTagsIdList = Arrays.asList(nowTagsId.split(","));
+
+        List<String> nowTags = new ArrayList<>();
+
+        nowTagsIdList.stream().filter(Objects::nonNull)
+                .forEach(id-> nowTags.add( blogLabelMapper.selectByExampleForTitleByPrimaryKey(Integer.valueOf(id))));
+
+        log.info("现在的标签序列：" + nowTags.toString());
+
+        BlogDetailWithAuthor blogDetailWithAuthor = new BlogDetailWithAuthor(blogId,blog.getTitle(),blog.getSummary(),blog.getReleaseDate(),nowTags,blogContent.getContent(),bloggerProfileWithBLOBs.getIntro(),bloggerProfileWithBLOBs.getAvatarId());
 
 
         return blogDetailWithAuthor;

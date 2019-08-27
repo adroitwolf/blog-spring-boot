@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
  * Created with IntelliJ IDEA.
  * User: WHOAMI
  * Time: 2019 2019/8/14 19:51
- * Description: ://TODO ${END}
+ * Description: 前台服务
  */
 @Service
 @Slf4j
@@ -37,11 +37,6 @@ public class PostServiceImpl implements PostService {
      * @Author: WHOAMI
      * @Date: 2019/8/23 17:37
      */
-    @Autowired
-    BlogTagMapMapper blogTagMapMapper;
-
-    @Autowired
-    BlogLabelMapper blogLabelMapper;
 
     @Autowired
     TagServiceImpl tagService;
@@ -107,20 +102,14 @@ public class PostServiceImpl implements PostService {
 
 
         //todo: tags
+        List<String> nowTagsId = new ArrayList<>();
+        if(!StringUtils.isBlank(blog.getTagTitle())){
 
-        String nowTagsId = blog.getTagTitle();
+          nowTagsId = tagService.selectTagTitleByIdString(blog.getTagTitle());
+        }
 
 
-        List<String> nowTagsIdList = Arrays.asList(nowTagsId.split(","));
-
-        List<String> nowTags = new ArrayList<>();
-
-        nowTagsIdList.stream().filter(Objects::nonNull)
-                .forEach(id-> nowTags.add( blogLabelMapper.selectByExampleForTitleByPrimaryKey(Integer.valueOf(id))));
-
-        log.info("现在的标签序列：" + nowTags.toString());
-
-        BlogDetailWithAuthor blogDetailWithAuthor = new BlogDetailWithAuthor(blogId,blog.getTitle(),blog.getSummary(),blog.getReleaseDate(),nowTags,blogContent.getContent(),bloggerProfileWithBLOBs.getIntro(),bloggerProfileWithBLOBs.getAvatarId());
+        BlogDetailWithAuthor blogDetailWithAuthor = new BlogDetailWithAuthor(blogId,blog.getTitle(),blog.getSummary(),blog.getReleaseDate(),nowTagsId,blogContent.getContent(),bloggerProfileWithBLOBs.getIntro(),bloggerProfileWithBLOBs.getAvatarId());
 
 
         return blogDetailWithAuthor;

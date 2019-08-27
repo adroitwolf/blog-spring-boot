@@ -9,6 +9,7 @@ import run.app.entity.DTO.BaseResponse;
 import run.app.entity.DTO.BlogDetail;
 import run.app.entity.DTO.DataGrid;
 import run.app.entity.params.ArticleParams;
+import run.app.entity.params.PostQueryParams;
 import run.app.security.log.MethodLog;
 import run.app.service.ArticleService;
 
@@ -95,6 +96,20 @@ public class BlogController {
                             HttpServletRequest request){
         String token = request.getHeader("Authentication");
         return articleService.getArticleList(pageNum,pageSize,token);
+    }
+
+
+    @MethodLog
+    @ApiOperation("根据条件搜索文章")
+    @GetMapping("query")
+    public DataGrid getListByExample(@RequestParam int pageNum,
+                                     @RequestParam int pageSize,
+                                     PostQueryParams postQueryParams,
+                                     HttpServletRequest request){
+
+        log.info(postQueryParams.toString());
+        String token = request.getHeader("Authentication");
+        return articleService.getArticleListByExample(pageNum,pageSize,postQueryParams,token);
     }
 
     @MethodLog

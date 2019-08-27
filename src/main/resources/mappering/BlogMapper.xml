@@ -86,6 +86,30 @@
       order by ${orderByClause}
     </if>
   </select>
+
+
+
+
+  <select id="selectByUserExample" parameterType="run.app.entity.params.PostQueryParams" resultMap="BaseResultMap">
+    select
+      a.id, a.blogger_id, a.status, a.title, a.summary, a.release_date, a.nearest_modify_date, a.tag_title
+    from blog as a,blog_content as b
+   <where>
+     <if test="query.keyword != '' and query.keyword != null">
+        <bind name="pattern" value="'%' + query.keyword + '%'"></bind>
+      and concat(a.title,a.summary,a.tag_title,b.content_md) like #{pattern}
+     </if>
+     <if test="query.status != '' and query.status != null">
+        and a.status = #{query.status}
+     </if>
+     <if test="blogger_id != '' and blogger_id != null">
+       and a.blogger_id = #{blogger_id}
+     </if>
+     and a.id = b.id
+   </where>
+    order by a.release_date desc
+  </select>
+
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />

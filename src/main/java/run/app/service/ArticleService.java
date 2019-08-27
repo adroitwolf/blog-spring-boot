@@ -5,6 +5,7 @@ import lombok.NonNull;
 import run.app.entity.DTO.BlogDetail;
 import run.app.entity.DTO.DataGrid;
 import run.app.entity.params.ArticleParams;
+import run.app.entity.params.PostQueryParams;
 
 /**
  * Created with IntelliJ IDEA.
@@ -21,12 +22,16 @@ public interface ArticleService {
 
     boolean updateArticleStatus(@NonNull Integer blogId,@NonNull String status);
 
+
+
+
     BlogDetail getArticleDetail(@NonNull Integer blogId);
 
     @NonNull
     DataGrid getArticleList(@NonNull int pageNum,@NonNull int pageSize,@NonNull String token);
 
 
+    DataGrid getArticleListByExample(@NonNull int pageNum, @NonNull int pageSize, PostQueryParams postQueryParams, @NonNull String token);
 
     @NonNull
     DataGrid getArticleList(@NonNull int pageNum,@NonNull int pageSize);

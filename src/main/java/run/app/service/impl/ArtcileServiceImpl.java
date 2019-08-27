@@ -12,6 +12,7 @@ import run.app.entity.DTO.BlogDetail;
 import run.app.entity.DTO.DataGrid;
 import run.app.entity.model.*;
 import run.app.entity.params.ArticleParams;
+import run.app.entity.params.PostQueryParams;
 import run.app.exception.BadRequestException;
 import run.app.exception.ServiceException;
 import run.app.mapper.BlogContentMapper;
@@ -174,7 +175,7 @@ public class ArtcileServiceImpl implements ArticleService {
 
 
 
-        if(StringUtils.isBlank(blog.getTagTitle())) {
+        if(!StringUtils.isBlank(blog.getTagTitle())) {
             String nowTagsId = blog.getTagTitle();
             List<String> nowTagsIdList = Arrays.asList(nowTagsId.split(","));
 
@@ -200,6 +201,7 @@ public class ArtcileServiceImpl implements ArticleService {
 //        Integer blogger_id = userService.getUserIdByToken(token);
         Integer blogger_id = tokenService.getUserIdWithToken(token);
         BlogExample blogExample = new BlogExample();
+        blogExample.setOrderByClause("release_date desc");
         BlogExample.Criteria criteria = blogExample.createCriteria();
         criteria.andBloggerIdEqualTo(blogger_id);
 
@@ -236,12 +238,45 @@ public class ArtcileServiceImpl implements ArticleService {
         return dataGrid;
     }
 
+    @Override
+    public DataGrid getArticleListByExample(@NonNull int pageNum, @NonNull int pageSize, PostQueryParams postQueryParams, @NonNull String token) {
+        PageHelper.startPage(pageNum,pageSize);
+        List<Blog> blogList = blogMapper.selectByUserExample(postQueryParams, tokenService.getUserIdWithToken(token));
+
+        PageInfo<Blog> list = new PageInfo<>(blogList);
+
+        DataGrid dataGrid = new DataGrid();
+
+        List<run.app.entity.DTO.Blog> blogs = list.getList().stream().map(item->{
+            List<String> tagsTitle = new ArrayList<>();
+            if(!StringUtils.isBlank(item.getTagTitle())){
+
+                tagsTitle = tagService.selectTagTitleByIdString(item.getTagTitle());
+            }
+
+            return new run.app.entity.DTO.Blog(item.getId()
+                    ,item.getStatus(),
+                    item.getTitle(),
+                    item.getSummary(),
+                    item.getReleaseDate(),
+                    item.getNearestModifyDate(),
+                    tagsTitle);
+        }).collect(Collectors.toList());
+
+
+        dataGrid.setRows(blogs);
+
+        dataGrid.setTotal(list.getTotal());
+
+        return dataGrid;
+    }
+
 
     @Override
     public @NonNull DataGrid getArticleList(@NonNull int pageNum, @NonNull int pageSize) {
         BlogExample blogExample = new BlogExample();
 
-        blogExample.setOrderByClause("release_date");
+        blogExample.setOrderByClause("release_date desc");
 
         PageHelper.startPage(pageNum,pageSize);
         List<Blog> blogs = blogMapper.selectByExample(blogExample);
@@ -278,18 +313,18 @@ public class ArtcileServiceImpl implements ArticleService {
     @Transactional
     public void deleteBlog(@NonNull Integer blogId) {
 
+
+
+
+        blogMapper.deleteByPrimaryKey(blogId);
+        blogContentMapper.deleteByPrimaryKey(blogId);
+//        todo:这里应该也减少tag标签
         Blog blog = blogMapper.selectByPrimaryKey(blogId);
 
         if(!StringUtils.isBlank(blog.getTagTitle())){
             tagService.deleteTagsKeyByBlogId(blogId);
             tagService.dealWithNumByIdString(blog.getTagTitle(),false);
         }
-
-        blogMapper.deleteByPrimaryKey(blogId);
-        blogContentMapper.deleteByPrimaryKey(blogId);
-//        todo:这里应该也减少tag标签
-
-
 
     }
 

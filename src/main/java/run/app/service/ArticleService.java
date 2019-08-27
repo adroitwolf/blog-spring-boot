@@ -27,14 +27,10 @@ public interface ArticleService {
 
     BlogDetail getArticleDetail(@NonNull Integer blogId);
 
-    @NonNull
-    DataGrid getArticleList(@NonNull int pageNum,@NonNull int pageSize,@NonNull String token);
-
 
     DataGrid getArticleListByExample(@NonNull int pageNum, @NonNull int pageSize, PostQueryParams postQueryParams, @NonNull String token);
 
-    @NonNull
-    DataGrid getArticleList(@NonNull int pageNum,@NonNull int pageSize);
+
 
     void deleteBlog(@NonNull Integer blogId);
 

@@ -88,19 +88,9 @@ public class BlogController {
         return baseResponse;
     }
 
-    @MethodLog
-    @ApiOperation("获取当前文章所有列表")
-    @GetMapping("/list")
-    public DataGrid getList(@RequestParam int pageNum,
-                            @RequestParam int pageSize,
-                            HttpServletRequest request){
-        String token = request.getHeader("Authentication");
-        return articleService.getArticleList(pageNum,pageSize,token);
-    }
-
 
     @MethodLog
-    @ApiOperation("根据条件搜索文章")
+    @ApiOperation("文章查询")
     @GetMapping("query")
     public DataGrid getListByExample(@RequestParam int pageNum,
                                      @RequestParam int pageSize,

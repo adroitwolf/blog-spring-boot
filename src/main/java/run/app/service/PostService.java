@@ -12,6 +12,8 @@ import run.app.entity.DTO.DataGrid;
 public interface PostService {
     DataGrid getList(int pageNum,int pageSize);
 
+    DataGrid getListByExample(int pageNum,int pageSize,String keyword);
+
     BlogDetailWithAuthor getDetail(Integer blogId);
 
 

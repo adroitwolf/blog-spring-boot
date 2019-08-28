@@ -12,6 +12,7 @@ import run.app.entity.model.Blog;
 import run.app.entity.model.BlogContent;
 import run.app.entity.model.BlogExample;
 import run.app.entity.model.BloggerProfileWithBLOBs;
+import run.app.entity.params.PostQueryParams;
 import run.app.mapper.*;
 import run.app.service.PostService;
 
@@ -87,6 +88,44 @@ public class PostServiceImpl implements PostService {
         dataGrid.setRows(resultX);
         dataGrid.setTotal(list.getTotal());
 
+
+        return dataGrid;
+    }
+
+    @Override
+    public DataGrid getListByExample(int pageNum, int pageSize, String keyword) {
+
+        PostQueryParams postQueryParams = new PostQueryParams();
+
+        postQueryParams.setKeyword(keyword);
+        postQueryParams.setStatus("PUBLISHED");
+        PageHelper.startPage(pageNum,pageSize);
+        List<Blog> blogList = blogMapper.selectByUserExample(postQueryParams, null);
+
+        PageInfo<Blog> list = new PageInfo<>(blogList);
+
+        DataGrid dataGrid = new DataGrid();
+
+        List<run.app.entity.DTO.Blog> blogs = list.getList().stream().map(item->{
+            List<String> tagsTitle = new ArrayList<>();
+            if(!StringUtils.isBlank(item.getTagTitle())){
+
+                tagsTitle = tagService.selectTagTitleByIdString(item.getTagTitle());
+            }
+
+            return new run.app.entity.DTO.Blog(item.getId()
+                    ,item.getStatus(),
+                    item.getTitle(),
+                    item.getSummary(),
+                    item.getReleaseDate(),
+                    item.getNearestModifyDate(),
+                    tagsTitle);
+        }).collect(Collectors.toList());
+
+
+        dataGrid.setRows(blogs);
+
+        dataGrid.setTotal(list.getTotal());
 
         return dataGrid;
     }

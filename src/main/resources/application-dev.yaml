@@ -22,6 +22,7 @@ spring:
 logging:
   level:
     run.app: DEBUG
+  path: ${user.dir}/logs
 
 mybatis:
   mapper-locations: classpath:/mappering/*.xml

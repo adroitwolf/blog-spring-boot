@@ -176,18 +176,7 @@ public class ArtcileServiceImpl implements ArticleService {
 
 
         if(!StringUtils.isBlank(blog.getTagTitle())) {
-            String nowTagsId = blog.getTagTitle();
-            List<String> nowTagsIdList = Arrays.asList(nowTagsId.split(","));
-
-            List<String> nowTags = new ArrayList<>();
-
-            nowTagsIdList.stream().filter(Objects::nonNull)
-                    .filter(string -> !string.isEmpty())
-                    .forEach(id -> nowTags.add(blogLabelMapper.selectByExampleForTitleByPrimaryKey(Integer.valueOf(id))));
-
-            log.info("现在的标签序列：" + nowTags.toString());
-
-            blogDetail.setTagsTitle(nowTags);
+            blogDetail.setTagsTitle(tagService.selectTagTitleByIdString(blog.getTagTitle()));
         }
         blogDetail.setSummary(blog.getSummary());
 

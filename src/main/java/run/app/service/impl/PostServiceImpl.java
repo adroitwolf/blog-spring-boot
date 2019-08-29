@@ -8,10 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import run.app.entity.DTO.BlogDetailWithAuthor;
 import run.app.entity.DTO.DataGrid;
-import run.app.entity.model.Blog;
-import run.app.entity.model.BlogContent;
-import run.app.entity.model.BlogExample;
-import run.app.entity.model.BloggerProfileWithBLOBs;
+import run.app.entity.model.*;
 import run.app.entity.params.PostQueryParams;
 import run.app.mapper.*;
 import run.app.service.PostService;
@@ -113,12 +110,10 @@ public class PostServiceImpl implements PostService {
                 tagsTitle = tagService.selectTagTitleByIdString(item.getTagTitle());
             }
 
-            return new run.app.entity.DTO.Blog(item.getId()
-                    ,item.getStatus(),
+            return new run.app.entity.DTO.Blog(item.getId(),
                     item.getTitle(),
                     item.getSummary(),
                     item.getReleaseDate(),
-                    item.getNearestModifyDate(),
                     tagsTitle);
         }).collect(Collectors.toList());
 
@@ -152,5 +147,54 @@ public class PostServiceImpl implements PostService {
 
 
         return blogDetailWithAuthor;
+    }
+
+    @Override
+    public DataGrid getListByTag(int pageNum, int pageSize, String tag) {
+
+        Integer id = tagService.selectIdWithName(tag);
+
+        log.debug("id:"+ id);
+
+        DataGrid dataGrid = new DataGrid();
+
+
+
+        if(!StringUtils.isBlank(id.toString())) {
+            List<Integer> list = tagService.selectBlogIdByTagId(id);
+
+
+
+            List<Integer> list1 = list.subList((pageNum - 1) * pageSize, list.size()>pageNum * pageSize?pageNum*pageSize:list.size());
+
+            List<run.app.entity.DTO.Blog> blogs = new ArrayList<>();
+
+            list1.stream().forEach(x -> {
+                run.app.entity.DTO.Blog blogx = new run.app.entity.DTO.Blog();
+                Blog blog = blogMapper.selectByPrimaryKey(x);
+
+                blogx.setId(x);
+
+                blogx.setSummary(blog.getSummary());
+                blogx.setTitle(blog.getTitle());
+                blogx.setReleaseDate(blog.getReleaseDate());
+
+                if (!StringUtils.isBlank(blog.getTagTitle())) {
+                    blogx.setTagsTitle(tagService.selectTagTitleByIdString(blog.getTagTitle()));
+                }
+                blogs.add(blogx);
+
+            });
+
+
+            dataGrid.setRows(blogs);
+            dataGrid.setTotal(list.size());
+
+            return dataGrid;
+        }
+
+        dataGrid.setTotal(0);
+
+        return dataGrid;
     }
 }

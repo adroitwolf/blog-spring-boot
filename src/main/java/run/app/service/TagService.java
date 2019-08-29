@@ -18,4 +18,10 @@ public interface TagService {
     void dealWithNumByIdString(String ids,boolean status);
 
     void deleteTagsKeyByBlogId(Integer blogId);
+
+    Integer selectIdWithName(String tag);
+
+
+
+    List<Integer> selectBlogIdByTagId(Integer id);
 }

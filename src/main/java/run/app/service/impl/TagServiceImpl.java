@@ -136,4 +136,29 @@ public class TagServiceImpl implements TagService {
         criteria.andBlogIdEqualTo(blogId);
         blogTagMapMapper.deleteByExample(blogTagMapExample);
     }
+
+    @Override
+    public Integer selectIdWithName(String tag) {
+
+        BlogLabelExample labelExample = new BlogLabelExample();
+
+        BlogLabelExample.Criteria criteria = labelExample.createCriteria();
+        criteria.andTitleEqualTo(tag);
+
+        List<BlogLabel> blogLabels = blogLabelMapper.selectByExample(labelExample);
+
+        return blogLabels.get(0).getId();
+
+
+    }
+
+    @Override
+    public List<Integer> selectBlogIdByTagId(Integer id) {
+        BlogTagMapExample blogTagMapExample = new BlogTagMapExample();
+        BlogTagMapExample.Criteria criteria = blogTagMapExample.createCriteria();
+        criteria.andTagIdEqualTo(id);
+        return  blogTagMapMapper.selectByExampleForBlogId(blogTagMapExample);
+
+
+    }
 }

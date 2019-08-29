@@ -29,6 +29,14 @@ public class ReceptionController {
         return postService.getListByExample(pageNum,pageSize,keyword);
     }
 
+    @GetMapping("tag")
+    @ApiOperation("查询相应tag标签")
+    public DataGrid searchTagBlogList(@RequestParam int pageNum,
+                                      @RequestParam int pageSize,
+                                      @RequestParam String tag){
+        return postService.getListByTag(pageNum,pageSize,tag);
+    }
+
     @GetMapping("/list")
     @ApiOperation("获取当前所有文章，并且默认按照创建时间排序")
     public DataGrid getList(@RequestParam int pageNum,

@@ -16,5 +16,6 @@ public interface PostService {
 
     BlogDetailWithAuthor getDetail(Integer blogId);
 
+    DataGrid getListByTag(int pageNum,int pageSize,String tag);
 
 }

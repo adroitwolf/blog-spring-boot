@@ -90,7 +90,6 @@ public class UserController {
             e.printStackTrace();
             baseResponse.setStatus(HttpStatus.BAD_REQUEST.value());
             baseResponse.setMessage("图片上传失败");
-
             return baseResponse;
         }
 

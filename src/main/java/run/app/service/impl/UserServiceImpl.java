@@ -23,6 +23,7 @@ import run.app.util.RedisUtil;
 
 import java.io.File;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -130,20 +131,24 @@ public class UserServiceImpl implements UserService {
     public void uploadAvatarId(@NonNull String avatar, @NonNull String token) {
         int id = tokenService.getUserIdWithToken(token);
 
-        BloggerProfileWithBLOBs withBLOBs = bloggerProfileMapper.selectByPrimaryKey(id);
-
-//        如果该账户目前有头像，要先删除当前头像
-        if(!StringUtils.isBlank(withBLOBs.getAvatarId())){
-            log.info(System.getProperty("user.dir")+ File.separator+ "avatar" +File.separator+ withBLOBs.getAvatarId());
-            File file = new File(System.getProperty("user.dir")+ File.separator+ "avatar"  +File.separator+ withBLOBs.getAvatarId());
-            if(file.exists()){
-
-                log.info("文件删除"+file.delete() );
-            }
-        }
 
         BloggerProfileExample bloggerProfileExample = new BloggerProfileExample();
         BloggerProfileExample.Criteria criteria = bloggerProfileExample.createCriteria();
+        criteria.andBloggerIdEqualTo(id);
+        List<BloggerProfileWithBLOBs> withBLOBs = bloggerProfileMapper.selectByExampleWithBLOBs(bloggerProfileExample);
+
+//        如果该账户目前有头像，要先删除当前头像
+        withBLOBs.stream().filter(Objects::nonNull).findFirst().ifPresent(a->{
+            if(!StringUtils.isBlank(a.getAvatarId())){
+                File file = new File(System.getProperty("user.dir")+ File.separator+ "avatar"  +File.separator+ a.getAvatarId());
+                if(file.exists()){
+                    log.info("文件删除"+file.delete() );
+                }
+            }
+        });
+
+
+
         criteria.andBloggerIdEqualTo(id);
 
         BloggerProfileWithBLOBs bloggerProfileWithBLOBs = new BloggerProfileWithBLOBs();

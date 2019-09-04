@@ -17,7 +17,7 @@ import java.util.Optional;
  * Created with IntelliJ IDEA.
  * User: WHOAMI
  * Time: 2019 2019/6/26 21:33
- * Description: ://TODO ${END}
+ * Description: :用户服务层接口
  */
 
 public interface UserService {
@@ -34,6 +34,9 @@ public interface UserService {
 
 
      void uploadAvatarId(@NonNull String avatar,@NonNull String token);
+
+
+
 
 //     Integer getUserIdByToken(@NonNull String token);
 

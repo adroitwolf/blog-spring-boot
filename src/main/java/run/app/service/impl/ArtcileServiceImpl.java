@@ -21,8 +21,8 @@ import run.app.mapper.BlogMapper;
 import run.app.mapper.BlogTagMapMapper;
 import run.app.security.token.TokenService;
 import run.app.service.ArticleService;
+import run.app.service.AttachmentService;
 import run.app.service.TagService;
-import run.app.service.UserService;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -49,7 +49,16 @@ public class ArtcileServiceImpl implements ArticleService {
     BlogLabelMapper blogLabelMapper;
     /*代码修改结束*/
 
+    /*
+    * 功能描述: 添加博客图片功能
+    * @Author: WHOAMI
+    * @Date: 2019/9/3 18:05
+     */
 
+    @Autowired
+    AttachmentService attachmentService;
+
+    /*代码修改结束*/
     @Autowired
     BlogMapper blogMapper;
 
@@ -83,8 +92,22 @@ public class ArtcileServiceImpl implements ArticleService {
         blog.setTitle(articleParams.getTitle());
 
 
+        /**
+         * 功能描述: 增加文章缩略图
+         * @Author: WHOAMI
+         * @Date: 2019/9/4 20:17
+         */
 
-        //todo  tag问题
+        int picture_id = -1;
+
+        if(!StringUtils.isBlank(articleParams.getPicture())){
+
+            picture_id = attachmentService.getIdByTitle(articleParams.getPicture());
+
+        }
+
+        /*增加代码结束*/
+
 //        blog.setTagTitle(articleParams.getTag());
 
         blog.setStatus("PUBLISHED");
@@ -93,6 +116,20 @@ public class ArtcileServiceImpl implements ArticleService {
         if(id == 0){
             throw new ServiceException("服务器出现错误，请重试");
         }
+
+
+        /**
+         * 功能描述: 增加文章标签功能
+         * @Author: WHOAMI
+         */
+
+        String tag = tagService.submitArticleWithTagString(articleParams.getTagList(), id);
+
+        blog.setTagTitle(tag);
+
+        blogMapper.updateByPrimaryKeySelective(blog);
+
+        /*增加代码结束*/
 
         BlogContent blogContent = new BlogContent();
 
@@ -117,6 +154,20 @@ public class ArtcileServiceImpl implements ArticleService {
 
         /*增加代码结束*/
 
+        /**
+        * 功能描述: 增加文章缩略图
+        * @Author: WHOAMI
+        * @Date: 2019/9/4 20:17
+         */
+
+        int picture_id = -1;
+
+        if(null != articleParams.getPicture()){
+
+            picture_id = attachmentService.getIdByTitle(articleParams.getPicture());
+        }
+
+        /*增加代码结束*/
 
         Blog blog = new Blog();
 //        if((userService.getUserIdByToken(token)) == -1){
@@ -131,7 +182,9 @@ public class ArtcileServiceImpl implements ArticleService {
         blog.setTagTitle(nowTagsString);
 //        blog.setTagTitle(articleParams.getTag());
 
-
+        if(picture_id != -1){
+            blog.setPictureId(picture_id);
+        }
 
         blogMapper.updateByPrimaryKeySelective(blog);
 
@@ -178,6 +231,11 @@ public class ArtcileServiceImpl implements ArticleService {
         if(!StringUtils.isBlank(blog.getTagTitle())) {
             blogDetail.setTagsTitle(tagService.selectTagTitleByIdString(blog.getTagTitle()));
         }
+
+//        博客缩略图问题
+        if(null != blog.getPictureId()){
+            blogDetail.setPicture(attachmentService.selectPicById(blog.getPictureId()));
+        }
         blogDetail.setSummary(blog.getSummary());
 
         return blogDetail;
@@ -195,19 +253,27 @@ public class ArtcileServiceImpl implements ArticleService {
         DataGrid dataGrid = new DataGrid();
 
         List<run.app.entity.DTO.Blog> blogs = list.getList().stream().map(item->{
+
+
             List<String> tagsTitle = new ArrayList<>();
             if(!StringUtils.isBlank(item.getTagTitle())){
 
                 tagsTitle = tagService.selectTagTitleByIdString(item.getTagTitle());
             }
 
+            String pic = "";
+//            获取博客图片名称
+            if(null != item.getPictureId()){
+                pic = attachmentService.selectPicById(item.getPictureId());
+            }
             return new run.app.entity.DTO.Blog(item.getId()
                     ,item.getStatus(),
                     item.getTitle(),
                     item.getSummary(),
                     item.getReleaseDate(),
                     item.getNearestModifyDate(),
-                    tagsTitle);
+                    tagsTitle,
+                    pic);
         }).collect(Collectors.toList());
 
 

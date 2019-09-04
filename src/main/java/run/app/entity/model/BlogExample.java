@@ -365,6 +365,66 @@ public class BlogExample {
             return (Criteria) this;
         }
 
+        public Criteria andPictureIdIsNull() {
+            addCriterion("picture_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPictureIdIsNotNull() {
+            addCriterion("picture_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPictureIdEqualTo(Integer value) {
+            addCriterion("picture_id =", value, "pictureId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPictureIdNotEqualTo(Integer value) {
+            addCriterion("picture_id <>", value, "pictureId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPictureIdGreaterThan(Integer value) {
+            addCriterion("picture_id >", value, "pictureId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPictureIdGreaterThanOrEqualTo(Integer value) {
+            addCriterion("picture_id >=", value, "pictureId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPictureIdLessThan(Integer value) {
+            addCriterion("picture_id <", value, "pictureId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPictureIdLessThanOrEqualTo(Integer value) {
+            addCriterion("picture_id <=", value, "pictureId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPictureIdIn(List<Integer> values) {
+            addCriterion("picture_id in", values, "pictureId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPictureIdNotIn(List<Integer> values) {
+            addCriterion("picture_id not in", values, "pictureId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPictureIdBetween(Integer value1, Integer value2) {
+            addCriterion("picture_id between", value1, value2, "pictureId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPictureIdNotBetween(Integer value1, Integer value2) {
+            addCriterion("picture_id not between", value1, value2, "pictureId");
+            return (Criteria) this;
+        }
+
         public Criteria andSummaryIsNull() {
             addCriterion("summary is null");
             return (Criteria) this;

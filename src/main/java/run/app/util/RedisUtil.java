@@ -17,7 +17,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * Created with IntelliJ IDEA.
  * User: WHOAMI
  * Time: 2019 2019/7/22 12:10
- * Description: ://TODO ${END}
+ * Description: :redis工具类
  */
 @Component
 public class RedisUtil {

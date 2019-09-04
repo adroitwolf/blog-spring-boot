@@ -24,11 +24,12 @@ public class BlogDetailWithAuthor extends BlogDetail {
     public BlogDetailWithAuthor() {
     }
 
+//    针对前台博客卡片详细内容带作者的
     public BlogDetailWithAuthor(Integer id,String title, String summary,
                                  Date releaseDate,
                                  List<String> tagTitle,
-                                String content,  String username, String avatarId) {
-        super(id, title, summary,releaseDate, tagTitle, content);
+                                String content,  String picture,String username, String avatarId) {
+        super(id, title, summary,releaseDate,tagTitle,picture, content);
         this.username = username;
         this.avatarId = avatarId;
     }

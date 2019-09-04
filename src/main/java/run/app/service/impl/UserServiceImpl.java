@@ -20,6 +20,7 @@ import run.app.security.token.AuthToken;
 import run.app.security.token.TokenService;
 import run.app.service.UserService;
 import run.app.util.RedisUtil;
+import run.app.util.UploadUtil;
 
 import java.io.File;
 import java.util.List;
@@ -140,10 +141,8 @@ public class UserServiceImpl implements UserService {
 //        如果该账户目前有头像，要先删除当前头像
         withBLOBs.stream().filter(Objects::nonNull).findFirst().ifPresent(a->{
             if(!StringUtils.isBlank(a.getAvatarId())){
-                File file = new File(System.getProperty("user.dir")+ File.separator+ "avatar"  +File.separator+ a.getAvatarId());
-                if(file.exists()){
-                    log.info("文件删除"+file.delete() );
-                }
+                UploadUtil instance = UploadUtil.getInstance();
+                instance.delFile(a.getAvatarId());
             }
         });
 
@@ -155,6 +154,8 @@ public class UserServiceImpl implements UserService {
         bloggerProfileWithBLOBs.setAvatarId(avatar);
         bloggerProfileMapper.updateByExampleSelective(bloggerProfileWithBLOBs,bloggerProfileExample);
     }
+
+
 
 
 //    @Override

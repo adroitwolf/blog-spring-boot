@@ -1,7 +1,9 @@
 package run.app.entity.model;
 
-import java.util.Date;
+import lombok.ToString;
 
+import java.util.Date;
+@ToString
 public class Blog {
     private Integer id;
 
@@ -10,6 +12,8 @@ public class Blog {
     private String status;
 
     private String title;
+
+    private Integer pictureId;
 
     private String summary;
 
@@ -22,7 +26,7 @@ public class Blog {
     public Blog() {
     }
 
-    public Blog(Integer id, String status, String title, String summary, Date releaseDate, Date nearestModifyDate, String tagTitle) {
+    public Blog(Integer id, String status, String title,Integer pictureId, String summary, Date releaseDate, Date nearestModifyDate, String tagTitle) {
         this.id = id;
         this.status = status;
         this.title = title;
@@ -30,9 +34,8 @@ public class Blog {
         this.releaseDate = releaseDate;
         this.nearestModifyDate = nearestModifyDate;
         this.tagTitle = tagTitle;
+        this.pictureId = pictureId;
     }
-
-
     public Integer getId() {
         return id;
     }
@@ -63,6 +66,14 @@ public class Blog {
 
     public void setTitle(String title) {
         this.title = title == null ? null : title.trim();
+    }
+
+    public Integer getPictureId() {
+        return pictureId;
+    }
+
+    public void setPictureId(Integer pictureId) {
+        this.pictureId = pictureId;
     }
 
     public String getSummary() {

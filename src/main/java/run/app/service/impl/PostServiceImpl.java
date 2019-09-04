@@ -11,12 +11,11 @@ import run.app.entity.DTO.DataGrid;
 import run.app.entity.model.*;
 import run.app.entity.params.PostQueryParams;
 import run.app.mapper.*;
+import run.app.service.AttachmentService;
 import run.app.service.PostService;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -38,6 +37,17 @@ public class PostServiceImpl implements PostService {
 
     @Autowired
     TagServiceImpl tagService;
+    /*代码修改结束*/
+
+
+    /*
+    * 功能描述: 新增博客图片功能
+    * @Author: WHOAMI
+    * @Date: 2019/9/3 18:08
+     */
+    @Autowired
+    AttachmentService attachmentService;
+
     /*代码修改结束*/
 
     @Autowired
@@ -75,11 +85,18 @@ public class PostServiceImpl implements PostService {
                 tagsTitle = tagService.selectTagTitleByIdString(item.getTagTitle());
             }
 
+            String pic = "";
+
+            if(null != item.getPictureId()){
+                pic = attachmentService.selectPicById(item.getBloggerId());
+            }
+
             return new run.app.entity.DTO.Blog(item.getId(),
                     item.getTitle(),
                     item.getSummary(),
                     item.getReleaseDate(),
-                    tagsTitle);}).collect(Collectors.toList());
+                    tagsTitle,
+                    pic);}).collect(Collectors.toList());
         DataGrid dataGrid = new DataGrid();
 
         dataGrid.setRows(resultX);
@@ -110,11 +127,18 @@ public class PostServiceImpl implements PostService {
                 tagsTitle = tagService.selectTagTitleByIdString(item.getTagTitle());
             }
 
+            String pic = "";
+
+            if(null != item.getPictureId()){
+                pic = attachmentService.selectPicById(item.getBloggerId());
+            }
+
             return new run.app.entity.DTO.Blog(item.getId(),
                     item.getTitle(),
                     item.getSummary(),
                     item.getReleaseDate(),
-                    tagsTitle);
+                    tagsTitle,
+                    pic);
         }).collect(Collectors.toList());
 
 
@@ -142,8 +166,14 @@ public class PostServiceImpl implements PostService {
           nowTagsId = tagService.selectTagTitleByIdString(blog.getTagTitle());
         }
 
+        String pic = "";
 
-        BlogDetailWithAuthor blogDetailWithAuthor = new BlogDetailWithAuthor(blogId,blog.getTitle(),blog.getSummary(),blog.getReleaseDate(),nowTagsId,blogContent.getContent(),bloggerProfileWithBLOBs.getIntro(),bloggerProfileWithBLOBs.getAvatarId());
+        if(null != blog.getPictureId()){
+            pic = attachmentService.selectPicById(blog.getBloggerId());
+        }
+
+
+        BlogDetailWithAuthor blogDetailWithAuthor = new BlogDetailWithAuthor(blogId,blog.getTitle(),blog.getSummary(),blog.getReleaseDate(),nowTagsId,blogContent.getContent(),pic,bloggerProfileWithBLOBs.getIntro(),bloggerProfileWithBLOBs.getAvatarId());
 
 
         return blogDetailWithAuthor;

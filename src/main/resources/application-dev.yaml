@@ -29,7 +29,7 @@ mybatis:
 
 # 图片上传下载
 web:
-  upload-path: ${user.dir}/avatar
+  upload-path: ${user.dir}\img
 
 
 jwt:

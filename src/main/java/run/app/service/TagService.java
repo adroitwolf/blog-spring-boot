@@ -10,6 +10,7 @@ import java.util.List;
  */
 public interface TagService {
 
+    String submitArticleWithTagString(List<String> tags,Integer blogId);
 
     String updateTagsWithId(Integer blogId, List<String> tagsParams);
 

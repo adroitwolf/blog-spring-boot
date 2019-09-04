@@ -22,13 +22,13 @@ public class BlogDetail  extends Blog{
     }
 
 //    准对前台将status属性去掉
-    public BlogDetail(Integer id, String title, String summary, Date releaseDate, List<String> tagsTitle, String content) {
-        super(id,title,summary,releaseDate,tagsTitle);
+    public BlogDetail(Integer id, String title, String summary, Date releaseDate, List<String> tagsTitle, String picture,String content) {
+        super(id,title,summary,releaseDate,tagsTitle,picture);
         this.content = content;
     }
 
-    public BlogDetail(Integer id, String status, String title, String summary, Date releaseDate, Date nearestModifyDate, Integer tagTitle, String content, String contentMd) {
-        super(id,status,title,summary,releaseDate,nearestModifyDate,tagTitle);
+    public BlogDetail(Integer id, String status, String title, String summary, Date releaseDate, Date nearestModifyDate, List<String> tagTitle, String picture,String content, String contentMd) {
+        super(id,status,title,summary,releaseDate,nearestModifyDate,tagTitle,picture);
         this.content = content;
         this.contentMd = contentMd;
     }

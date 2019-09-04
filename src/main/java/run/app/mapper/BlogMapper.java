@@ -19,7 +19,7 @@ public interface BlogMapper {
 
     List<Blog> selectByExample(BlogExample example);
 
-    List<Blog> selectByUserExample(@Param("query") PostQueryParams postQueryParams,@Param("blogger_id") Integer blogger_id);
+    List<Blog> selectByUserExample(@Param("query") PostQueryParams postQueryParams, @Param("blogger_id") Integer blogger_id);
 
     Blog selectByPrimaryKey(Integer id);
 

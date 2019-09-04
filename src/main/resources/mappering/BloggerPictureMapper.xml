@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="run.app.mapper.BloggerPictureMapper">
+  <resultMap id="BaseResultMap" type="run.app.entity.model.BloggerPicture">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="blogger_id" jdbcType="INTEGER" property="bloggerId" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="upload_date" jdbcType="TIMESTAMP" property="uploadDate" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="run.app.entity.model.BloggerPicture">
+    <result column="bewrite" jdbcType="LONGVARCHAR" property="bewrite" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, blogger_id, title, upload_date
+  </sql>
+  <sql id="Blob_Column_List">
+    bewrite
+  </sql>
+  <select id="selectByExampleWithBLOBs" parameterType="run.app.entity.model.BloggerPictureExample" resultMap="ResultMapWithBLOBs">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from blogger_picture
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" parameterType="run.app.entity.model.BloggerPictureExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from blogger_picture
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from blogger_picture
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from blogger_picture
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="run.app.entity.model.BloggerPictureExample">
+    delete from blogger_picture
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="run.app.entity.model.BloggerPicture">
+    insert into blogger_picture (id, blogger_id, title, 
+      upload_date, bewrite)
+    values (#{id,jdbcType=INTEGER}, #{bloggerId,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, 
+      #{uploadDate,jdbcType=TIMESTAMP}, #{bewrite,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="run.app.entity.model.BloggerPicture">
+    insert into blogger_picture
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="bloggerId != null">
+        blogger_id,
+      </if>
+      <if test="title != null">
+        title,
+      </if>
+      <if test="uploadDate != null">
+        upload_date,
+      </if>
+      <if test="bewrite != null">
+        bewrite,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="bloggerId != null">
+        #{bloggerId,jdbcType=INTEGER},
+      </if>
+      <if test="title != null">
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="uploadDate != null">
+        #{uploadDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="bewrite != null">
+        #{bewrite,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="run.app.entity.model.BloggerPictureExample" resultType="java.lang.Long">
+    select count(*) from blogger_picture
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update blogger_picture
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.bloggerId != null">
+        blogger_id = #{record.bloggerId,jdbcType=INTEGER},
+      </if>
+      <if test="record.title != null">
+        title = #{record.title,jdbcType=VARCHAR},
+      </if>
+      <if test="record.uploadDate != null">
+        upload_date = #{record.uploadDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.bewrite != null">
+        bewrite = #{record.bewrite,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map">
+    update blogger_picture
+    set id = #{record.id,jdbcType=INTEGER},
+      blogger_id = #{record.bloggerId,jdbcType=INTEGER},
+      title = #{record.title,jdbcType=VARCHAR},
+      upload_date = #{record.uploadDate,jdbcType=TIMESTAMP},
+      bewrite = #{record.bewrite,jdbcType=LONGVARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update blogger_picture
+    set id = #{record.id,jdbcType=INTEGER},
+      blogger_id = #{record.bloggerId,jdbcType=INTEGER},
+      title = #{record.title,jdbcType=VARCHAR},
+      upload_date = #{record.uploadDate,jdbcType=TIMESTAMP}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="run.app.entity.model.BloggerPicture">
+    update blogger_picture
+    <set>
+      <if test="bloggerId != null">
+        blogger_id = #{bloggerId,jdbcType=INTEGER},
+      </if>
+      <if test="title != null">
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="uploadDate != null">
+        upload_date = #{uploadDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="bewrite != null">
+        bewrite = #{bewrite,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="run.app.entity.model.BloggerPicture">
+    update blogger_picture
+    set blogger_id = #{bloggerId,jdbcType=INTEGER},
+      title = #{title,jdbcType=VARCHAR},
+      upload_date = #{uploadDate,jdbcType=TIMESTAMP},
+      bewrite = #{bewrite,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="run.app.entity.model.BloggerPicture">
+    update blogger_picture
+    set blogger_id = #{bloggerId,jdbcType=INTEGER},
+      title = #{title,jdbcType=VARCHAR},
+      upload_date = #{uploadDate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

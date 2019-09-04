@@ -33,6 +33,47 @@ public class TagServiceImpl implements TagService {
 
 
     @Override
+    public String submitArticleWithTagString(List<String> tags,Integer blogId) {
+
+
+        BlogLabelExample blogLabelExample = new BlogLabelExample();
+
+        List<Integer> nowTags = new ArrayList<>();
+
+        tags.stream().filter(Objects::nonNull).forEach(item ->{
+            blogLabelExample.clear();
+            BlogLabelExample.Criteria blogLabelExampleCriteria1 = blogLabelExample.createCriteria();
+            blogLabelExampleCriteria1.andTitleEqualTo(item);
+
+            Optional<String> temp = Optional.ofNullable( blogLabelMapper.selectByExampleForPrimaryKey(blogLabelExample));
+
+            if(!temp.isPresent()){
+//                        需要新建标签
+                BlogLabel blogLabel = new BlogLabel();
+                blogLabel.setCiteNum(1);
+                blogLabel.setCreateDate(new Date());
+                blogLabel.setTitle(item);
+
+                blogLabelMapper.insertSelective(blogLabel);
+
+
+                blogTagMapMapper.insertSelective(new BlogTagMapKey(blogLabel.getId(),blogId));
+
+                nowTags.add(blogLabel.getId());
+
+
+            }else{
+                log.info("id:"+temp.get()) ;
+                blogLabelMapper.updateByPrimaryKeyForAddNum(Integer.valueOf(temp.get()));
+                nowTags.add(Integer.valueOf(temp.get()));
+            }
+        });
+
+        return StringUtils.join(nowTags,",");
+
+    }
+
+    @Override
     @Transactional
     public String updateTagsWithId(Integer blogId,List<String> tagsParams) {
         /**

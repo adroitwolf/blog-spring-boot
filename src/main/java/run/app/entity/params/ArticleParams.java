@@ -29,6 +29,7 @@ public class ArticleParams {
     @NotBlank(message = "文章内容不能为空")
     private String content;
 
+    private String picture;
 
     private List<String> tagList;
 

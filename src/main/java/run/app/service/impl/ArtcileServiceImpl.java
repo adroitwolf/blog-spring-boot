@@ -110,12 +110,9 @@ public class ArtcileServiceImpl implements ArticleService {
          * @Date: 2019/9/4 20:17
          */
 
-        int picture_id = -1;
 
         if(!StringUtils.isBlank(articleParams.getPicture())){
-
-            picture_id = attachmentService.getIdByTitle(articleParams.getPicture());
-
+            blog.setPictureId(attachmentService.getIdByTitle(articleParams.getPicture()));
         }
 
         /*增加代码结束*/
@@ -123,7 +120,6 @@ public class ArtcileServiceImpl implements ArticleService {
 //        blog.setTagTitle(articleParams.getTag());
 
         blog.setStatus("PUBLISHED");
-
 
 
         /**

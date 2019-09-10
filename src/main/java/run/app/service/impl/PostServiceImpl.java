@@ -89,7 +89,7 @@ public class PostServiceImpl implements PostService {
             String pic = "";
 
             if(null != item.getPictureId()){
-                pic = attachmentService.selectPicById(item.getBloggerId());
+                pic = attachmentService.selectPicById(item.getPictureId());
             }
 
             return new run.app.entity.DTO.Blog(item.getId(),
@@ -131,7 +131,7 @@ public class PostServiceImpl implements PostService {
             String pic = "";
 
             if(null != item.getPictureId()){
-                pic = attachmentService.selectPicById(item.getBloggerId());
+                pic = attachmentService.selectPicById(item.getPictureId());
             }
 
             return new run.app.entity.DTO.Blog(item.getId(),
@@ -171,7 +171,7 @@ public class PostServiceImpl implements PostService {
         String pic = "";
 
         if(null != blog.getPictureId()){
-            pic = attachmentService.selectPicById(blog.getBloggerId());
+            pic = attachmentService.selectPicById(blog.getPictureId());
         }
 
 
@@ -194,18 +194,18 @@ public class PostServiceImpl implements PostService {
 
 
         if(!StringUtils.isBlank(id.toString())) {
-            PageHelper.startPage(pageNum,pageSize);
-            List<Long> list = tagService.selectBlogIdByTagId(id);
-            PageInfo<Long> pageInfo = new PageInfo<>(list);
+            List<Long> list = tagService.selectBlogIdByTagId(pageSize,pageNum,id);
+            log.debug("tag集合"+list.size());
+
 //          采取分页的方式 10-9 -19
 //            List<Long> list1 = list.subList((pageNum - 1) * pageSize, list.size()>pageNum * pageSize?pageNum*pageSize:list.size());
 
             List<run.app.entity.DTO.Blog> blogs = new ArrayList<>();
 
-            pageInfo.getList().stream().forEach(x -> {
+            list.stream().forEach(x -> {
                 run.app.entity.DTO.Blog blogx = new run.app.entity.DTO.Blog();
                 Blog blog = blogMapper.selectByPrimaryKey(x);
-                blogx.setId(x);
+                blogx.setId(blog.getId());
 
                 blogx.setSummary(blog.getSummary());
                 blogx.setTitle(blog.getTitle());

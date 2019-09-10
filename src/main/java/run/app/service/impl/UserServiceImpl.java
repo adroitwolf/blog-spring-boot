@@ -56,18 +56,20 @@ public class UserServiceImpl implements UserService {
     @Override
     public @NonNull BloggerProfileWithBLOBs findUserDetailByBloggerId(@NonNull Integer bloggerId) {
 
-        BloggerProfileExample bloggerProfileExample = new BloggerProfileExample();
-        BloggerProfileExample.Criteria criteria = bloggerProfileExample.createCriteria();
+//        BloggerProfileExample bloggerProfileExample = new BloggerProfileExample();
+//        BloggerProfileExample.Criteria criteria = bloggerProfileExample.createCriteria();
+//
+//        criteria.andBloggerIdEqualTo(bloggerId);
+//
+//        List<BloggerProfileWithBLOBs> bloggerProfileWithBLOBs = bloggerProfileMapper.selectByExampleWithBLOBs(bloggerProfileExample);
 
-        criteria.andBloggerIdEqualTo(bloggerId);
 
-        List<BloggerProfileWithBLOBs> bloggerProfileWithBLOBs = bloggerProfileMapper.selectByExampleWithBLOBs(bloggerProfileExample);
 
-        for (BloggerProfileWithBLOBs bloggerProfile: bloggerProfileWithBLOBs) {
-            return bloggerProfile;
-        }
+//        for (BloggerProfileWithBLOBs bloggerProfile: bloggerProfileWithBLOBs) {
+//            return bloggerProfile;
+//        }
 
-        return null;
+        return bloggerProfileMapper.selectByPrimaryKey(bloggerId);
     }
 
     @Override
@@ -78,11 +80,11 @@ public class UserServiceImpl implements UserService {
         Integer userId = tokenService.getUserIdWithToken(token);
         BloggerProfileWithBLOBs bloggerProfileWithBLOBs = new BloggerProfileWithBLOBs();
 
-        BloggerProfileExample bloggerProfileExample = new BloggerProfileExample();
-
-        BloggerProfileExample.Criteria criteria = bloggerProfileExample.createCriteria();
-
-        criteria.andBloggerIdEqualTo(userId);
+//        BloggerProfileExample bloggerProfileExample = new BloggerProfileExample();
+//
+//        BloggerProfileExample.Criteria criteria = bloggerProfileExample.createCriteria();
+//
+//        criteria.andBloggerIdEqualTo(userId);
 
 //    这个才是昵称
         bloggerProfileWithBLOBs.setIntro(userParams.getUsername());
@@ -93,8 +95,10 @@ public class UserServiceImpl implements UserService {
         bloggerProfileWithBLOBs.setEmail(userParams.getEmail());
 
 
-        bloggerProfileMapper.updateByExampleSelective(bloggerProfileWithBLOBs,bloggerProfileExample);
+//        bloggerProfileMapper.updateByExampleSelective(bloggerProfileWithBLOBs,bloggerProfileExample);
 
+
+        bloggerProfileMapper.updateByPrimaryKeySelective(bloggerProfileWithBLOBs);
 
         UserDetail userDetail = new UserDetail();
 
@@ -133,26 +137,37 @@ public class UserServiceImpl implements UserService {
         int id = tokenService.getUserIdWithToken(token);
 
 
-        BloggerProfileExample bloggerProfileExample = new BloggerProfileExample();
-        BloggerProfileExample.Criteria criteria = bloggerProfileExample.createCriteria();
-        criteria.andBloggerIdEqualTo(id);
-        List<BloggerProfileWithBLOBs> withBLOBs = bloggerProfileMapper.selectByExampleWithBLOBs(bloggerProfileExample);
+//        BloggerProfileExample bloggerProfileExample = new BloggerProfileExample();
+//        BloggerProfileExample.Criteria criteria = bloggerProfileExample.createCriteria();
+//        criteria.andBloggerIdEqualTo(id);
+//        List<BloggerProfileWithBLOBs> withBLOBs = bloggerProfileMapper.selectByExampleWithBLOBs(bloggerProfileExample);
+//
+////        如果该账户目前有头像，要先删除当前头像
+//        withBLOBs.stream().filter(Objects::nonNull).findFirst().ifPresent(a->{
+//            if(!StringUtils.isBlank(a.getAvatarId())){
+//                UploadUtil instance = UploadUtil.getInstance();
+//                instance.delFile(a.getAvatarId());
+//            }
+//        });
 
-//        如果该账户目前有头像，要先删除当前头像
-        withBLOBs.stream().filter(Objects::nonNull).findFirst().ifPresent(a->{
-            if(!StringUtils.isBlank(a.getAvatarId())){
+        BloggerProfileWithBLOBs bloggerProfileWithBLOBs = bloggerProfileMapper.selectByPrimaryKey(id);
+
+        if(!StringUtils.isBlank(bloggerProfileWithBLOBs.getAvatarId())){
                 UploadUtil instance = UploadUtil.getInstance();
-                instance.delFile(a.getAvatarId());
-            }
-        });
+                instance.delFile(bloggerProfileWithBLOBs.getAvatarId());
+        }
 
 
+        BloggerProfileWithBLOBs profile = new BloggerProfileWithBLOBs();
+        profile.setBloggerId(id);
+        profile.setAvatarId(avatar);
+        bloggerProfileMapper.updateByPrimaryKeySelective(profile);
 
-        criteria.andBloggerIdEqualTo(id);
-
-        BloggerProfileWithBLOBs bloggerProfileWithBLOBs = new BloggerProfileWithBLOBs();
-        bloggerProfileWithBLOBs.setAvatarId(avatar);
-        bloggerProfileMapper.updateByExampleSelective(bloggerProfileWithBLOBs,bloggerProfileExample);
+//        criteria.andBloggerIdEqualTo(id);
+//
+//        BloggerProfileWithBLOBs bloggerProfileWithBLOBs = new BloggerProfileWithBLOBs();
+//        bloggerProfileWithBLOBs.setAvatarId(avatar);
+//        bloggerProfileMapper.updateByExampleSelective(bloggerProfileWithBLOBs,bloggerProfileExample);
     }
 
 

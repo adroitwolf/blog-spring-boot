@@ -10,19 +10,19 @@ import java.util.List;
  */
 public interface TagService {
 
-    String submitArticleWithTagString(List<String> tags,Integer blogId);
+    String submitArticleWithTagString(List<String> tags,Long blogId);
 
-    String updateTagsWithId(Integer blogId, List<String> tagsParams);
+    String updateTagsWithId(Long blogId, List<String> tagsParams);
 
     List<String> selectTagTitleByIdString(String ids);
 
     void dealWithNumByIdString(String ids,boolean status);
 
-    void deleteTagsKeyByBlogId(Integer blogId);
+    void deleteTagsKeyByBlogId(Long blogId);
 
-    Integer selectIdWithName(String tag);
+    Long selectIdWithName(String tag);
 
 
 
-    List<Integer> selectBlogIdByTagId(Integer id);
+    List<Long> selectBlogIdByTagId(Long id);
 }

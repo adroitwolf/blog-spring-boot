@@ -1,35 +1,36 @@
 package run.app.entity.model;
 
 public class BlogTagMapKey {
-    private Integer tagId;
+    private Long tagId;
 
-    private Integer blogId;
+    private Long blogId;
 
     public BlogTagMapKey() {
     }
 
-    public BlogTagMapKey(Integer tagId, Integer blogId) {
+    public BlogTagMapKey(Long tagId, Long blogId) {
         this.tagId = tagId;
         this.blogId = blogId;
     }
 
-    public BlogTagMapKey(Integer tagId) {
+    public BlogTagMapKey(Long tagId) {
         this.tagId = tagId;
     }
 
-    public Integer getTagId() {
+
+    public Long getTagId() {
         return tagId;
     }
 
-    public void setTagId(Integer tagId) {
+    public void setTagId(Long tagId) {
         this.tagId = tagId;
     }
 
-    public Integer getBlogId() {
+    public Long getBlogId() {
         return blogId;
     }
 
-    public void setBlogId(Integer blogId) {
+    public void setBlogId(Long blogId) {
         this.blogId = blogId;
     }
 }

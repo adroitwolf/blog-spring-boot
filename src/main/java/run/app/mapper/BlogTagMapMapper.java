@@ -17,8 +17,8 @@ public interface BlogTagMapMapper {
     int insertSelective(BlogTagMapKey record);
 
     /* 增加两条返回单一子段的代码  8-23-19 WHOAMI*/
-    List<Integer> selectByExampleForTag(BlogTagMapExample example);
-    List<Integer> selectByExampleForBlogId(BlogTagMapExample example);
+    List<Long> selectByExampleForTag(BlogTagMapExample example);
+    List<Long> selectByExampleForBlogId(BlogTagMapExample example);
     /* 增加代码结束*/
     List<BlogTagMapKey> selectByExample(BlogTagMapExample example);
 

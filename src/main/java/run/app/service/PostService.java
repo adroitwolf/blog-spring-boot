@@ -14,7 +14,7 @@ public interface PostService {
 
     DataGrid getListByExample(int pageNum,int pageSize,String keyword);
 
-    BlogDetailWithAuthor getDetail(Integer blogId);
+    BlogDetailWithAuthor getDetail(Long blogId);
 
     DataGrid getListByTag(int pageNum,int pageSize,String tag);
 

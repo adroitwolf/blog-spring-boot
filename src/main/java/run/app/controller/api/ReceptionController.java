@@ -46,7 +46,7 @@ public class ReceptionController {
 
     @ApiOperation("获取博客详细内容")
     @GetMapping("/detail/{BlogId:\\d+}")
-    public BaseResponse getBlogDetail(@PathVariable("BlogId")Integer blogId){
+    public BaseResponse getBlogDetail(@PathVariable("BlogId")Long blogId){
 
         BaseResponse baseResponse = new BaseResponse();
 

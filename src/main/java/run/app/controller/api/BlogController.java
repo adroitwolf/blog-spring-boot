@@ -48,7 +48,7 @@ public class BlogController {
     @MethodLog
     @ApiOperation("博客-回收站之间的操作")
     @PutMapping("/{BlogId:\\d+}/status/{status}")
-    public BaseResponse updateArticleStatus(@PathVariable("BlogId")Integer blogId ,
+    public BaseResponse updateArticleStatus(@PathVariable("BlogId")Long blogId ,
                               @PathVariable("status")String status){
         articleService.updateArticleStatus(blogId,status);
         BaseResponse baseResponse = new BaseResponse();
@@ -62,7 +62,7 @@ public class BlogController {
 
     @ApiOperation("查看博客详细内容")
     @GetMapping("detail/{BlogId:\\d+}")
-    public BaseResponse getBlogDetail(@PathVariable("BlogId")Integer blogId){
+    public BaseResponse getBlogDetail(@PathVariable("BlogId")Long blogId){
         BlogDetail articleDetail = articleService.getArticleDetail(blogId);
         BaseResponse baseResponse = new BaseResponse();
         baseResponse.setStatus(HttpStatus.OK.value());
@@ -73,7 +73,7 @@ public class BlogController {
     @MethodLog
     @ApiOperation("更新博客文档")
     @PutMapping("{BlogId:\\d+}")
-    public BaseResponse updateArticle(@PathVariable("BlogId")Integer blogId ,@Valid @RequestBody ArticleParams articleParams,
+    public BaseResponse updateArticle(@PathVariable("BlogId")Long blogId ,@Valid @RequestBody ArticleParams articleParams,
                                       HttpServletRequest request){
 
         log.debug(articleParams.toString());
@@ -105,7 +105,7 @@ public class BlogController {
     @MethodLog
     @ApiOperation("删除博客")
     @DeleteMapping("{blogId:\\d+}")
-    public void deleteBlog(@PathVariable("blogId")Integer blogId){
+    public void deleteBlog(@PathVariable("blogId")Long blogId){
         articleService.deleteBlog(blogId);
     }
 

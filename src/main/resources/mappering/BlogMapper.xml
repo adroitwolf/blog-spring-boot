@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="run.app.mapper.BlogMapper">
   <resultMap id="BaseResultMap" type="run.app.entity.model.Blog">
-    <id column="id" jdbcType="INTEGER" property="id" />
+    <id column="id" jdbcType="BIGINT" property="id" />
     <result column="blogger_id" jdbcType="INTEGER" property="bloggerId" />
     <result column="status" jdbcType="VARCHAR" property="status" />
     <result column="title" jdbcType="VARCHAR" property="title" />
@@ -90,7 +90,6 @@
   </select>
 
 
-
   <select id="selectByUserExample" parameterType="run.app.entity.params.PostQueryParams" resultMap="BaseResultMap">
     select
     a.id, a.blogger_id, a.status, a.title,a.picture_id , a.summary,a.release_date, a.nearest_modify_date, a.tag_title
@@ -110,17 +109,17 @@
     </where>
     order by a.release_date desc
   </select>
-
-
-  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from blog
-    where id = #{id,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from blog
-    where id = #{id,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
   </delete>
   <delete id="deleteByExample" parameterType="run.app.entity.model.BlogExample">
     delete from blog
@@ -133,12 +132,12 @@
       title, picture_id, summary, 
       release_date, nearest_modify_date, tag_title
       )
-    values (#{id,jdbcType=INTEGER}, #{bloggerId,jdbcType=INTEGER}, #{status,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=BIGINT}, #{bloggerId,jdbcType=INTEGER}, #{status,jdbcType=VARCHAR}, 
       #{title,jdbcType=VARCHAR}, #{pictureId,jdbcType=INTEGER}, #{summary,jdbcType=VARCHAR}, 
       #{releaseDate,jdbcType=TIMESTAMP}, #{nearestModifyDate,jdbcType=TIMESTAMP}, #{tagTitle,jdbcType=VARCHAR}
       )
   </insert>
-  <insert id="insertSelective" parameterType="run.app.entity.model.Blog" useGeneratedKeys="true" keyProperty="id" >
+  <insert id="insertSelective" parameterType="run.app.entity.model.Blog">
     insert into blog
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -171,7 +170,7 @@
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
-        #{id,jdbcType=INTEGER},
+        #{id,jdbcType=BIGINT},
       </if>
       <if test="bloggerId != null">
         #{bloggerId,jdbcType=INTEGER},
@@ -209,7 +208,7 @@
     update blog
     <set>
       <if test="record.id != null">
-        id = #{record.id,jdbcType=INTEGER},
+        id = #{record.id,jdbcType=BIGINT},
       </if>
       <if test="record.bloggerId != null">
         blogger_id = #{record.bloggerId,jdbcType=INTEGER},
@@ -242,7 +241,7 @@
   </update>
   <update id="updateByExample" parameterType="map">
     update blog
-    set id = #{record.id,jdbcType=INTEGER},
+    set id = #{record.id,jdbcType=BIGINT},
       blogger_id = #{record.bloggerId,jdbcType=INTEGER},
       status = #{record.status,jdbcType=VARCHAR},
       title = #{record.title,jdbcType=VARCHAR},
@@ -283,7 +282,7 @@
         tag_title = #{tagTitle,jdbcType=VARCHAR},
       </if>
     </set>
-    where id = #{id,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="run.app.entity.model.Blog">
     update blog
@@ -295,6 +294,6 @@
       release_date = #{releaseDate,jdbcType=TIMESTAMP},
       nearest_modify_date = #{nearestModifyDate,jdbcType=TIMESTAMP},
       tag_title = #{tagTitle,jdbcType=VARCHAR}
-    where id = #{id,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

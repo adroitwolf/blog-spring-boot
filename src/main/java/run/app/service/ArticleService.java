@@ -18,21 +18,19 @@ public interface ArticleService {
     @NonNull
     boolean submitArticle(@NonNull ArticleParams articleParams,@NonNull String token);
 
-    boolean updateArticle(@NonNull ArticleParams articleParams,@NonNull Integer blogId,@NonNull String token);
+    boolean updateArticle(@NonNull ArticleParams articleParams,@NonNull Long blogId,@NonNull String token);
 
-    boolean updateArticleStatus(@NonNull Integer blogId,@NonNull String status);
-
-
+    boolean updateArticleStatus(@NonNull Long blogId,@NonNull String status);
 
 
-    BlogDetail getArticleDetail(@NonNull Integer blogId);
+    BlogDetail getArticleDetail(@NonNull Long blogId);
 
 
     DataGrid getArticleListByExample(@NonNull int pageNum, @NonNull int pageSize, PostQueryParams postQueryParams, @NonNull String token);
 
 
 
-    void deleteBlog(@NonNull Integer blogId);
+    void deleteBlog(@NonNull Long blogId);
 
     long getArticleCount(@NonNull String token);
 

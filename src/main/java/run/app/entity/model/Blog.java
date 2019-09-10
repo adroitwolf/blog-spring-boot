@@ -3,9 +3,10 @@ package run.app.entity.model;
 import lombok.ToString;
 
 import java.util.Date;
+
 @ToString
 public class Blog {
-    private Integer id;
+    private Long id;
 
     private Integer bloggerId;
 
@@ -23,24 +24,11 @@ public class Blog {
 
     private String tagTitle;
 
-    public Blog() {
-    }
-
-    public Blog(Integer id, String status, String title,Integer pictureId, String summary, Date releaseDate, Date nearestModifyDate, String tagTitle) {
-        this.id = id;
-        this.status = status;
-        this.title = title;
-        this.summary = summary;
-        this.releaseDate = releaseDate;
-        this.nearestModifyDate = nearestModifyDate;
-        this.tagTitle = tagTitle;
-        this.pictureId = pictureId;
-    }
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

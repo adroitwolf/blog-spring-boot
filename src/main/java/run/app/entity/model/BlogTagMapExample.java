@@ -114,52 +114,52 @@ public class BlogTagMapExample {
             return (Criteria) this;
         }
 
-        public Criteria andTagIdEqualTo(Integer value) {
+        public Criteria andTagIdEqualTo(Long value) {
             addCriterion("tag_id =", value, "tagId");
             return (Criteria) this;
         }
 
-        public Criteria andTagIdNotEqualTo(Integer value) {
+        public Criteria andTagIdNotEqualTo(Long value) {
             addCriterion("tag_id <>", value, "tagId");
             return (Criteria) this;
         }
 
-        public Criteria andTagIdGreaterThan(Integer value) {
+        public Criteria andTagIdGreaterThan(Long value) {
             addCriterion("tag_id >", value, "tagId");
             return (Criteria) this;
         }
 
-        public Criteria andTagIdGreaterThanOrEqualTo(Integer value) {
+        public Criteria andTagIdGreaterThanOrEqualTo(Long value) {
             addCriterion("tag_id >=", value, "tagId");
             return (Criteria) this;
         }
 
-        public Criteria andTagIdLessThan(Integer value) {
+        public Criteria andTagIdLessThan(Long value) {
             addCriterion("tag_id <", value, "tagId");
             return (Criteria) this;
         }
 
-        public Criteria andTagIdLessThanOrEqualTo(Integer value) {
+        public Criteria andTagIdLessThanOrEqualTo(Long value) {
             addCriterion("tag_id <=", value, "tagId");
             return (Criteria) this;
         }
 
-        public Criteria andTagIdIn(List<Integer> values) {
+        public Criteria andTagIdIn(List<Long> values) {
             addCriterion("tag_id in", values, "tagId");
             return (Criteria) this;
         }
 
-        public Criteria andTagIdNotIn(List<Integer> values) {
+        public Criteria andTagIdNotIn(List<Long> values) {
             addCriterion("tag_id not in", values, "tagId");
             return (Criteria) this;
         }
 
-        public Criteria andTagIdBetween(Integer value1, Integer value2) {
+        public Criteria andTagIdBetween(Long value1, Long value2) {
             addCriterion("tag_id between", value1, value2, "tagId");
             return (Criteria) this;
         }
 
-        public Criteria andTagIdNotBetween(Integer value1, Integer value2) {
+        public Criteria andTagIdNotBetween(Long value1, Long value2) {
             addCriterion("tag_id not between", value1, value2, "tagId");
             return (Criteria) this;
         }
@@ -174,52 +174,52 @@ public class BlogTagMapExample {
             return (Criteria) this;
         }
 
-        public Criteria andBlogIdEqualTo(Integer value) {
+        public Criteria andBlogIdEqualTo(Long value) {
             addCriterion("blog_id =", value, "blogId");
             return (Criteria) this;
         }
 
-        public Criteria andBlogIdNotEqualTo(Integer value) {
+        public Criteria andBlogIdNotEqualTo(Long value) {
             addCriterion("blog_id <>", value, "blogId");
             return (Criteria) this;
         }
 
-        public Criteria andBlogIdGreaterThan(Integer value) {
+        public Criteria andBlogIdGreaterThan(Long value) {
             addCriterion("blog_id >", value, "blogId");
             return (Criteria) this;
         }
 
-        public Criteria andBlogIdGreaterThanOrEqualTo(Integer value) {
+        public Criteria andBlogIdGreaterThanOrEqualTo(Long value) {
             addCriterion("blog_id >=", value, "blogId");
             return (Criteria) this;
         }
 
-        public Criteria andBlogIdLessThan(Integer value) {
+        public Criteria andBlogIdLessThan(Long value) {
             addCriterion("blog_id <", value, "blogId");
             return (Criteria) this;
         }
 
-        public Criteria andBlogIdLessThanOrEqualTo(Integer value) {
+        public Criteria andBlogIdLessThanOrEqualTo(Long value) {
             addCriterion("blog_id <=", value, "blogId");
             return (Criteria) this;
         }
 
-        public Criteria andBlogIdIn(List<Integer> values) {
+        public Criteria andBlogIdIn(List<Long> values) {
             addCriterion("blog_id in", values, "blogId");
             return (Criteria) this;
         }
 
-        public Criteria andBlogIdNotIn(List<Integer> values) {
+        public Criteria andBlogIdNotIn(List<Long> values) {
             addCriterion("blog_id not in", values, "blogId");
             return (Criteria) this;
         }
 
-        public Criteria andBlogIdBetween(Integer value1, Integer value2) {
+        public Criteria andBlogIdBetween(Long value1, Long value2) {
             addCriterion("blog_id between", value1, value2, "blogId");
             return (Criteria) this;
         }
 
-        public Criteria andBlogIdNotBetween(Integer value1, Integer value2) {
+        public Criteria andBlogIdNotBetween(Long value1, Long value2) {
             addCriterion("blog_id not between", value1, value2, "blogId");
             return (Criteria) this;
         }

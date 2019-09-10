@@ -1,8 +1,6 @@
 package run.app.entity.model;
 
 public class BloggerProfile {
-    private Integer id;
-
     private Integer bloggerId;
 
     private String phone;
@@ -10,14 +8,6 @@ public class BloggerProfile {
     private String email;
 
     private String avatarId;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public Integer getBloggerId() {
         return bloggerId;

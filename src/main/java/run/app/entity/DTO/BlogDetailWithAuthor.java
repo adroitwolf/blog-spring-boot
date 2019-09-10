@@ -25,7 +25,7 @@ public class BlogDetailWithAuthor extends BlogDetail {
     }
 
 //    针对前台博客卡片详细内容带作者的
-    public BlogDetailWithAuthor(Integer id,String title, String summary,
+    public BlogDetailWithAuthor(Long id,String title, String summary,
                                  Date releaseDate,
                                  List<String> tagTitle,
                                 String content,  String picture,String username, String avatarId) {

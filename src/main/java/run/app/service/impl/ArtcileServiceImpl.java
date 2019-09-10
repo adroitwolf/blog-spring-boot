@@ -23,6 +23,7 @@ import run.app.security.token.TokenService;
 import run.app.service.ArticleService;
 import run.app.service.AttachmentService;
 import run.app.service.TagService;
+import run.app.util.AppUtil;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -80,6 +81,8 @@ public class ArtcileServiceImpl implements ArticleService {
     public @NonNull boolean submitArticle(@NonNull ArticleParams articleParams,@NonNull String token) {
 
         Blog blog = new Blog();
+
+
         Integer bloggerId;
 //        if((bloggerId =userService.getUserIdByToken(token)) == -1){
         if((bloggerId =tokenService.getUserIdWithToken(token)) == -1){
@@ -91,6 +94,15 @@ public class ArtcileServiceImpl implements ArticleService {
         blog.setSummary(articleParams.getSummary());
         blog.setTitle(articleParams.getTitle());
 
+        /*生成文章id 10-9 - 19 WHOAMI*/
+
+        AppUtil instance = AppUtil.getInstance();
+
+        long blog_id = instance.nextId();
+
+        blog.setId(blog_id);
+
+        /*增加代码结束*/
 
         /**
          * 功能描述: 增加文章缩略图
@@ -111,11 +123,7 @@ public class ArtcileServiceImpl implements ArticleService {
 //        blog.setTagTitle(articleParams.getTag());
 
         blog.setStatus("PUBLISHED");
-        int id = blogMapper.insertSelective(blog);
 
-        if(id == 0){
-            throw new ServiceException("服务器出现错误，请重试");
-        }
 
 
         /**
@@ -123,11 +131,11 @@ public class ArtcileServiceImpl implements ArticleService {
          * @Author: WHOAMI
          */
 
-        String tag = tagService.submitArticleWithTagString(articleParams.getTagList(), id);
+        String tag = tagService.submitArticleWithTagString(articleParams.getTagList(), blog_id);
 
         blog.setTagTitle(tag);
 
-        blogMapper.updateByPrimaryKeySelective(blog);
+        blogMapper.insertSelective(blog);
 
         /*增加代码结束*/
 
@@ -138,12 +146,13 @@ public class ArtcileServiceImpl implements ArticleService {
         blogContent.setContentMd(articleParams.getContent());
 
         blogContentMapper.insert(blogContent);
+
         return true;
     }
 
     @Override
     @Transactional
-    public boolean updateArticle(@NonNull ArticleParams articleParams, @NonNull Integer blogId, @NonNull String token) {
+    public boolean updateArticle(@NonNull ArticleParams articleParams, @NonNull Long blogId, @NonNull String token) {
 
 
         /**
@@ -198,7 +207,7 @@ public class ArtcileServiceImpl implements ArticleService {
     }
 
     @Override
-    public boolean updateArticleStatus(@NonNull Integer blogId, @NonNull String status) {
+    public boolean updateArticleStatus(@NonNull Long blogId, @NonNull String status) {
 
         Blog blog = new Blog();
         blog.setStatus(status);
@@ -208,7 +217,7 @@ public class ArtcileServiceImpl implements ArticleService {
     }
 
     @Override
-    public BlogDetail getArticleDetail(@NonNull Integer blogId) {
+    public BlogDetail getArticleDetail(@NonNull Long blogId) {
 
         Blog blog = blogMapper.selectByPrimaryKey(blogId);
 
@@ -287,7 +296,7 @@ public class ArtcileServiceImpl implements ArticleService {
 
     @Override
     @Transactional
-    public void deleteBlog(@NonNull Integer blogId) {
+    public void deleteBlog(@NonNull Long blogId) {
 
 
         /**

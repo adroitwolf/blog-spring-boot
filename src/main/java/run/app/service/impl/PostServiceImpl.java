@@ -79,6 +79,7 @@ public class PostServiceImpl implements PostService {
         List<Blog> result = list.getList();
 
         List<run.app.entity.DTO.Blog> resultX= result.stream().map(item->{
+
             List<String> tagsTitle = new ArrayList<>();
             if(!StringUtils.isBlank(item.getTagTitle())){
 
@@ -150,9 +151,10 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public BlogDetailWithAuthor getDetail(Integer blogId) {
+    public BlogDetailWithAuthor getDetail(Long blogId) {
 
         Blog blog = blogMapper.selectByPrimaryKey(blogId);
+
 
         BlogContent blogContent = blogContentMapper.selectByPrimaryKey(blogId);
 
@@ -182,7 +184,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public DataGrid getListByTag(int pageNum, int pageSize, String tag) {
 
-        Integer id = tagService.selectIdWithName(tag);
+        Long id = tagService.selectIdWithName(tag);
 
         log.debug("id:"+ id);
 
@@ -190,19 +192,19 @@ public class PostServiceImpl implements PostService {
 
 
 
+
         if(!StringUtils.isBlank(id.toString())) {
-            List<Integer> list = tagService.selectBlogIdByTagId(id);
-
-
-
-            List<Integer> list1 = list.subList((pageNum - 1) * pageSize, list.size()>pageNum * pageSize?pageNum*pageSize:list.size());
+            PageHelper.startPage(pageNum,pageSize);
+            List<Long> list = tagService.selectBlogIdByTagId(id);
+            PageInfo<Long> pageInfo = new PageInfo<>(list);
+//          采取分页的方式 10-9 -19
+//            List<Long> list1 = list.subList((pageNum - 1) * pageSize, list.size()>pageNum * pageSize?pageNum*pageSize:list.size());
 
             List<run.app.entity.DTO.Blog> blogs = new ArrayList<>();
 
-            list1.stream().forEach(x -> {
+            pageInfo.getList().stream().forEach(x -> {
                 run.app.entity.DTO.Blog blogx = new run.app.entity.DTO.Blog();
                 Blog blog = blogMapper.selectByPrimaryKey(x);
-
                 blogx.setId(x);
 
                 blogx.setSummary(blog.getSummary());

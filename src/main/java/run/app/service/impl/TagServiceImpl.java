@@ -12,6 +12,7 @@ import run.app.entity.model.BlogTagMapKey;
 import run.app.mapper.BlogLabelMapper;
 import run.app.mapper.BlogTagMapMapper;
 import run.app.service.TagService;
+import run.app.util.AppUtil;
 
 import java.util.*;
 
@@ -33,12 +34,13 @@ public class TagServiceImpl implements TagService {
 
 
     @Override
-    public String submitArticleWithTagString(List<String> tags,Integer blogId) {
+    public String submitArticleWithTagString(List<String> tags,Long blogId) {
 
+        AppUtil instance = AppUtil.getInstance();
 
         BlogLabelExample blogLabelExample = new BlogLabelExample();
 
-        List<Integer> nowTags = new ArrayList<>();
+        List<Long> nowTags = new ArrayList<>();
 
         tags.stream().filter(Objects::nonNull).forEach(item ->{
             blogLabelExample.clear();
@@ -53,9 +55,8 @@ public class TagServiceImpl implements TagService {
                 blogLabel.setCiteNum(1);
                 blogLabel.setCreateDate(new Date());
                 blogLabel.setTitle(item);
-
+                blogLabel.setId(instance.nextId());
                 blogLabelMapper.insertSelective(blogLabel);
-
 
                 blogTagMapMapper.insertSelective(new BlogTagMapKey(blogLabel.getId(),blogId));
 
@@ -64,8 +65,8 @@ public class TagServiceImpl implements TagService {
 
             }else{
                 log.info("id:"+temp.get()) ;
-                blogLabelMapper.updateByPrimaryKeyForAddNum(Integer.valueOf(temp.get()));
-                nowTags.add(Integer.valueOf(temp.get()));
+                blogLabelMapper.updateByPrimaryKeyForAddNum(Long.valueOf(temp.get()));
+                nowTags.add(Long.valueOf(temp.get()));
             }
         });
 
@@ -75,7 +76,7 @@ public class TagServiceImpl implements TagService {
 
     @Override
     @Transactional
-    public String updateTagsWithId(Integer blogId,List<String> tagsParams) {
+    public String updateTagsWithId(Long blogId,List<String> tagsParams) {
         /**
          * 功能描述: 增加更新文章代码
          * 内容描述：主要是在标签生成方面 本次修改伴随着数据库底层代码修改
@@ -89,7 +90,9 @@ public class TagServiceImpl implements TagService {
         BlogTagMapExample.Criteria criteria = blogTagMapExample.createCriteria();
         criteria.andBlogIdEqualTo(blogId);
 
-        List<Integer> updateTags = blogTagMapMapper.selectByExampleForTag(blogTagMapExample);
+        AppUtil instance = AppUtil.getInstance();
+
+        List<Long> updateTags = blogTagMapMapper.selectByExampleForTag(blogTagMapExample);
 
         updateTags.stream().filter(Objects::nonNull)
                 .forEach(tags->blogLabelMapper.updateByPrimaryKeyForReduceNum(tags));
@@ -98,7 +101,7 @@ public class TagServiceImpl implements TagService {
 //        查询到现在的标签id没有的话新增
         BlogLabelExample blogLabelExample = new BlogLabelExample();
 
-        List<Integer> nowTags = new ArrayList<>();
+        List<Long> nowTags = new ArrayList<>();
 
 
         tagsParams.stream().filter(Objects::nonNull)
@@ -117,7 +120,7 @@ public class TagServiceImpl implements TagService {
                         blogLabel.setCiteNum(1);
                         blogLabel.setCreateDate(new Date());
                         blogLabel.setTitle(value);
-
+                        blogLabel.setId(instance.nextId());
                         blogLabelMapper.insertSelective(blogLabel);
 
 
@@ -128,8 +131,8 @@ public class TagServiceImpl implements TagService {
 
                     }else{
                         log.info("id:"+temp.get()) ;
-                        blogLabelMapper.updateByPrimaryKeyForAddNum(Integer.valueOf(temp.get()));
-                        nowTags.add(Integer.valueOf(temp.get()));
+                        blogLabelMapper.updateByPrimaryKeyForAddNum(Long.valueOf(temp.get()));
+                        nowTags.add(Long.valueOf(temp.get()));
                     }
 
                 });
@@ -148,7 +151,7 @@ public class TagServiceImpl implements TagService {
         List<String> tags = new ArrayList<>();
 
         list.stream().filter(Objects::nonNull)
-                .forEach(x-> tags.add(blogLabelMapper.selectByExampleForTitleByPrimaryKey(Integer.valueOf(x))));
+                .forEach(x-> tags.add(blogLabelMapper.selectByExampleForTitleByPrimaryKey(Long.valueOf(x))));
 
 
         return tags;
@@ -162,16 +165,16 @@ public class TagServiceImpl implements TagService {
         list.stream().filter(Objects::nonNull)
                 .forEach(x->{
                     if(status){
-                        blogLabelMapper.updateByPrimaryKeyForAddNum(Integer.valueOf(x));
+                        blogLabelMapper.updateByPrimaryKeyForAddNum(Long.valueOf(x));
                     }else{
-                        blogLabelMapper.updateByPrimaryKeyForReduceNum(Integer.valueOf(x));
+                        blogLabelMapper.updateByPrimaryKeyForReduceNum(Long.valueOf(x));
                     }
                 });
     }
 
     @Override
     @Transactional
-    public void deleteTagsKeyByBlogId(Integer blogId) {
+    public void deleteTagsKeyByBlogId(Long blogId) {
         BlogTagMapExample blogTagMapExample = new BlogTagMapExample();
         BlogTagMapExample.Criteria criteria = blogTagMapExample.createCriteria();
         criteria.andBlogIdEqualTo(blogId);
@@ -179,7 +182,7 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    public Integer selectIdWithName(String tag) {
+    public Long selectIdWithName(String tag) {
 
         BlogLabelExample labelExample = new BlogLabelExample();
 
@@ -194,7 +197,7 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    public List<Integer> selectBlogIdByTagId(Integer id) {
+    public List<Long> selectBlogIdByTagId(Long id) {
         BlogTagMapExample blogTagMapExample = new BlogTagMapExample();
         BlogTagMapExample.Criteria criteria = blogTagMapExample.createCriteria();
         criteria.andTagIdEqualTo(id);

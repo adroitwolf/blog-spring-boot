@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="run.app.mapper.BlogLabelMapper">
   <resultMap id="BaseResultMap" type="run.app.entity.model.BlogLabel">
-    <id column="id" jdbcType="INTEGER" property="id" />
+    <id column="id" jdbcType="BIGINT" property="id" />
     <result column="title" jdbcType="VARCHAR" property="title" />
     <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
     <result column="cite_num" jdbcType="INTEGER" property="citeNum" />
@@ -83,6 +83,7 @@
     </if>
   </select>
 
+
   <select id="selectByExampleForPrimaryKey" parameterType="run.app.entity.model.BlogLabelExample" resultType="java.lang.String">
     select
 
@@ -102,24 +103,23 @@
   </select>
 
 
-  <select id="selectByExampleForTitleByPrimaryKey" parameterType="java.lang.Integer" resultType="java.lang.String">
+  <select id="selectByExampleForTitleByPrimaryKey" parameterType="java.lang.Long" resultType="java.lang.String">
     select
     title
     from blog_label
-    where id = #{id,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
   </select>
 
 
-
-  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from blog_label
-    where id = #{id,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from blog_label
-    where id = #{id,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
   </delete>
   <delete id="deleteByExample" parameterType="run.app.entity.model.BlogLabelExample">
     delete from blog_label
@@ -130,10 +130,10 @@
   <insert id="insert" parameterType="run.app.entity.model.BlogLabel">
     insert into blog_label (id, title, create_date, 
       cite_num)
-    values (#{id,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, 
+    values (#{id,jdbcType=BIGINT}, #{title,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, 
       #{citeNum,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="run.app.entity.model.BlogLabel" useGeneratedKeys="true" keyProperty="id">
+  <insert id="insertSelective" parameterType="run.app.entity.model.BlogLabel">
     insert into blog_label
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -151,7 +151,7 @@
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
-        #{id,jdbcType=INTEGER},
+        #{id,jdbcType=BIGINT},
       </if>
       <if test="title != null">
         #{title,jdbcType=VARCHAR},
@@ -174,7 +174,7 @@
     update blog_label
     <set>
       <if test="record.id != null">
-        id = #{record.id,jdbcType=INTEGER},
+        id = #{record.id,jdbcType=BIGINT},
       </if>
       <if test="record.title != null">
         title = #{record.title,jdbcType=VARCHAR},
@@ -192,7 +192,7 @@
   </update>
   <update id="updateByExample" parameterType="map">
     update blog_label
-    set id = #{record.id,jdbcType=INTEGER},
+    set id = #{record.id,jdbcType=BIGINT},
       title = #{record.title,jdbcType=VARCHAR},
       create_date = #{record.createDate,jdbcType=TIMESTAMP},
       cite_num = #{record.citeNum,jdbcType=INTEGER}
@@ -213,28 +213,28 @@
         cite_num = #{citeNum,jdbcType=INTEGER},
       </if>
     </set>
-    where id = #{id,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="run.app.entity.model.BlogLabel">
     update blog_label
     set title = #{title,jdbcType=VARCHAR},
       create_date = #{createDate,jdbcType=TIMESTAMP},
       cite_num = #{citeNum,jdbcType=INTEGER}
-    where id = #{id,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
   </update>
 
 
-  <update id="updateByPrimaryKeyForReduceNum" parameterType="java.lang.Integer">
+  <update id="updateByPrimaryKeyForReduceNum" parameterType="java.lang.Long">
     update blog_label
     set
       cite_num = cite_num -1
     where id = #{id,jdbcType=INTEGER}
   </update>
 
-  <update id="updateByPrimaryKeyForAddNum" parameterType="java.lang.Integer">
+  <update id="updateByPrimaryKeyForAddNum" parameterType="java.lang.Long">
     update blog_label
     set
       cite_num = cite_num +1
-    where id = #{id,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

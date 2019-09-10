@@ -3,7 +3,7 @@ package run.app.entity.model;
 import java.util.Date;
 
 public class BlogLabel {
-    private Integer id;
+    private Long id;
 
     private String title;
 
@@ -11,14 +11,11 @@ public class BlogLabel {
 
     private Integer citeNum;
 
-
-
-
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

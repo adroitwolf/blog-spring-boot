@@ -1,10 +1,13 @@
 package run.app.entity.DTO;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 import lombok.ToString;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -16,14 +19,14 @@ import java.util.List;
  */
 @Data
 @ToString
-public class Blog {
+public class Blog implements Serializable {
 
     public Blog() {
     }
 
 
 //    提供给后台分页查询数据
-    public Blog(Integer id, String status, String title, String summary, Date releaseDate, Date nearestModifyDate, List<String> tagsTitle,String picture) {
+    public Blog(Long id, String status, String title, String summary, Date releaseDate, Date nearestModifyDate, List<String> tagsTitle,String picture) {
         this.id = id;
         this.status = status;
         this.title = title;
@@ -35,7 +38,7 @@ public class Blog {
     }
 
 //    提供给前台博客卡片数据
-    public Blog(Integer id, String title, String summary, Date releaseDate, List<String> tagsTitle,String picture) {
+    public Blog(Long id, String title, String summary, Date releaseDate, List<String> tagsTitle,String picture) {
         this.id = id;
         this.title = title;
         this.summary = summary;
@@ -48,7 +51,9 @@ public class Blog {
 
     private String picture;
 
-    private Integer id;
+
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long id;
 
     private String status;
 

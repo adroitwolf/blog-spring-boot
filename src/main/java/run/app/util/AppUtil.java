@@ -18,6 +18,34 @@ import java.util.UUID;
 @Component
 public class AppUtil {
 
+    private final static  SnowFlake snowFlake = new SnowFlake(0,0);
+
+
+    private static enum SingleEnum{
+        INSTANCE;
+        private AppUtil appUtil;
+
+        private SingleEnum(){
+            appUtil = new AppUtil();
+        }
+
+        public AppUtil getInstance(){
+            return appUtil;
+        }
+
+    }
+
+//    获取自增id
+    public long nextId(){
+        return snowFlake.nextId();
+    }
+
+
+
+    public static AppUtil getInstance(){
+        return SingleEnum.INSTANCE.getInstance();
+    }
+
     public static String RandomUUIDWithoutDash(){
         return StringUtils.remove(UUID.randomUUID().toString(),"-");
     }

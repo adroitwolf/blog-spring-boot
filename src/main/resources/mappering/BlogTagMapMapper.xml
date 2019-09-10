@@ -2,8 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="run.app.mapper.BlogTagMapMapper">
   <resultMap id="BaseResultMap" type="run.app.entity.model.BlogTagMapKey">
-    <id column="tag_id" jdbcType="INTEGER" property="tagId" />
-    <id column="blog_id" jdbcType="INTEGER" property="blogId" />
+    <id column="tag_id" jdbcType="BIGINT" property="tagId" />
+    <id column="blog_id" jdbcType="BIGINT" property="blogId" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -81,7 +81,8 @@
     </if>
   </select>
 
-  <select id="selectByExampleForTag" parameterType="run.app.entity.model.BlogTagMapExample" resultType="integer">
+
+  <select id="selectByExampleForTag" parameterType="run.app.entity.model.BlogTagMapExample" resultType="java.lang.Long">
     select
 
     tag_id
@@ -99,7 +100,7 @@
     </if>
   </select>
 
-  <select id="selectByExampleForBlogId" parameterType="run.app.entity.model.BlogTagMapExample" resultType="integer">
+  <select id="selectByExampleForBlogId" parameterType="run.app.entity.model.BlogTagMapExample" resultType="java.lang.Long">
     select
 
     blog_id
@@ -119,8 +120,8 @@
 
   <delete id="deleteByPrimaryKey" parameterType="run.app.entity.model.BlogTagMapKey">
     delete from blog_tag_map
-    where tag_id = #{tagId,jdbcType=INTEGER}
-      and blog_id = #{blogId,jdbcType=INTEGER}
+    where tag_id = #{tagId,jdbcType=BIGINT}
+      and blog_id = #{blogId,jdbcType=BIGINT}
   </delete>
   <delete id="deleteByExample" parameterType="run.app.entity.model.BlogTagMapExample">
     delete from blog_tag_map
@@ -130,7 +131,7 @@
   </delete>
   <insert id="insert" parameterType="run.app.entity.model.BlogTagMapKey">
     insert into blog_tag_map (tag_id, blog_id)
-    values (#{tagId,jdbcType=INTEGER}, #{blogId,jdbcType=INTEGER})
+    values (#{tagId,jdbcType=BIGINT}, #{blogId,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="run.app.entity.model.BlogTagMapKey">
     insert into blog_tag_map
@@ -144,10 +145,10 @@
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="tagId != null">
-        #{tagId,jdbcType=INTEGER},
+        #{tagId,jdbcType=BIGINT},
       </if>
       <if test="blogId != null">
-        #{blogId,jdbcType=INTEGER},
+        #{blogId,jdbcType=BIGINT},
       </if>
     </trim>
   </insert>
@@ -161,10 +162,10 @@
     update blog_tag_map
     <set>
       <if test="record.tagId != null">
-        tag_id = #{record.tagId,jdbcType=INTEGER},
+        tag_id = #{record.tagId,jdbcType=BIGINT},
       </if>
       <if test="record.blogId != null">
-        blog_id = #{record.blogId,jdbcType=INTEGER},
+        blog_id = #{record.blogId,jdbcType=BIGINT},
       </if>
     </set>
     <if test="_parameter != null">
@@ -173,8 +174,8 @@
   </update>
   <update id="updateByExample" parameterType="map">
     update blog_tag_map
-    set tag_id = #{record.tagId,jdbcType=INTEGER},
-      blog_id = #{record.blogId,jdbcType=INTEGER}
+    set tag_id = #{record.tagId,jdbcType=BIGINT},
+      blog_id = #{record.blogId,jdbcType=BIGINT}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>

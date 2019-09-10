@@ -11,7 +11,7 @@ public interface BloggerProfileMapper {
 
     int deleteByExample(BloggerProfileExample example);
 
-    int deleteByPrimaryKey(Integer id);
+    int deleteByPrimaryKey(Integer bloggerId);
 
     int insert(BloggerProfileWithBLOBs record);
 
@@ -21,7 +21,7 @@ public interface BloggerProfileMapper {
 
     List<BloggerProfile> selectByExample(BloggerProfileExample example);
 
-    BloggerProfileWithBLOBs selectByPrimaryKey(Integer id);
+    BloggerProfileWithBLOBs selectByPrimaryKey(Integer bloggerId);
 
     int updateByExampleSelective(@Param("record") BloggerProfileWithBLOBs record, @Param("example") BloggerProfileExample example);
 

@@ -12,7 +12,10 @@ import run.app.entity.DTO.DataGrid;
 public interface PostService {
     DataGrid getList(int pageNum,int pageSize);
 
-    BlogDetailWithAuthor getDetail(Integer blogId);
+    DataGrid getListByExample(int pageNum,int pageSize,String keyword);
 
+    BlogDetailWithAuthor getDetail(Long blogId);
+
+    DataGrid getListByTag(int pageNum,int pageSize,String tag);
 
 }

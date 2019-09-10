@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="run.app.mapper.BlogContentMapper">
   <resultMap id="BaseResultMap" type="run.app.entity.model.BlogContent">
-    <id column="id" jdbcType="INTEGER" property="id" />
+    <id column="id" jdbcType="BIGINT" property="id" />
   </resultMap>
   <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="run.app.entity.model.BlogContent">
     <result column="content" jdbcType="LONGVARCHAR" property="content" />
@@ -102,17 +102,17 @@
       order by ${orderByClause}
     </if>
   </select>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
     select 
     <include refid="Base_Column_List" />
     ,
     <include refid="Blob_Column_List" />
     from blog_content
-    where id = #{id,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from blog_content
-    where id = #{id,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
   </delete>
   <delete id="deleteByExample" parameterType="run.app.entity.model.BlogContentExample">
     delete from blog_content
@@ -123,7 +123,7 @@
   <insert id="insert" parameterType="run.app.entity.model.BlogContent">
     insert into blog_content (id, content, content_md
       )
-    values (#{id,jdbcType=INTEGER}, #{content,jdbcType=LONGVARCHAR}, #{contentMd,jdbcType=LONGVARCHAR}
+    values (#{id,jdbcType=BIGINT}, #{content,jdbcType=LONGVARCHAR}, #{contentMd,jdbcType=LONGVARCHAR}
       )
   </insert>
   <insert id="insertSelective" parameterType="run.app.entity.model.BlogContent">
@@ -141,7 +141,7 @@
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
-        #{id,jdbcType=INTEGER},
+        #{id,jdbcType=BIGINT},
       </if>
       <if test="content != null">
         #{content,jdbcType=LONGVARCHAR},
@@ -161,7 +161,7 @@
     update blog_content
     <set>
       <if test="record.id != null">
-        id = #{record.id,jdbcType=INTEGER},
+        id = #{record.id,jdbcType=BIGINT},
       </if>
       <if test="record.content != null">
         content = #{record.content,jdbcType=LONGVARCHAR},
@@ -176,7 +176,7 @@
   </update>
   <update id="updateByExampleWithBLOBs" parameterType="map">
     update blog_content
-    set id = #{record.id,jdbcType=INTEGER},
+    set id = #{record.id,jdbcType=BIGINT},
       content = #{record.content,jdbcType=LONGVARCHAR},
       content_md = #{record.contentMd,jdbcType=LONGVARCHAR}
     <if test="_parameter != null">
@@ -185,7 +185,7 @@
   </update>
   <update id="updateByExample" parameterType="map">
     update blog_content
-    set id = #{record.id,jdbcType=INTEGER}
+    set id = #{record.id,jdbcType=BIGINT}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -200,12 +200,12 @@
         content_md = #{contentMd,jdbcType=LONGVARCHAR},
       </if>
     </set>
-    where id = #{id,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKeyWithBLOBs" parameterType="run.app.entity.model.BlogContent">
     update blog_content
     set content = #{content,jdbcType=LONGVARCHAR},
       content_md = #{contentMd,jdbcType=LONGVARCHAR}
-    where id = #{id,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

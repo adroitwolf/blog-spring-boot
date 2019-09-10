@@ -9,6 +9,7 @@ import run.app.entity.DTO.BaseResponse;
 import run.app.entity.DTO.BlogDetail;
 import run.app.entity.DTO.DataGrid;
 import run.app.entity.params.ArticleParams;
+import run.app.entity.params.PostQueryParams;
 import run.app.security.log.MethodLog;
 import run.app.service.ArticleService;
 
@@ -21,7 +22,7 @@ import java.util.Map;
  * Created with IntelliJ IDEA.
  * User: WHOAMI
  * Time: 2019 2019/7/25 21:25
- * Description: ://TODO ${END}
+ * Description: :博客相关控制器
  */
 @Slf4j
 @RestController
@@ -47,7 +48,7 @@ public class BlogController {
     @MethodLog
     @ApiOperation("博客-回收站之间的操作")
     @PutMapping("/{BlogId:\\d+}/status/{status}")
-    public BaseResponse updateArticleStatus(@PathVariable("BlogId")Integer blogId ,
+    public BaseResponse updateArticleStatus(@PathVariable("BlogId")Long blogId ,
                               @PathVariable("status")String status){
         articleService.updateArticleStatus(blogId,status);
         BaseResponse baseResponse = new BaseResponse();
@@ -61,7 +62,7 @@ public class BlogController {
 
     @ApiOperation("查看博客详细内容")
     @GetMapping("detail/{BlogId:\\d+}")
-    public BaseResponse getBlogDetail(@PathVariable("BlogId")Integer blogId){
+    public BaseResponse getBlogDetail(@PathVariable("BlogId")Long blogId){
         BlogDetail articleDetail = articleService.getArticleDetail(blogId);
         BaseResponse baseResponse = new BaseResponse();
         baseResponse.setStatus(HttpStatus.OK.value());
@@ -72,7 +73,7 @@ public class BlogController {
     @MethodLog
     @ApiOperation("更新博客文档")
     @PutMapping("{BlogId:\\d+}")
-    public BaseResponse updateArticle(@PathVariable("BlogId")Integer blogId ,@Valid @RequestBody ArticleParams articleParams,
+    public BaseResponse updateArticle(@PathVariable("BlogId")Long blogId ,@Valid @RequestBody ArticleParams articleParams,
                                       HttpServletRequest request){
 
         log.debug(articleParams.toString());
@@ -87,20 +88,24 @@ public class BlogController {
         return baseResponse;
     }
 
+
     @MethodLog
-    @ApiOperation("获取当前文章所有列表")
-    @GetMapping("/list")
-    public DataGrid getList(@RequestParam int pageNum,
-                            @RequestParam int pageSize,
-                            HttpServletRequest request){
+    @ApiOperation("文章查询")
+    @GetMapping("query")
+    public DataGrid getListByExample(@RequestParam int pageNum,
+                                     @RequestParam int pageSize,
+                                     PostQueryParams postQueryParams,
+                                     HttpServletRequest request){
+
+        log.info(postQueryParams.toString());
         String token = request.getHeader("Authentication");
-        return articleService.getArticleList(pageNum,pageSize,token);
+        return articleService.getArticleListByExample(pageNum,pageSize,postQueryParams,token);
     }
 
     @MethodLog
     @ApiOperation("删除博客")
     @DeleteMapping("{blogId:\\d+}")
-    public void deleteBlog(@PathVariable("blogId")Integer blogId){
+    public void deleteBlog(@PathVariable("blogId")Long blogId){
         articleService.deleteBlog(blogId);
     }
 

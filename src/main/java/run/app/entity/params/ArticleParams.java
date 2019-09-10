@@ -5,6 +5,7 @@ import lombok.ToString;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -28,8 +29,11 @@ public class ArticleParams {
     @NotBlank(message = "文章内容不能为空")
     private String content;
 
+    private String picture;
 
-    private String tag;
+    private List<String> tagList;
+
+//    private Integer tag;
 
     @NotBlank(message = "文章总结不能为空")
     @Size(max=100,message = "文章总结不能超过{maxz}")

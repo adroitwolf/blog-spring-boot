@@ -1,15 +1,12 @@
 package run.app.entity.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.ToString;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
-
 @ToString
 public class Blog {
-    private Integer id;
+    private Long id;
 
     private Integer bloggerId;
 
@@ -17,36 +14,21 @@ public class Blog {
 
     private String title;
 
+    private Integer pictureId;
+
     private String summary;
 
-    @DateTimeFormat(pattern="yyyy-mm-dd hh:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date releaseDate;
 
-    @DateTimeFormat(pattern="yyyy-mm-dd hh:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date nearestModifyDate;
 
     private String tagTitle;
 
-    public Blog() {
-    }
-
-    public Blog(Integer id, String status, String title, String summary, Date releaseDate, Date nearestModifyDate, String tagTitle) {
-        this.id = id;
-        this.status = status;
-        this.title = title;
-        this.summary = summary;
-        this.releaseDate = releaseDate;
-        this.nearestModifyDate = nearestModifyDate;
-        this.tagTitle = tagTitle;
-    }
-
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -72,6 +54,14 @@ public class Blog {
 
     public void setTitle(String title) {
         this.title = title == null ? null : title.trim();
+    }
+
+    public Integer getPictureId() {
+        return pictureId;
+    }
+
+    public void setPictureId(Integer pictureId) {
+        this.pictureId = pictureId;
     }
 
     public String getSummary() {

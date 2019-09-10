@@ -96,10 +96,9 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 
         baseResponse.setMessage(appException.getMessage());
 
-        response.setStatus(HttpStatus.UNAUTHORIZED.value());
 
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.getWriter().write(JSONObject.toJSON(baseResponse).toString());
     }
 

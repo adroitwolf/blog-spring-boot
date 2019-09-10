@@ -11,21 +11,24 @@ import run.app.entity.DTO.UserDetail;
 import run.app.entity.params.LoginParams;
 import run.app.entity.params.PasswordParams;
 import run.app.entity.params.UserParams;
+import run.app.exception.BadRequestException;
 import run.app.security.log.MethodLog;
 import run.app.security.token.AuthToken;
 import run.app.service.UserService;
+import run.app.util.UploadUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.File;
 import java.io.IOException;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
  * Created with IntelliJ IDEA.
  * User: WHOAMI
  * Time: 2019 2019/7/22 7:33
- * Description: ://TODO ${END}
+ * Description: :用户控制层
  */
 @Slf4j
 @RestController
@@ -68,38 +71,44 @@ public class UserController {
                                       HttpServletRequest request){
         BaseResponse baseResponse = new BaseResponse();
 
-        String property = System.getProperty("user.dir");
+        UploadUtil instance = UploadUtil.getInstance();
+
+        String filename = instance.uploadFile(avatar).orElseThrow(()->new BadRequestException("用户更新头像失败"));
 
 
-        String filePath = property + File.separator + "avatar";
 
-
-        String trueFilename = UUID.randomUUID().toString();
-
-
-        String filename = avatar.getOriginalFilename();
-
-        String type = filename.indexOf(".") != -1 ? filename.substring(filename.lastIndexOf(".")+1,filename.length()):null;
-
-        String trueFile = null == type ? filePath + File.separator + trueFilename :
-                filePath + File.separator + trueFilename + "." + type;
-
-        try {
-            avatar.transferTo(new File(trueFile));
-        } catch (IOException e) {
-            e.printStackTrace();
-            baseResponse.setStatus(HttpStatus.BAD_REQUEST.value());
-            baseResponse.setMessage("图片上传失败");
-
-            return baseResponse;
-        }
+//
+//        String property = System.getProperty("user.dir");
+//
+//
+//        String filePath = property + File.separator + "avatar";
+//
+//
+//        String trueFilename = UUID.randomUUID().toString();
+//
+//
+//        String filename = avatar.getOriginalFilename();
+//
+//        String type = filename.indexOf(".") != -1 ? filename.substring(filename.lastIndexOf(".")+1):null;
+//
+//        String trueFile = null == type ? filePath + File.separator + trueFilename :
+//                filePath + File.separator + trueFilename + "." + type;
+//
+//        try {
+//            avatar.transferTo(new File(trueFile));
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            baseResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+//            baseResponse.setMessage("图片上传失败");
+//            return baseResponse;
+//        }
 
         String token = request.getHeader("Authentication");
 
 //保存到数据库
-        userService.uploadAvatarId(trueFilename+"." +type,token);
+        userService.uploadAvatarId(filename,token);
 
-        baseResponse.setData(trueFilename+"." +type);
+        baseResponse.setData(filename);
 
         return baseResponse;
     }

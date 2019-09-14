@@ -191,12 +191,10 @@ public class PostServiceImpl implements PostService {
         DataGrid dataGrid = new DataGrid();
 
 
-
-
-        if(!StringUtils.isBlank(id.toString())) {
+        if(null != id) {
             List<Long> list = tagService.selectBlogIdByTagId(pageSize,pageNum,id);
             log.debug("tag集合"+list.size());
-
+            PageInfo<Long> longPageInfo = new PageInfo<>(list);
 //          采取分页的方式 10-9 -19
 //            List<Long> list1 = list.subList((pageNum - 1) * pageSize, list.size()>pageNum * pageSize?pageNum*pageSize:list.size());
 
@@ -224,8 +222,7 @@ public class PostServiceImpl implements PostService {
 
 
             dataGrid.setRows(blogs);
-            dataGrid.setTotal(list.size());
-
+            dataGrid.setTotal(longPageInfo.getTotal());
             return dataGrid;
         }
 

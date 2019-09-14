@@ -42,7 +42,6 @@ public class TagServiceImpl implements TagService {
 //        首先要去重
        tags = (List<String>) instance.removeDuplicateListItem(tags);
 
-       log.debug("去重后的tag:"+ tags);
         BlogLabelExample blogLabelExample = new BlogLabelExample();
 
         List<Long> nowTags = new ArrayList<>();
@@ -68,8 +67,6 @@ public class TagServiceImpl implements TagService {
 
 
             }else{
-                log.info("id:"+temp.get()) ;
-
 
                 blogLabelMapper.updateByPrimaryKeyForAddNum(Long.valueOf(temp.get()));
                 blogTagMapMapper.insert(new BlogTagMapKey(Long.valueOf(temp.get()),blogId));
@@ -96,7 +93,7 @@ public class TagServiceImpl implements TagService {
          * @Date: 2019/8/23 17:35
          */
 
-//        查询更新之前到相应的标签id 并且每一个都要在tag标签使用人数中自减1
+//        查询更新之前到相应的标签id 并且每一个都要在tag标签使用人数中自减1 并且删除掉tag_map标签中的 集合
 
         BlogTagMapExample blogTagMapExample = new BlogTagMapExample();
         BlogTagMapExample.Criteria criteria = blogTagMapExample.createCriteria();
@@ -106,7 +103,10 @@ public class TagServiceImpl implements TagService {
         List<Long> updateTags = blogTagMapMapper.selectByExampleForTag(blogTagMapExample);
 
         updateTags.stream().filter(Objects::nonNull)
-                .forEach(tags->blogLabelMapper.updateByPrimaryKeyForReduceNum(tags));
+                .forEach(tags->{
+                    blogLabelMapper.updateByPrimaryKeyForReduceNum(tags);
+                    blogTagMapMapper.deleteByPrimaryKey(new BlogTagMapKey(tags,blogId));
+                });
 
 
 //        查询到现在的标签id没有的话新增
@@ -118,7 +118,6 @@ public class TagServiceImpl implements TagService {
         tagsParams.stream().filter(Objects::nonNull)
                 .forEach(value->{
                     log.info(value);
-
                     blogLabelExample.clear();
                     BlogLabelExample.Criteria blogLabelExampleCriteria1 = blogLabelExample.createCriteria();
                     blogLabelExampleCriteria1.andTitleEqualTo(value);

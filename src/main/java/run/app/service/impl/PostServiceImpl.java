@@ -206,7 +206,6 @@ public class PostServiceImpl implements PostService {
                 run.app.entity.DTO.Blog blogx = new run.app.entity.DTO.Blog();
                 Blog blog = blogMapper.selectByPrimaryKey(x);
                 blogx.setId(blog.getId());
-
                 blogx.setSummary(blog.getSummary());
                 blogx.setTitle(blog.getTitle());
                 blogx.setReleaseDate(blog.getReleaseDate());
@@ -214,6 +213,11 @@ public class PostServiceImpl implements PostService {
                 if (!StringUtils.isBlank(blog.getTagTitle())) {
                     blogx.setTagsTitle(tagService.selectTagTitleByIdString(blog.getTagTitle()));
                 }
+
+                if(null != blog.getPictureId()){
+                    blogx.setPicture(attachmentService.selectPicById(blog.getPictureId()));
+                }
+
                 blogs.add(blogx);
 
             });

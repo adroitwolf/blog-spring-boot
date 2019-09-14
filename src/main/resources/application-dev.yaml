@@ -2,9 +2,10 @@ server:
   port: 8099
 
 spring:
+  application:
+    name: WHOAMI
   datasource:
-    name: dev
-    url: jdbc:mysql://127.0.0.1:3306/eblog?useUnicode=true&characterEncoding=UTF-8
+    url: jdbc:mysql://127.0.0.1:3306/eblog?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
     username: root
     password: 123
     driver-class-name: com.mysql.jdbc.Driver
@@ -15,6 +16,9 @@ spring:
     password: 123
   resources:
     static-locations: classpath:/META-INF/resources/,classpath:/resources/, classpath:/static/, classpath:/public/,file:${web.upload-path}
+  servlet:
+    multipart:
+      max-file-size: 10MB
 
 # pagehepler
 

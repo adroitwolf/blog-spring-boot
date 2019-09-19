@@ -1,10 +1,7 @@
 package run.app.util;
 
-import com.mysql.jdbc.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.SetOperations;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -21,6 +18,7 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 @Component
 public class RedisUtil {
+
 
     @Autowired
     RedisTemplate<String,String> redisTemplate;

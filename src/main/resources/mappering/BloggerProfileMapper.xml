@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="run.app.mapper.BloggerProfileMapper">
   <resultMap id="BaseResultMap" type="run.app.entity.model.BloggerProfile">
-    <id column="blogger_id" jdbcType="INTEGER" property="bloggerId" />
+    <id column="blogger_id" jdbcType="BIGINT" property="bloggerId" />
     <result column="phone" jdbcType="VARCHAR" property="phone" />
     <result column="email" jdbcType="VARCHAR" property="email" />
     <result column="avatar_id" jdbcType="VARCHAR" property="avatarId" />
@@ -105,17 +105,17 @@
       order by ${orderByClause}
     </if>
   </select>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
     select 
     <include refid="Base_Column_List" />
     ,
     <include refid="Blob_Column_List" />
     from blogger_profile
-    where blogger_id = #{bloggerId,jdbcType=INTEGER}
+    where blogger_id = #{bloggerId,jdbcType=BIGINT}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from blogger_profile
-    where blogger_id = #{bloggerId,jdbcType=INTEGER}
+    where blogger_id = #{bloggerId,jdbcType=BIGINT}
   </delete>
   <delete id="deleteByExample" parameterType="run.app.entity.model.BloggerProfileExample">
     delete from blogger_profile
@@ -127,7 +127,7 @@
     insert into blogger_profile (blogger_id, phone, email, 
       avatar_id, about_me, intro
       )
-    values (#{bloggerId,jdbcType=INTEGER}, #{phone,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, 
+    values (#{bloggerId,jdbcType=BIGINT}, #{phone,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, 
       #{avatarId,jdbcType=VARCHAR}, #{aboutMe,jdbcType=LONGVARCHAR}, #{intro,jdbcType=LONGVARCHAR}
       )
   </insert>
@@ -155,7 +155,7 @@
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="bloggerId != null">
-        #{bloggerId,jdbcType=INTEGER},
+        #{bloggerId,jdbcType=BIGINT},
       </if>
       <if test="phone != null">
         #{phone,jdbcType=VARCHAR},
@@ -184,7 +184,7 @@
     update blogger_profile
     <set>
       <if test="record.bloggerId != null">
-        blogger_id = #{record.bloggerId,jdbcType=INTEGER},
+        blogger_id = #{record.bloggerId,jdbcType=BIGINT},
       </if>
       <if test="record.phone != null">
         phone = #{record.phone,jdbcType=VARCHAR},
@@ -208,7 +208,7 @@
   </update>
   <update id="updateByExampleWithBLOBs" parameterType="map">
     update blogger_profile
-    set blogger_id = #{record.bloggerId,jdbcType=INTEGER},
+    set blogger_id = #{record.bloggerId,jdbcType=BIGINT},
       phone = #{record.phone,jdbcType=VARCHAR},
       email = #{record.email,jdbcType=VARCHAR},
       avatar_id = #{record.avatarId,jdbcType=VARCHAR},
@@ -220,7 +220,7 @@
   </update>
   <update id="updateByExample" parameterType="map">
     update blogger_profile
-    set blogger_id = #{record.bloggerId,jdbcType=INTEGER},
+    set blogger_id = #{record.bloggerId,jdbcType=BIGINT},
       phone = #{record.phone,jdbcType=VARCHAR},
       email = #{record.email,jdbcType=VARCHAR},
       avatar_id = #{record.avatarId,jdbcType=VARCHAR}
@@ -247,7 +247,7 @@
         intro = #{intro,jdbcType=LONGVARCHAR},
       </if>
     </set>
-    where blogger_id = #{bloggerId,jdbcType=INTEGER}
+    where blogger_id = #{bloggerId,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKeyWithBLOBs" parameterType="run.app.entity.model.BloggerProfileWithBLOBs">
     update blogger_profile
@@ -256,13 +256,13 @@
       avatar_id = #{avatarId,jdbcType=VARCHAR},
       about_me = #{aboutMe,jdbcType=LONGVARCHAR},
       intro = #{intro,jdbcType=LONGVARCHAR}
-    where blogger_id = #{bloggerId,jdbcType=INTEGER}
+    where blogger_id = #{bloggerId,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="run.app.entity.model.BloggerProfile">
     update blogger_profile
     set phone = #{phone,jdbcType=VARCHAR},
       email = #{email,jdbcType=VARCHAR},
       avatar_id = #{avatarId,jdbcType=VARCHAR}
-    where blogger_id = #{bloggerId,jdbcType=INTEGER}
+    where blogger_id = #{bloggerId,jdbcType=BIGINT}
   </update>
 </mapper>

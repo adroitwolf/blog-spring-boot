@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import run.app.entity.DTO.BaseResponse;
 import run.app.entity.DTO.DataGrid;
+import run.app.entity.DTO.ImageFile;
 import run.app.entity.DTO.Picture;
 import run.app.entity.model.BloggerPicture;
 import run.app.entity.model.BloggerPictureExample;
@@ -18,6 +19,7 @@ import run.app.mapper.BloggerPictureMapper;
 import run.app.security.token.TokenService;
 import run.app.service.AttachmentService;
 import run.app.service.UserService;
+import run.app.util.AppUtil;
 import run.app.util.UploadUtil;
 
 import java.util.Date;
@@ -37,6 +39,8 @@ import java.util.stream.Collectors;
 public class AttachmentServiceImpl implements AttachmentService {
 
 
+
+
     @Autowired
     BloggerPictureMapper bloggerPictureMapper;
 
@@ -49,16 +53,24 @@ public class AttachmentServiceImpl implements AttachmentService {
     @Autowired
     TokenService tokenService;
 
+
+    AppUtil appUtil;
+
+    public AttachmentServiceImpl() {
+        this.appUtil =  AppUtil.getInstance();
+    }
+
+
     @Override
-    public String selectPicById(Integer id) {
-        return bloggerPictureMapper.selectByPrimaryKey(id).getTitle();
+    public String selectPicById(Long id) {
+        return bloggerPictureMapper.selectByPrimaryKey(id).getFileKey();
     }
 
 
     @Override
     public DataGrid getAttachmentList(int pageSize, int pageNum, String token) {
 
-        int id = tokenService.getUserIdWithToken(token);
+        Long id = tokenService.getUserIdWithToken(token);
 
         BloggerPictureExample bloggerPictureExample = new BloggerPictureExample();
 
@@ -75,8 +87,9 @@ public class AttachmentServiceImpl implements AttachmentService {
         PageInfo<BloggerPicture> bloggerPicturePageInfo = new PageInfo<>(bloggerPictures);
 
 
+        //todo:
         List<Picture> pictures = bloggerPictures.stream().filter(Objects::nonNull).map(item ->{
-            return new Picture(item.getId(),item.getTitle(),item.getBewrite());
+            return new Picture(item.getId(),item.getPath());
                 }
         ).collect(Collectors.toList());
 
@@ -93,35 +106,62 @@ public class AttachmentServiceImpl implements AttachmentService {
     @Transactional
     public BaseResponse uploadFile(MultipartFile file, String token) {
         UploadUtil instance = UploadUtil.getInstance();
-        String filename = instance.uploadFile(file).orElseThrow(()->new BadRequestException("用户上传图片失败"));
+        ImageFile imageFile = instance.uploadFile(file).orElseThrow(()->new BadRequestException("用户上传图片失败"));
 
-        int user_id = tokenService.getUserIdWithToken(token);
+
+
+        Long user_id = tokenService.getUserIdWithToken(token);
 
         BloggerPicture bloggerPicture = new BloggerPicture();
 
-        bloggerPicture.setTitle(filename);
+        bloggerPicture.setId(appUtil.nextId());
 
         bloggerPicture.setBloggerId(user_id);
 
+
+        bloggerPicture.setTitle(imageFile.getTitle());
+
         bloggerPicture.setUploadDate(new Date());
+
+        bloggerPicture.setUpdateDate(new Date());
+
+        bloggerPicture.setCiteNum(1);
+
+        bloggerPicture.setMediaType(imageFile.getMediaType().getType());
+
+        bloggerPicture.setSuffx(imageFile.getSuffx());
+
+        bloggerPicture.setThumbPath(imageFile.getThumbPath());
+
+        bloggerPicture.setHeight(imageFile.getHeight());
+
+        bloggerPicture.setWidth(imageFile.getWidth());
+
+        bloggerPicture.setSize(imageFile.getSize());
+
+        bloggerPicture.setPath(imageFile.getPath());
+
+        bloggerPicture.setFileKey(imageFile.getFileKey());
+
 
         bloggerPictureMapper.insertSelective(bloggerPicture);
 
         BaseResponse baseResponse = new BaseResponse();
 
+
+
         baseResponse.setStatus(HttpStatus.OK.value());
 
-        baseResponse.setData(filename);
+        baseResponse.setData(imageFile.getTitle());
 
         return baseResponse;
     }
 
     @Override
-    public int getIdByTitle(String title) {
+    public Long getIdByTitle(String title) {
         BloggerPictureExample bloggerPictureExample = new BloggerPictureExample();
         BloggerPictureExample.Criteria criteria = bloggerPictureExample.createCriteria();
-        criteria.andTitleEqualTo(title);
-
+        criteria.andFileKeyEqualTo(title);
         List<BloggerPicture> bloggerPictures = bloggerPictureMapper.selectByExample(bloggerPictureExample);
         BloggerPicture bloggerPicture = bloggerPictures.stream().filter(Objects::nonNull).findFirst().orElseThrow(() -> new BadRequestException("图片名称有误,或附件已被删除！"));
         return bloggerPicture.getId();

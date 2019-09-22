@@ -18,7 +18,7 @@ public interface UserService {
 
 
      @NonNull
-     BloggerProfileWithBLOBs findUserDetailByBloggerId(@NonNull Integer bloggerId);
+     BloggerProfileWithBLOBs findUserDetailByBloggerId(@NonNull Long bloggerId);
 
 
      @NonNull UserDetail updateProfileById(@NonNull UserParams userParams,@NonNull String token);

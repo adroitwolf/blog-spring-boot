@@ -25,9 +25,6 @@ import run.app.util.UploadUtil;
 public class UserServiceImpl implements UserService {
 
 
-
-
-
     @Autowired
     BloggerProfileMapper bloggerProfileMapper;
 
@@ -40,7 +37,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public @NonNull BloggerProfileWithBLOBs findUserDetailByBloggerId(@NonNull Integer bloggerId) {
+    public @NonNull BloggerProfileWithBLOBs findUserDetailByBloggerId(@NonNull Long bloggerId) {
 
 //        BloggerProfileExample bloggerProfileExample = new BloggerProfileExample();
 //        BloggerProfileExample.Criteria criteria = bloggerProfileExample.createCriteria();
@@ -63,7 +60,7 @@ public class UserServiceImpl implements UserService {
 
 
 //        Integer userId = getUserIdByToken(token);
-        Integer userId = tokenService.getUserIdWithToken(token);
+        Long userId = tokenService.getUserIdWithToken(token);
         BloggerProfileWithBLOBs bloggerProfileWithBLOBs = new BloggerProfileWithBLOBs();
 
 //        BloggerProfileExample bloggerProfileExample = new BloggerProfileExample();
@@ -99,7 +96,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDetail getUserDetailByToken(@NonNull String token) {
-        int id = tokenService.getUserIdWithToken(token);
+        Long id = tokenService.getUserIdWithToken(token);
 
         @NonNull BloggerProfileWithBLOBs bloggerProfile = findUserDetailByBloggerId(id);
 
@@ -120,7 +117,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void uploadAvatarId(@NonNull String avatar, @NonNull String token) {
-        int id = tokenService.getUserIdWithToken(token);
+        Long id = tokenService.getUserIdWithToken(token);
 
 
 //        BloggerProfileExample bloggerProfileExample = new BloggerProfileExample();

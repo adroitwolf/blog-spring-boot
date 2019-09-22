@@ -18,6 +18,7 @@ import run.app.mapper.BloggerAccountMapper;
 import run.app.mapper.BloggerProfileMapper;
 import run.app.security.token.TokenService;
 import run.app.service.AccountService;
+import run.app.util.AppUtil;
 
 import java.util.Date;
 import java.util.List;
@@ -33,6 +34,13 @@ import java.util.Optional;
 @Slf4j
 @Transactional
 public class AccountServiceImpl implements AccountService {
+
+    public AccountServiceImpl() {
+        this.appUtil = AppUtil.getInstance();
+
+    }
+
+    AppUtil appUtil;
 
     @Autowired
     BloggerAccountMapper bloggerAccountMapper;
@@ -110,7 +118,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public String getUsernameByToken(@NonNull String token) {
 
-        Integer id = tokenService.getUserIdWithToken(token);
+        Long id = tokenService.getUserIdWithToken(token);
 
 
         BloggerAccount bloggerAccount = bloggerAccountMapper.selectByPrimaryKey(id);
@@ -119,7 +127,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public @NonNull Integer findBloggerIdByUsername(@NonNull String username) {
+    public @NonNull Long findBloggerIdByUsername(@NonNull String username) {
 
         BloggerAccountExample bloggerAccountExample = new BloggerAccountExample();
         BloggerAccountExample.Criteria criteria = bloggerAccountExample.createCriteria();
@@ -130,7 +138,7 @@ public class AccountServiceImpl implements AccountService {
         for (BloggerAccount bloggerAccount: bloggerAccounts) {
             return bloggerAccount.getId();
         }
-        return new Integer(-1);
+        return new Long(-1L);
     }
 
     @Override
@@ -146,9 +154,13 @@ public class AccountServiceImpl implements AccountService {
         }
 
         BloggerAccount bloggerAccount = new BloggerAccount();
+        bloggerAccount.setId(appUtil.nextId());
+
         bloggerAccount.setUsername(registerParams.getAccount());
         bloggerAccount.setPassword(registerParams.getPassword());
         bloggerAccount.setRegisterDate(new Date());
+
+
 
         if(bloggerAccountMapper.insertSelective(bloggerAccount) == 0){
             baseResponse.setStatus(HttpStatus.BAD_REQUEST.value());

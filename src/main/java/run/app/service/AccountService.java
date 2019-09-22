@@ -26,7 +26,7 @@ public interface AccountService {
     String getUsernameByToken(@NonNull String token);
 
     @NonNull
-    Integer findBloggerIdByUsername(@NonNull String username);
+    Long findBloggerIdByUsername(@NonNull String username);
 
 
     BaseResponse registerUser(@NonNull RegisterParams registerParams);

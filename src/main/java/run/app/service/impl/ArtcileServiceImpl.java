@@ -82,7 +82,7 @@ public class ArtcileServiceImpl implements ArticleService {
         Blog blog = new Blog();
 
 
-        Integer bloggerId;
+        Long bloggerId;
 //        if((bloggerId =userService.getUserIdByToken(token)) == -1){
         if((bloggerId =tokenService.getUserIdWithToken(token)) == -1){
             throw  new BadRequestException("用户信息错误！");
@@ -164,7 +164,7 @@ public class ArtcileServiceImpl implements ArticleService {
         * @Date: 2019/9/4 20:17
          */
 
-        int picture_id = -1;
+        Long picture_id = -1L;
 
         if(null != articleParams.getPicture()){
 
@@ -316,7 +316,7 @@ public class ArtcileServiceImpl implements ArticleService {
     public long getArticleCount(@NonNull String token) {
 //        Integer bloggerId = userService.getUserIdByToken(token);
 
-        Integer bloggerId = tokenService.getUserIdWithToken(token);
+        Long bloggerId = tokenService.getUserIdWithToken(token);
         BlogExample blogExample = new BlogExample();
 
         BlogExample.Criteria criteria = blogExample.createCriteria();

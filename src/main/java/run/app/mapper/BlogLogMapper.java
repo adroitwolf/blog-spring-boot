@@ -10,7 +10,7 @@ public interface BlogLogMapper {
 
     int deleteByExample(BlogLogExample example);
 
-    int deleteByPrimaryKey(Integer id);
+    int deleteByPrimaryKey(Long id);
 
     int insert(BlogLog record);
 
@@ -18,7 +18,7 @@ public interface BlogLogMapper {
 
     List<BlogLog> selectByExample(BlogLogExample example);
 
-    BlogLog selectByPrimaryKey(Integer id);
+    BlogLog selectByPrimaryKey(Long id);
 
     int updateByExampleSelective(@Param("record") BlogLog record, @Param("example") BlogLogExample example);
 

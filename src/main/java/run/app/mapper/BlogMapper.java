@@ -2,9 +2,9 @@ package run.app.mapper;
 
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
+import run.app.entity.VO.PostQueryParams;
 import run.app.entity.model.Blog;
 import run.app.entity.model.BlogExample;
-import run.app.entity.VO.PostQueryParams;
 
 public interface BlogMapper {
     long countByExample(BlogExample example);
@@ -19,7 +19,7 @@ public interface BlogMapper {
 
     List<Blog> selectByExample(BlogExample example);
 
-    List<Blog> selectByUserExample(@Param("query") PostQueryParams postQueryParams, @Param("blogger_id") Integer blogger_id);
+    List<Blog> selectByUserExample(@Param("query") PostQueryParams postQueryParams, @Param("blogger_id") Long blogger_id);
 
 
     Blog selectByPrimaryKey(Long id);

@@ -2,13 +2,20 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="run.app.mapper.BloggerPictureMapper">
   <resultMap id="BaseResultMap" type="run.app.entity.model.BloggerPicture">
-    <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="blogger_id" jdbcType="INTEGER" property="bloggerId" />
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="blogger_id" jdbcType="BIGINT" property="bloggerId" />
+    <result column="path" jdbcType="VARCHAR" property="path" />
     <result column="title" jdbcType="VARCHAR" property="title" />
     <result column="upload_date" jdbcType="TIMESTAMP" property="uploadDate" />
-  </resultMap>
-  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="run.app.entity.model.BloggerPicture">
-    <result column="bewrite" jdbcType="LONGVARCHAR" property="bewrite" />
+    <result column="suffx" jdbcType="VARCHAR" property="suffx" />
+    <result column="size" jdbcType="BIGINT" property="size" />
+    <result column="width" jdbcType="INTEGER" property="width" />
+    <result column="height" jdbcType="INTEGER" property="height" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+    <result column="cite_num" jdbcType="INTEGER" property="citeNum" />
+    <result column="thumb_path" jdbcType="VARCHAR" property="thumbPath" />
+    <result column="media_type" jdbcType="VARCHAR" property="mediaType" />
+    <result column="file_key" jdbcType="VARCHAR" property="fileKey" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -69,27 +76,9 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, blogger_id, title, upload_date
+    id, blogger_id, path, title, upload_date, suffx, size, width, height, update_date, 
+    cite_num, thumb_path, media_type, file_key
   </sql>
-  <sql id="Blob_Column_List">
-    bewrite
-  </sql>
-  <select id="selectByExampleWithBLOBs" parameterType="run.app.entity.model.BloggerPictureExample" resultMap="ResultMapWithBLOBs">
-    select
-    <if test="distinct">
-      distinct
-    </if>
-    <include refid="Base_Column_List" />
-    ,
-    <include refid="Blob_Column_List" />
-    from blogger_picture
-    <if test="_parameter != null">
-      <include refid="Example_Where_Clause" />
-    </if>
-    <if test="orderByClause != null">
-      order by ${orderByClause}
-    </if>
-  </select>
   <select id="selectByExample" parameterType="run.app.entity.model.BloggerPictureExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
@@ -104,17 +93,15 @@
       order by ${orderByClause}
     </if>
   </select>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    ,
-    <include refid="Blob_Column_List" />
     from blogger_picture
-    where id = #{id,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from blogger_picture
-    where id = #{id,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
   </delete>
   <delete id="deleteByExample" parameterType="run.app.entity.model.BloggerPictureExample">
     delete from blogger_picture
@@ -123,10 +110,16 @@
     </if>
   </delete>
   <insert id="insert" parameterType="run.app.entity.model.BloggerPicture">
-    insert into blogger_picture (id, blogger_id, title, 
-      upload_date, bewrite)
-    values (#{id,jdbcType=INTEGER}, #{bloggerId,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, 
-      #{uploadDate,jdbcType=TIMESTAMP}, #{bewrite,jdbcType=LONGVARCHAR})
+    insert into blogger_picture (id, blogger_id, path, 
+      title, upload_date, suffx, 
+      size, width, height, 
+      update_date, cite_num, thumb_path, 
+      media_type, file_key)
+    values (#{id,jdbcType=BIGINT}, #{bloggerId,jdbcType=BIGINT}, #{path,jdbcType=VARCHAR}, 
+      #{title,jdbcType=VARCHAR}, #{uploadDate,jdbcType=TIMESTAMP}, #{suffx,jdbcType=VARCHAR}, 
+      #{size,jdbcType=BIGINT}, #{width,jdbcType=INTEGER}, #{height,jdbcType=INTEGER}, 
+      #{updateDate,jdbcType=TIMESTAMP}, #{citeNum,jdbcType=INTEGER}, #{thumbPath,jdbcType=VARCHAR}, 
+      #{mediaType,jdbcType=VARCHAR}, #{fileKey,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="run.app.entity.model.BloggerPicture">
     insert into blogger_picture
@@ -137,22 +130,52 @@
       <if test="bloggerId != null">
         blogger_id,
       </if>
+      <if test="path != null">
+        path,
+      </if>
       <if test="title != null">
         title,
       </if>
       <if test="uploadDate != null">
         upload_date,
       </if>
-      <if test="bewrite != null">
-        bewrite,
+      <if test="suffx != null">
+        suffx,
+      </if>
+      <if test="size != null">
+        size,
+      </if>
+      <if test="width != null">
+        width,
+      </if>
+      <if test="height != null">
+        height,
+      </if>
+      <if test="updateDate != null">
+        update_date,
+      </if>
+      <if test="citeNum != null">
+        cite_num,
+      </if>
+      <if test="thumbPath != null">
+        thumb_path,
+      </if>
+      <if test="mediaType != null">
+        media_type,
+      </if>
+      <if test="fileKey != null">
+        file_key,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
-        #{id,jdbcType=INTEGER},
+        #{id,jdbcType=BIGINT},
       </if>
       <if test="bloggerId != null">
-        #{bloggerId,jdbcType=INTEGER},
+        #{bloggerId,jdbcType=BIGINT},
+      </if>
+      <if test="path != null">
+        #{path,jdbcType=VARCHAR},
       </if>
       <if test="title != null">
         #{title,jdbcType=VARCHAR},
@@ -160,8 +183,32 @@
       <if test="uploadDate != null">
         #{uploadDate,jdbcType=TIMESTAMP},
       </if>
-      <if test="bewrite != null">
-        #{bewrite,jdbcType=LONGVARCHAR},
+      <if test="suffx != null">
+        #{suffx,jdbcType=VARCHAR},
+      </if>
+      <if test="size != null">
+        #{size,jdbcType=BIGINT},
+      </if>
+      <if test="width != null">
+        #{width,jdbcType=INTEGER},
+      </if>
+      <if test="height != null">
+        #{height,jdbcType=INTEGER},
+      </if>
+      <if test="updateDate != null">
+        #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="citeNum != null">
+        #{citeNum,jdbcType=INTEGER},
+      </if>
+      <if test="thumbPath != null">
+        #{thumbPath,jdbcType=VARCHAR},
+      </if>
+      <if test="mediaType != null">
+        #{mediaType,jdbcType=VARCHAR},
+      </if>
+      <if test="fileKey != null">
+        #{fileKey,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -175,10 +222,13 @@
     update blogger_picture
     <set>
       <if test="record.id != null">
-        id = #{record.id,jdbcType=INTEGER},
+        id = #{record.id,jdbcType=BIGINT},
       </if>
       <if test="record.bloggerId != null">
-        blogger_id = #{record.bloggerId,jdbcType=INTEGER},
+        blogger_id = #{record.bloggerId,jdbcType=BIGINT},
+      </if>
+      <if test="record.path != null">
+        path = #{record.path,jdbcType=VARCHAR},
       </if>
       <if test="record.title != null">
         title = #{record.title,jdbcType=VARCHAR},
@@ -186,31 +236,54 @@
       <if test="record.uploadDate != null">
         upload_date = #{record.uploadDate,jdbcType=TIMESTAMP},
       </if>
-      <if test="record.bewrite != null">
-        bewrite = #{record.bewrite,jdbcType=LONGVARCHAR},
+      <if test="record.suffx != null">
+        suffx = #{record.suffx,jdbcType=VARCHAR},
+      </if>
+      <if test="record.size != null">
+        size = #{record.size,jdbcType=BIGINT},
+      </if>
+      <if test="record.width != null">
+        width = #{record.width,jdbcType=INTEGER},
+      </if>
+      <if test="record.height != null">
+        height = #{record.height,jdbcType=INTEGER},
+      </if>
+      <if test="record.updateDate != null">
+        update_date = #{record.updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.citeNum != null">
+        cite_num = #{record.citeNum,jdbcType=INTEGER},
+      </if>
+      <if test="record.thumbPath != null">
+        thumb_path = #{record.thumbPath,jdbcType=VARCHAR},
+      </if>
+      <if test="record.mediaType != null">
+        media_type = #{record.mediaType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.fileKey != null">
+        file_key = #{record.fileKey,jdbcType=VARCHAR},
       </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByExampleWithBLOBs" parameterType="map">
-    update blogger_picture
-    set id = #{record.id,jdbcType=INTEGER},
-      blogger_id = #{record.bloggerId,jdbcType=INTEGER},
-      title = #{record.title,jdbcType=VARCHAR},
-      upload_date = #{record.uploadDate,jdbcType=TIMESTAMP},
-      bewrite = #{record.bewrite,jdbcType=LONGVARCHAR}
-    <if test="_parameter != null">
-      <include refid="Update_By_Example_Where_Clause" />
-    </if>
-  </update>
   <update id="updateByExample" parameterType="map">
     update blogger_picture
-    set id = #{record.id,jdbcType=INTEGER},
-      blogger_id = #{record.bloggerId,jdbcType=INTEGER},
+    set id = #{record.id,jdbcType=BIGINT},
+      blogger_id = #{record.bloggerId,jdbcType=BIGINT},
+      path = #{record.path,jdbcType=VARCHAR},
       title = #{record.title,jdbcType=VARCHAR},
-      upload_date = #{record.uploadDate,jdbcType=TIMESTAMP}
+      upload_date = #{record.uploadDate,jdbcType=TIMESTAMP},
+      suffx = #{record.suffx,jdbcType=VARCHAR},
+      size = #{record.size,jdbcType=BIGINT},
+      width = #{record.width,jdbcType=INTEGER},
+      height = #{record.height,jdbcType=INTEGER},
+      update_date = #{record.updateDate,jdbcType=TIMESTAMP},
+      cite_num = #{record.citeNum,jdbcType=INTEGER},
+      thumb_path = #{record.thumbPath,jdbcType=VARCHAR},
+      media_type = #{record.mediaType,jdbcType=VARCHAR},
+      file_key = #{record.fileKey,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -219,7 +292,10 @@
     update blogger_picture
     <set>
       <if test="bloggerId != null">
-        blogger_id = #{bloggerId,jdbcType=INTEGER},
+        blogger_id = #{bloggerId,jdbcType=BIGINT},
+      </if>
+      <if test="path != null">
+        path = #{path,jdbcType=VARCHAR},
       </if>
       <if test="title != null">
         title = #{title,jdbcType=VARCHAR},
@@ -227,25 +303,51 @@
       <if test="uploadDate != null">
         upload_date = #{uploadDate,jdbcType=TIMESTAMP},
       </if>
-      <if test="bewrite != null">
-        bewrite = #{bewrite,jdbcType=LONGVARCHAR},
+      <if test="suffx != null">
+        suffx = #{suffx,jdbcType=VARCHAR},
+      </if>
+      <if test="size != null">
+        size = #{size,jdbcType=BIGINT},
+      </if>
+      <if test="width != null">
+        width = #{width,jdbcType=INTEGER},
+      </if>
+      <if test="height != null">
+        height = #{height,jdbcType=INTEGER},
+      </if>
+      <if test="updateDate != null">
+        update_date = #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="citeNum != null">
+        cite_num = #{citeNum,jdbcType=INTEGER},
+      </if>
+      <if test="thumbPath != null">
+        thumb_path = #{thumbPath,jdbcType=VARCHAR},
+      </if>
+      <if test="mediaType != null">
+        media_type = #{mediaType,jdbcType=VARCHAR},
+      </if>
+      <if test="fileKey != null">
+        file_key = #{fileKey,jdbcType=VARCHAR},
       </if>
     </set>
-    where id = #{id,jdbcType=INTEGER}
-  </update>
-  <update id="updateByPrimaryKeyWithBLOBs" parameterType="run.app.entity.model.BloggerPicture">
-    update blogger_picture
-    set blogger_id = #{bloggerId,jdbcType=INTEGER},
-      title = #{title,jdbcType=VARCHAR},
-      upload_date = #{uploadDate,jdbcType=TIMESTAMP},
-      bewrite = #{bewrite,jdbcType=LONGVARCHAR}
-    where id = #{id,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="run.app.entity.model.BloggerPicture">
     update blogger_picture
-    set blogger_id = #{bloggerId,jdbcType=INTEGER},
+    set blogger_id = #{bloggerId,jdbcType=BIGINT},
+      path = #{path,jdbcType=VARCHAR},
       title = #{title,jdbcType=VARCHAR},
-      upload_date = #{uploadDate,jdbcType=TIMESTAMP}
-    where id = #{id,jdbcType=INTEGER}
+      upload_date = #{uploadDate,jdbcType=TIMESTAMP},
+      suffx = #{suffx,jdbcType=VARCHAR},
+      size = #{size,jdbcType=BIGINT},
+      width = #{width,jdbcType=INTEGER},
+      height = #{height,jdbcType=INTEGER},
+      update_date = #{updateDate,jdbcType=TIMESTAMP},
+      cite_num = #{citeNum,jdbcType=INTEGER},
+      thumb_path = #{thumbPath,jdbcType=VARCHAR},
+      media_type = #{mediaType,jdbcType=VARCHAR},
+      file_key = #{fileKey,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

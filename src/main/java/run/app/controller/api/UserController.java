@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import run.app.entity.DTO.BaseResponse;
+import run.app.entity.DTO.ImageFile;
 import run.app.entity.DTO.UserDetail;
 import run.app.entity.VO.UserParams;
 import run.app.exception.BadRequestException;
@@ -65,42 +66,13 @@ public class UserController {
 
         UploadUtil instance = UploadUtil.getInstance();
 
-        String filename = instance.uploadFile(avatar).orElseThrow(()->new BadRequestException("用户更新头像失败"));
-
-
-
-//
-//        String property = System.getProperty("user.dir");
-//
-//
-//        String filePath = property + File.separator + "avatar";
-//
-//
-//        String trueFilename = UUID.randomUUID().toString();
-//
-//
-//        String filename = avatar.getOriginalFilename();
-//
-//        String type = filename.indexOf(".") != -1 ? filename.substring(filename.lastIndexOf(".")+1):null;
-//
-//        String trueFile = null == type ? filePath + File.separator + trueFilename :
-//                filePath + File.separator + trueFilename + "." + type;
-//
-//        try {
-//            avatar.transferTo(new File(trueFile));
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//            baseResponse.setStatus(HttpStatus.BAD_REQUEST.value());
-//            baseResponse.setMessage("图片上传失败");
-//            return baseResponse;
-//        }
+        ImageFile imageFile = instance.uploadFile(avatar).orElseThrow(()->new BadRequestException("用户更新头像失败"));
 
         String token = request.getHeader("Authentication");
 
-//保存到数据库
-        userService.uploadAvatarId(filename,token);
-
-        baseResponse.setData(filename);
+        //todo:保存到数据库
+        userService.uploadAvatarId(imageFile.getPath(),token);
+        baseResponse.setData(imageFile.getPath());
 
         return baseResponse;
     }

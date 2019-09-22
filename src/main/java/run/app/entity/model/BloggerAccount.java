@@ -3,7 +3,7 @@ package run.app.entity.model;
 import java.util.Date;
 
 public class BloggerAccount {
-    private Integer id;
+    private Long id;
 
     private String username;
 
@@ -11,11 +11,11 @@ public class BloggerAccount {
 
     private Date registerDate;
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

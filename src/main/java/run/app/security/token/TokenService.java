@@ -25,7 +25,7 @@ public interface TokenService {
     JWTVerifier getVerifierWithToken(String token);
 
 
-    int getUserIdWithToken(String token);
+    Long getUserIdWithToken(String token);
 
     void storage(String token,String username);
 

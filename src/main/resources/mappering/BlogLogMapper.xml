@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="run.app.mapper.BlogLogMapper">
   <resultMap id="BaseResultMap" type="run.app.entity.model.BlogLog">
-    <id column="id" jdbcType="INTEGER" property="id" />
+    <id column="id" jdbcType="BIGINT" property="id" />
     <result column="romoteIp" jdbcType="VARCHAR" property="romoteip" />
     <result column="username" jdbcType="VARCHAR" property="username" />
     <result column="romoteTime" jdbcType="TIMESTAMP" property="romotetime" />
@@ -83,15 +83,15 @@
       order by ${orderByClause}
     </if>
   </select>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from blog_log
-    where id = #{id,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from blog_log
-    where id = #{id,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
   </delete>
   <delete id="deleteByExample" parameterType="run.app.entity.model.BlogLogExample">
     delete from blog_log
@@ -102,7 +102,7 @@
   <insert id="insert" parameterType="run.app.entity.model.BlogLog">
     insert into blog_log (id, romoteIp, username, 
       romoteTime, operation)
-    values (#{id,jdbcType=INTEGER}, #{romoteip,jdbcType=VARCHAR}, #{username,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=BIGINT}, #{romoteip,jdbcType=VARCHAR}, #{username,jdbcType=VARCHAR}, 
       #{romotetime,jdbcType=TIMESTAMP}, #{operation,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="run.app.entity.model.BlogLog">
@@ -126,7 +126,7 @@
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
-        #{id,jdbcType=INTEGER},
+        #{id,jdbcType=BIGINT},
       </if>
       <if test="romoteip != null">
         #{romoteip,jdbcType=VARCHAR},
@@ -152,7 +152,7 @@
     update blog_log
     <set>
       <if test="record.id != null">
-        id = #{record.id,jdbcType=INTEGER},
+        id = #{record.id,jdbcType=BIGINT},
       </if>
       <if test="record.romoteip != null">
         romoteIp = #{record.romoteip,jdbcType=VARCHAR},
@@ -173,7 +173,7 @@
   </update>
   <update id="updateByExample" parameterType="map">
     update blog_log
-    set id = #{record.id,jdbcType=INTEGER},
+    set id = #{record.id,jdbcType=BIGINT},
       romoteIp = #{record.romoteip,jdbcType=VARCHAR},
       username = #{record.username,jdbcType=VARCHAR},
       romoteTime = #{record.romotetime,jdbcType=TIMESTAMP},
@@ -198,7 +198,7 @@
         operation = #{operation,jdbcType=VARCHAR},
       </if>
     </set>
-    where id = #{id,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="run.app.entity.model.BlogLog">
     update blog_log
@@ -206,6 +206,6 @@
       username = #{username,jdbcType=VARCHAR},
       romoteTime = #{romotetime,jdbcType=TIMESTAMP},
       operation = #{operation,jdbcType=VARCHAR}
-    where id = #{id,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

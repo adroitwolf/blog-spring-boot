@@ -20,6 +20,7 @@ public interface BlogTagMapMapper {
     List<Long> selectByExampleForTag(BlogTagMapExample example);
     List<Long> selectByExampleForBlogId(BlogTagMapExample example);
     /* 增加代码结束*/
+
     List<BlogTagMapKey> selectByExample(BlogTagMapExample example);
 
     int updateByExampleSelective(@Param("record") BlogTagMapKey record, @Param("example") BlogTagMapExample example);

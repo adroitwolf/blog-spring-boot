@@ -108,9 +108,9 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public int getUserIdWithToken(String token) {
+    public Long getUserIdWithToken(String token) {
 
-       return  JWT.decode(token).getClaim("userId").asInt();
+       return  JWT.decode(token).getClaim("userId").asLong();
 
     }
 
@@ -158,7 +158,7 @@ public class TokenServiceImpl implements TokenService {
     {
         Optional<String> username = redisUtil.get(token);
 
-       Integer id = accountService.findBloggerIdByUsername(username.get());
+       Long id = accountService.findBloggerIdByUsername(username.get());
 
        if(id.equals(-1)){
            throw new UnAuthenticationException("用户信息异常！请联系管理员处理");

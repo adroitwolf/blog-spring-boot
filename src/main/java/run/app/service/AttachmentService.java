@@ -12,13 +12,13 @@ import run.app.entity.DTO.DataGrid;
  */
 public interface AttachmentService {
 
-    String selectPicById(Integer id);
+    String selectPicById(Long id);
 
     DataGrid getAttachmentList(int pageSize,int pageNum,String token);
 
     BaseResponse uploadFile(MultipartFile file,String token);
 
-    int getIdByTitle(String title);
+    Long getIdByTitle(String title);
 
 
 }

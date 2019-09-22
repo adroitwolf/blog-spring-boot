@@ -10,7 +10,7 @@ public interface BloggerAccountMapper {
 
     int deleteByExample(BloggerAccountExample example);
 
-    int deleteByPrimaryKey(Integer id);
+    int deleteByPrimaryKey(Long id);
 
     int insert(BloggerAccount record);
 
@@ -18,7 +18,7 @@ public interface BloggerAccountMapper {
 
     List<BloggerAccount> selectByExample(BloggerAccountExample example);
 
-    BloggerAccount selectByPrimaryKey(Integer id);
+    BloggerAccount selectByPrimaryKey(Long id);
 
     int updateByExampleSelective(@Param("record") BloggerAccount record, @Param("example") BloggerAccountExample example);
 

@@ -1,7 +1,7 @@
 package run.app.entity.model;
 
 public class BloggerProfile {
-    private Integer bloggerId;
+    private Long bloggerId;
 
     private String phone;
 
@@ -9,11 +9,11 @@ public class BloggerProfile {
 
     private String avatarId;
 
-    public Integer getBloggerId() {
+    public Long getBloggerId() {
         return bloggerId;
     }
 
-    public void setBloggerId(Integer bloggerId) {
+    public void setBloggerId(Long bloggerId) {
         this.bloggerId = bloggerId;
     }
 

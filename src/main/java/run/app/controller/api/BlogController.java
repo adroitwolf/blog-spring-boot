@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.*;
 import run.app.entity.DTO.BaseResponse;
 import run.app.entity.DTO.BlogDetail;
 import run.app.entity.DTO.DataGrid;
-import run.app.entity.params.ArticleParams;
-import run.app.entity.params.PostQueryParams;
+import run.app.entity.VO.ArticleParams;
+import run.app.entity.VO.PostQueryParams;
 import run.app.security.log.MethodLog;
 import run.app.service.ArticleService;
 

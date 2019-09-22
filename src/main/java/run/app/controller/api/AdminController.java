@@ -5,9 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import run.app.entity.DTO.BaseResponse;
-import run.app.entity.params.LoginParams;
-import run.app.entity.params.PasswordParams;
-import run.app.entity.params.RegisterParams;
+import run.app.entity.VO.LoginParams;
+import run.app.entity.VO.PasswordParams;
+import run.app.entity.VO.RegisterParams;
 import run.app.security.log.MethodLog;
 import run.app.service.AccountService;
 

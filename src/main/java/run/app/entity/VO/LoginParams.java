@@ -1,4 +1,4 @@
-package run.app.entity.params;
+package run.app.entity.VO;
 
 import lombok.Data;
 import lombok.ToString;

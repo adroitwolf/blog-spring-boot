@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
+import run.app.entity.DTO.ImageFile;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,7 +43,10 @@ public class UploadUtil {
         this.imgPath = imgPath;
     }
 
-    public Optional<String> uploadFile(MultipartFile file){
+    public Optional<ImageFile> uploadFile(MultipartFile file){
+
+
+        ImageFile imageFile = new ImageFile();
 
 
         String originFilename = file.getOriginalFilename();
@@ -61,7 +65,10 @@ public class UploadUtil {
             e.printStackTrace();
             return  Optional.ofNullable(null);
         }
-        return  Optional.ofNullable(filename  + (null == type ? "" :("."+ type)));
+
+        imageFile.setFileName(filename  + (null == type ? "" :("."+ type)));
+
+        return  Optional.ofNullable();
     }
 
 

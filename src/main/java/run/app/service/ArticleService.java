@@ -1,11 +1,10 @@
 package run.app.service;
 
-import io.swagger.models.auth.In;
 import lombok.NonNull;
 import run.app.entity.DTO.BlogDetail;
 import run.app.entity.DTO.DataGrid;
-import run.app.entity.params.ArticleParams;
-import run.app.entity.params.PostQueryParams;
+import run.app.entity.VO.ArticleParams;
+import run.app.entity.VO.PostQueryParams;
 
 /**
  * Created with IntelliJ IDEA.

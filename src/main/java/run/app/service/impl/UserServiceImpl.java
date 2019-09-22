@@ -1,7 +1,5 @@
 package run.app.service.impl;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.interfaces.Claim;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -10,23 +8,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import run.app.entity.DTO.UserDetail;
 import run.app.entity.model.*;
-import run.app.entity.params.LoginParams;
-import run.app.entity.params.UserParams;
-import run.app.exception.BadRequestException;
-import run.app.exception.ServiceException;
-import run.app.mapper.BloggerAccountMapper;
+import run.app.entity.VO.UserParams;
 import run.app.mapper.BloggerProfileMapper;
-import run.app.security.token.AuthToken;
 import run.app.security.token.TokenService;
 import run.app.service.UserService;
-import run.app.util.RedisUtil;
 import run.app.util.UploadUtil;
-
-import java.io.File;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created with IntelliJ IDEA.

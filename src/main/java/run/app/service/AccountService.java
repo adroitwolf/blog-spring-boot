@@ -2,8 +2,8 @@ package run.app.service;
 
 import lombok.NonNull;
 import run.app.entity.DTO.BaseResponse;
-import run.app.entity.params.LoginParams;
-import run.app.entity.params.RegisterParams;
+import run.app.entity.VO.LoginParams;
+import run.app.entity.VO.RegisterParams;
 
 import java.util.Optional;
 

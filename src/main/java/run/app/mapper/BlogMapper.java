@@ -4,7 +4,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 import run.app.entity.model.Blog;
 import run.app.entity.model.BlogExample;
-import run.app.entity.params.PostQueryParams;
+import run.app.entity.VO.PostQueryParams;
 
 public interface BlogMapper {
     long countByExample(BlogExample example);

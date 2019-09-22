@@ -8,21 +8,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import run.app.entity.DTO.BaseResponse;
 import run.app.entity.DTO.UserDetail;
-import run.app.entity.params.LoginParams;
-import run.app.entity.params.PasswordParams;
-import run.app.entity.params.UserParams;
+import run.app.entity.VO.UserParams;
 import run.app.exception.BadRequestException;
 import run.app.security.log.MethodLog;
-import run.app.security.token.AuthToken;
 import run.app.service.UserService;
 import run.app.util.UploadUtil;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.io.File;
-import java.io.IOException;
-import java.util.Optional;
-import java.util.UUID;
 
 /**
  * Created with IntelliJ IDEA.

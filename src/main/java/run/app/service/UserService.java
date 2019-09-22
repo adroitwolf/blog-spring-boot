@@ -3,15 +3,8 @@ package run.app.service;
 
 import lombok.NonNull;
 import run.app.entity.DTO.UserDetail;
-import run.app.entity.model.BloggerAccount;
-import run.app.entity.model.BloggerProfile;
 import run.app.entity.model.BloggerProfileWithBLOBs;
-import run.app.entity.params.LoginParams;
-import run.app.entity.params.UserParams;
-import run.app.security.token.AuthToken;
-
-import java.util.List;
-import java.util.Optional;
+import run.app.entity.VO.UserParams;
 
 /**
  * Created with IntelliJ IDEA.

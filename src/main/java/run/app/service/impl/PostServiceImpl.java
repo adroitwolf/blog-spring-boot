@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import run.app.entity.DTO.BlogDetailWithAuthor;
 import run.app.entity.DTO.DataGrid;
 import run.app.entity.model.*;
-import run.app.entity.params.PostQueryParams;
+import run.app.entity.VO.PostQueryParams;
 import run.app.mapper.*;
 import run.app.service.AttachmentService;
 import run.app.service.PostService;

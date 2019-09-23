@@ -32,10 +32,6 @@ public class UserServiceImpl implements UserService {
     TokenService tokenService;
 
 
-
-
-
-
     @Override
     public @NonNull BloggerProfileWithBLOBs findUserDetailByBloggerId(@NonNull Long bloggerId) {
 
@@ -45,7 +41,6 @@ public class UserServiceImpl implements UserService {
 //        criteria.andBloggerIdEqualTo(bloggerId);
 //
 //        List<BloggerProfileWithBLOBs> bloggerProfileWithBLOBs = bloggerProfileMapper.selectByExampleWithBLOBs(bloggerProfileExample);
-
 
 
 //        for (BloggerProfileWithBLOBs bloggerProfile: bloggerProfileWithBLOBs) {
@@ -70,10 +65,9 @@ public class UserServiceImpl implements UserService {
 //        criteria.andBloggerIdEqualTo(userId);
 
 //    这个才是昵称
+        bloggerProfileWithBLOBs.setBloggerId(userId);
         bloggerProfileWithBLOBs.setIntro(userParams.getUsername());
-
         bloggerProfileWithBLOBs.setAboutMe(userParams.getAboutMe());
-
         bloggerProfileWithBLOBs.setPhone(userParams.getPhone());
         bloggerProfileWithBLOBs.setEmail(userParams.getEmail());
 
@@ -135,9 +129,9 @@ public class UserServiceImpl implements UserService {
 
         BloggerProfileWithBLOBs bloggerProfileWithBLOBs = bloggerProfileMapper.selectByPrimaryKey(id);
 
-        if(!StringUtils.isBlank(bloggerProfileWithBLOBs.getAvatarId())){
-                UploadUtil instance = UploadUtil.getInstance();
-                instance.delFile(bloggerProfileWithBLOBs.getAvatarId());
+        if (!StringUtils.isBlank(bloggerProfileWithBLOBs.getAvatarId())) {
+            UploadUtil instance = UploadUtil.getInstance();
+            instance.delFile(bloggerProfileWithBLOBs.getAvatarId());
         }
 
 
@@ -152,8 +146,6 @@ public class UserServiceImpl implements UserService {
 //        bloggerProfileWithBLOBs.setAvatarId(avatar);
 //        bloggerProfileMapper.updateByExampleSelective(bloggerProfileWithBLOBs,bloggerProfileExample);
     }
-
-
 
 
 //    @Override

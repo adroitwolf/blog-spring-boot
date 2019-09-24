@@ -33,7 +33,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public @NonNull BloggerProfileWithBLOBs findUserDetailByBloggerId(@NonNull Long bloggerId) {
+    public @NonNull BloggerProfile findUserDetailByBloggerId(@NonNull Long bloggerId) {
 
 //        BloggerProfileExample bloggerProfileExample = new BloggerProfileExample();
 //        BloggerProfileExample.Criteria criteria = bloggerProfileExample.createCriteria();
@@ -56,7 +56,7 @@ public class UserServiceImpl implements UserService {
 
 //        Integer userId = getUserIdByToken(token);
         Long userId = tokenService.getUserIdWithToken(token);
-        BloggerProfileWithBLOBs bloggerProfileWithBLOBs = new BloggerProfileWithBLOBs();
+        BloggerProfile bloggerProfile = new BloggerProfile();
 
 //        BloggerProfileExample bloggerProfileExample = new BloggerProfileExample();
 //
@@ -65,25 +65,18 @@ public class UserServiceImpl implements UserService {
 //        criteria.andBloggerIdEqualTo(userId);
 
 //    这个才是昵称
-        bloggerProfileWithBLOBs.setBloggerId(userId);
-        bloggerProfileWithBLOBs.setIntro(userParams.getUsername());
-        bloggerProfileWithBLOBs.setAboutMe(userParams.getAboutMe());
-        bloggerProfileWithBLOBs.setPhone(userParams.getPhone());
-        bloggerProfileWithBLOBs.setEmail(userParams.getEmail());
-
-
+        bloggerProfile.setBloggerId(userId);
+        bloggerProfile.setNickname(userParams.getUsername());
+        bloggerProfile.setAboutMe(userParams.getAboutMe());
 //        bloggerProfileMapper.updateByExampleSelective(bloggerProfileWithBLOBs,bloggerProfileExample);
 
 
-        bloggerProfileMapper.updateByPrimaryKeySelective(bloggerProfileWithBLOBs);
+        bloggerProfileMapper.updateByPrimaryKeySelective(bloggerProfile);
 
         UserDetail userDetail = new UserDetail();
 
-        userDetail.setAboutMe(bloggerProfileWithBLOBs.getAboutMe());
-        userDetail.setUsername(bloggerProfileWithBLOBs.getIntro());
-
-        userDetail.setPhone(bloggerProfileWithBLOBs.getPhone());
-        userDetail.setEmail(bloggerProfileWithBLOBs.getEmail());
+        userDetail.setAboutMe(bloggerProfile.getAboutMe());
+        userDetail.setUsername(bloggerProfile.getNickname());
 
         return userDetail;
     }
@@ -92,14 +85,12 @@ public class UserServiceImpl implements UserService {
     public UserDetail getUserDetailByToken(@NonNull String token) {
         Long id = tokenService.getUserIdWithToken(token);
 
-        @NonNull BloggerProfileWithBLOBs bloggerProfile = findUserDetailByBloggerId(id);
+        @NonNull BloggerProfile bloggerProfile = findUserDetailByBloggerId(id);
 
 
         UserDetail userDetail = new UserDetail();
         userDetail.setAvatarId(bloggerProfile.getAvatarId());
-        userDetail.setUsername(bloggerProfile.getIntro());
-        userDetail.setEmail(bloggerProfile.getEmail());
-        userDetail.setPhone(bloggerProfile.getPhone());
+        userDetail.setUsername(bloggerProfile.getNickname());
         userDetail.setAboutMe(bloggerProfile.getAboutMe());
 
         return userDetail;
@@ -127,15 +118,15 @@ public class UserServiceImpl implements UserService {
 //            }
 //        });
 
-        BloggerProfileWithBLOBs bloggerProfileWithBLOBs = bloggerProfileMapper.selectByPrimaryKey(id);
+        BloggerProfile bloggerProfile = bloggerProfileMapper.selectByPrimaryKey(id);
 
-        if (!StringUtils.isBlank(bloggerProfileWithBLOBs.getAvatarId())) {
+        if (!StringUtils.isBlank(bloggerProfile.getAvatarId())) {
             UploadUtil instance = UploadUtil.getInstance();
-            instance.delFile(bloggerProfileWithBLOBs.getAvatarId());
+            instance.delFile(bloggerProfile.getAvatarId());
         }
 
 
-        BloggerProfileWithBLOBs profile = new BloggerProfileWithBLOBs();
+        BloggerProfile profile = new BloggerProfile();
         profile.setBloggerId(id);
         profile.setAvatarId(avatar);
         bloggerProfileMapper.updateByPrimaryKeySelective(profile);

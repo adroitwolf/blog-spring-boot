@@ -16,5 +16,4 @@ public interface BloggerAccountMapper extends BaseMapper<BloggerAccount,Long> {
 
     int updateByExample(@Param("record") BloggerAccount record, @Param("example") BloggerAccountExample example);
 
-
 }

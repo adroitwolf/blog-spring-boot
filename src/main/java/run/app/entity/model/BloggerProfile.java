@@ -3,9 +3,9 @@ package run.app.entity.model;
 public class BloggerProfile {
     private Long bloggerId;
 
-    private String phone;
+    private String aboutMe;
 
-    private String email;
+    private String nickname;
 
     private String avatarId;
 
@@ -17,20 +17,20 @@ public class BloggerProfile {
         this.bloggerId = bloggerId;
     }
 
-    public String getPhone() {
-        return phone;
+    public String getAboutMe() {
+        return aboutMe;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone == null ? null : phone.trim();
+    public void setAboutMe(String aboutMe) {
+        this.aboutMe = aboutMe == null ? null : aboutMe.trim();
     }
 
-    public String getEmail() {
-        return email;
+    public String getNickname() {
+        return nickname;
     }
 
-    public void setEmail(String email) {
-        this.email = email == null ? null : email.trim();
+    public void setNickname(String nickname) {
+        this.nickname = nickname == null ? null : nickname.trim();
     }
 
     public String getAvatarId() {

@@ -15,19 +15,17 @@ import org.springframework.util.DigestUtils;
 import run.app.config.properties.JWTProperties;
 import run.app.entity.DTO.UserDetail;
 import run.app.entity.model.BloggerAccount;
-import run.app.entity.model.BloggerProfileWithBLOBs;
+import run.app.entity.model.BloggerProfile;
 import run.app.exception.ServiceException;
 import run.app.exception.UnAuthenticationException;
 import run.app.security.token.AuthToken;
 import run.app.security.token.TokenService;
 import run.app.service.AccountService;
 import run.app.service.UserService;
-import run.app.util.AppUtil;
 import run.app.util.RedisUtil;
 
 import java.util.Date;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -164,7 +162,7 @@ public class TokenServiceImpl implements TokenService {
            throw new UnAuthenticationException("用户信息异常！请联系管理员处理");
        }
 
-        @NonNull BloggerProfileWithBLOBs bloggerProfile = userService.findUserDetailByBloggerId(id);
+        @NonNull BloggerProfile bloggerProfile = userService.findUserDetailByBloggerId(id);
 
         if(bloggerProfile.equals(null)){
            throw new UnAuthenticationException("用户信息异常！请联系管理员处理");
@@ -172,12 +170,8 @@ public class TokenServiceImpl implements TokenService {
 
         UserDetail userDetail = new UserDetail();
        userDetail.setAvatarId(bloggerProfile.getAvatarId());
-       userDetail.setUsername(bloggerProfile.getIntro());
-       userDetail.setEmail(bloggerProfile.getEmail());
-       userDetail.setPhone(bloggerProfile.getPhone());
+       userDetail.setUsername(bloggerProfile.getNickname());
         userDetail.setAboutMe(bloggerProfile.getAboutMe());
-
-
         return userDetail;
     }
 

@@ -3,7 +3,7 @@ package run.app.service;
 
 import lombok.NonNull;
 import run.app.entity.DTO.UserDetail;
-import run.app.entity.model.BloggerProfileWithBLOBs;
+import run.app.entity.model.BloggerProfile;
 import run.app.entity.VO.UserParams;
 
 /**
@@ -18,7 +18,7 @@ public interface UserService {
 
 
      @NonNull
-     BloggerProfileWithBLOBs findUserDetailByBloggerId(@NonNull Long bloggerId);
+     BloggerProfile findUserDetailByBloggerId(@NonNull Long bloggerId);
 
 
      @NonNull UserDetail updateProfileById(@NonNull UserParams userParams,@NonNull String token);

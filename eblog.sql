@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50634
 File Encoding         : 65001
 
-Date: 2019-09-22 20:43:18
+Date: 2019-09-24 23:29:11
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -38,10 +38,12 @@ CREATE TABLE `blog` (
 -- ----------------------------
 DROP TABLE IF EXISTS `blogger_account`;
 CREATE TABLE `blogger_account` (
-  `id` bigint(20) unsigned NOT NULL COMMENT '????id',
-  `username` varchar(50) NOT NULL COMMENT '?????û???',
-  `password` varchar(100) NOT NULL COMMENT '???????',
-  `register_date` datetime NOT NULL COMMENT 'ע??ʱ?',
+  `id` bigint(20) unsigned NOT NULL COMMENT '用户id',
+  `username` varchar(50) NOT NULL COMMENT '用户账号',
+  `password` varchar(100) NOT NULL COMMENT '用户密码',
+  `register_date` datetime NOT NULL COMMENT '注册日期',
+  `phone` varchar(20) DEFAULT NULL COMMENT '手机号',
+  `email` varchar(50) DEFAULT NULL COMMENT '邮箱',
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -66,8 +68,7 @@ CREATE TABLE `blogger_picture` (
   `media_type` varchar(50) NOT NULL COMMENT '媒体类型',
   `file_key` varchar(200) NOT NULL COMMENT '物理磁盘的名称',
   PRIMARY KEY (`id`),
-  KEY `blogger_id` (`blogger_id`),
-  CONSTRAINT `blogger_id` FOREIGN KEY (`blogger_id`) REFERENCES `blogger_account` (`id`)
+  KEY `blogger_id` (`blogger_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=373248458343055361 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
@@ -75,17 +76,11 @@ CREATE TABLE `blogger_picture` (
 -- ----------------------------
 DROP TABLE IF EXISTS `blogger_profile`;
 CREATE TABLE `blogger_profile` (
-  `blogger_id` bigint(20) unsigned NOT NULL COMMENT '????id',
-  `phone` varchar(20) DEFAULT NULL COMMENT '?绰',
-  `email` varchar(50) DEFAULT NULL COMMENT '???',
-  `about_me` text COMMENT '?????',
-  `intro` text NOT NULL COMMENT 'һ?仰?',
-  `avatar_id` varchar(255) DEFAULT NULL COMMENT '????ͷ?',
-  PRIMARY KEY (`blogger_id`),
-  UNIQUE KEY `blogger_id` (`blogger_id`),
-  UNIQUE KEY `phone` (`phone`),
-  KEY `avatar_id` (`avatar_id`),
-  CONSTRAINT `blogger_profile_ibfk_2` FOREIGN KEY (`blogger_id`) REFERENCES `blogger_account` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  `blogger_id` bigint(20) unsigned NOT NULL COMMENT '用户id',
+  `about_me` varchar(1024) DEFAULT NULL COMMENT '个人介绍',
+  `nickname` varchar(20) NOT NULL COMMENT '用户名',
+  `avatar_id` varchar(255) DEFAULT NULL COMMENT '用户头像',
+  PRIMARY KEY (`blogger_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
@@ -123,8 +118,7 @@ CREATE TABLE `blog_log` (
   `romoteTime` datetime NOT NULL,
   `operation` varchar(255) DEFAULT NULL COMMENT '?û?????',
   PRIMARY KEY (`id`),
-  KEY `userId` (`username`),
-  CONSTRAINT `userId` FOREIGN KEY (`username`) REFERENCES `blogger_account` (`username`)
+  KEY `userId` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------

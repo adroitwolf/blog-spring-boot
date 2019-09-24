@@ -158,7 +158,7 @@ public class PostServiceImpl implements PostService {
 
         BlogContent blogContent = blogContentMapper.selectByPrimaryKey(blogId);
 
-        BloggerProfileWithBLOBs bloggerProfileWithBLOBs = bloggerProfileMapper.selectByPrimaryKey(blog.getBloggerId());
+        BloggerProfile bloggerProfile = bloggerProfileMapper.selectByPrimaryKey(blog.getBloggerId());
 
 
         //todo: tags
@@ -175,7 +175,7 @@ public class PostServiceImpl implements PostService {
         }
 
 
-        BlogDetailWithAuthor blogDetailWithAuthor = new BlogDetailWithAuthor(blogId,blog.getTitle(),blog.getSummary(),blog.getReleaseDate(),nowTagsId,blogContent.getContent(),pic,bloggerProfileWithBLOBs.getIntro(),bloggerProfileWithBLOBs.getAvatarId());
+        BlogDetailWithAuthor blogDetailWithAuthor = new BlogDetailWithAuthor(blogId,blog.getTitle(),blog.getSummary(),blog.getReleaseDate(),nowTagsId,blogContent.getContent(),pic,bloggerProfile.getNickname(),bloggerProfile.getAvatarId());
 
 
         return blogDetailWithAuthor;

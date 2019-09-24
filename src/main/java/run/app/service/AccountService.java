@@ -4,6 +4,7 @@ import lombok.NonNull;
 import run.app.entity.DTO.BaseResponse;
 import run.app.entity.VO.LoginParams;
 import run.app.entity.VO.RegisterParams;
+import run.app.entity.model.BloggerAccount;
 
 import java.util.Optional;
 
@@ -30,5 +31,11 @@ public interface AccountService {
 
 
     BaseResponse registerUser(@NonNull RegisterParams registerParams);
+
+
+    BloggerAccount loginWithEmail(String email);
+
+
+    BloggerAccount loginWithUsername(String username);
 
 }

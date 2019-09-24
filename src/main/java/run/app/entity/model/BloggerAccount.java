@@ -1,7 +1,10 @@
 package run.app.entity.model;
 
+import lombok.ToString;
+
 import java.util.Date;
 
+@ToString
 public class BloggerAccount {
     private Long id;
 
@@ -10,6 +13,10 @@ public class BloggerAccount {
     private String password;
 
     private Date registerDate;
+
+    private String phone;
+
+    private String email;
 
     public Long getId() {
         return id;
@@ -41,5 +48,21 @@ public class BloggerAccount {
 
     public void setRegisterDate(Date registerDate) {
         this.registerDate = registerDate;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone == null ? null : phone.trim();
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email == null ? null : email.trim();
     }
 }

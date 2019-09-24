@@ -6,6 +6,8 @@
     <result column="username" jdbcType="VARCHAR" property="username" />
     <result column="password" jdbcType="VARCHAR" property="password" />
     <result column="register_date" jdbcType="TIMESTAMP" property="registerDate" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -66,7 +68,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, username, password, register_date
+    id, username, password, register_date, phone, email
   </sql>
   <select id="selectByExample" parameterType="run.app.entity.model.BloggerAccountExample" resultMap="BaseResultMap">
     select
@@ -100,9 +102,11 @@
   </delete>
   <insert id="insert" parameterType="run.app.entity.model.BloggerAccount">
     insert into blogger_account (id, username, password, 
-      register_date)
+      register_date, phone, email
+      )
     values (#{id,jdbcType=BIGINT}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
-      #{registerDate,jdbcType=TIMESTAMP})
+      #{registerDate,jdbcType=TIMESTAMP}, #{phone,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="run.app.entity.model.BloggerAccount">
     insert into blogger_account
@@ -119,6 +123,12 @@
       <if test="registerDate != null">
         register_date,
       </if>
+      <if test="phone != null">
+        phone,
+      </if>
+      <if test="email != null">
+        email,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -132,6 +142,12 @@
       </if>
       <if test="registerDate != null">
         #{registerDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="phone != null">
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null">
+        #{email,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -156,6 +172,12 @@
       <if test="record.registerDate != null">
         register_date = #{record.registerDate,jdbcType=TIMESTAMP},
       </if>
+      <if test="record.phone != null">
+        phone = #{record.phone,jdbcType=VARCHAR},
+      </if>
+      <if test="record.email != null">
+        email = #{record.email,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -166,7 +188,9 @@
     set id = #{record.id,jdbcType=BIGINT},
       username = #{record.username,jdbcType=VARCHAR},
       password = #{record.password,jdbcType=VARCHAR},
-      register_date = #{record.registerDate,jdbcType=TIMESTAMP}
+      register_date = #{record.registerDate,jdbcType=TIMESTAMP},
+      phone = #{record.phone,jdbcType=VARCHAR},
+      email = #{record.email,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -183,6 +207,12 @@
       <if test="registerDate != null">
         register_date = #{registerDate,jdbcType=TIMESTAMP},
       </if>
+      <if test="phone != null">
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null">
+        email = #{email,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -190,7 +220,9 @@
     update blogger_account
     set username = #{username,jdbcType=VARCHAR},
       password = #{password,jdbcType=VARCHAR},
-      register_date = #{registerDate,jdbcType=TIMESTAMP}
+      register_date = #{registerDate,jdbcType=TIMESTAMP},
+      phone = #{phone,jdbcType=VARCHAR},
+      email = #{email,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

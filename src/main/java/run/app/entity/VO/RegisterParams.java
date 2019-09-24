@@ -3,6 +3,7 @@ package run.app.entity.VO;
 import lombok.Data;
 import lombok.ToString;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
@@ -25,4 +26,17 @@ public class RegisterParams {
     private String password;
 
     private String username;
+
+
+    @NotBlank(message = "手机号不能为空！")
+    @Size(max = 11,message = "手机号位数不正确")
+    private String phone;
+
+    @Email(message = "电子邮件格式不正确")
+    @NotBlank(message = "邮箱不能为空！")
+    @Size(max = 127,message = "邮箱长度不能超过{max}")
+    private String email;
+
+
+
 }

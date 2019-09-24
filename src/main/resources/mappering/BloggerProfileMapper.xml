@@ -3,13 +3,9 @@
 <mapper namespace="run.app.mapper.BloggerProfileMapper">
   <resultMap id="BaseResultMap" type="run.app.entity.model.BloggerProfile">
     <id column="blogger_id" jdbcType="BIGINT" property="bloggerId" />
-    <result column="phone" jdbcType="VARCHAR" property="phone" />
-    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="about_me" jdbcType="VARCHAR" property="aboutMe" />
+    <result column="nickname" jdbcType="VARCHAR" property="nickname" />
     <result column="avatar_id" jdbcType="VARCHAR" property="avatarId" />
-  </resultMap>
-  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="run.app.entity.model.BloggerProfileWithBLOBs">
-    <result column="about_me" jdbcType="LONGVARCHAR" property="aboutMe" />
-    <result column="intro" jdbcType="LONGVARCHAR" property="intro" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -70,27 +66,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    blogger_id, phone, email, avatar_id
+    blogger_id, about_me, nickname, avatar_id
   </sql>
-  <sql id="Blob_Column_List">
-    about_me, intro
-  </sql>
-  <select id="selectByExampleWithBLOBs" parameterType="run.app.entity.model.BloggerProfileExample" resultMap="ResultMapWithBLOBs">
-    select
-    <if test="distinct">
-      distinct
-    </if>
-    <include refid="Base_Column_List" />
-    ,
-    <include refid="Blob_Column_List" />
-    from blogger_profile
-    <if test="_parameter != null">
-      <include refid="Example_Where_Clause" />
-    </if>
-    <if test="orderByClause != null">
-      order by ${orderByClause}
-    </if>
-  </select>
   <select id="selectByExample" parameterType="run.app.entity.model.BloggerProfileExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
@@ -105,11 +82,9 @@
       order by ${orderByClause}
     </if>
   </select>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    ,
-    <include refid="Blob_Column_List" />
     from blogger_profile
     where blogger_id = #{bloggerId,jdbcType=BIGINT}
   </select>
@@ -123,54 +98,40 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="run.app.entity.model.BloggerProfileWithBLOBs">
-    insert into blogger_profile (blogger_id, phone, email, 
-      avatar_id, about_me, intro
-      )
-    values (#{bloggerId,jdbcType=BIGINT}, #{phone,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, 
-      #{avatarId,jdbcType=VARCHAR}, #{aboutMe,jdbcType=LONGVARCHAR}, #{intro,jdbcType=LONGVARCHAR}
-      )
+  <insert id="insert" parameterType="run.app.entity.model.BloggerProfile">
+    insert into blogger_profile (blogger_id, about_me, nickname, 
+      avatar_id)
+    values (#{bloggerId,jdbcType=BIGINT}, #{aboutMe,jdbcType=VARCHAR}, #{nickname,jdbcType=VARCHAR}, 
+      #{avatarId,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="run.app.entity.model.BloggerProfileWithBLOBs">
+  <insert id="insertSelective" parameterType="run.app.entity.model.BloggerProfile">
     insert into blogger_profile
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="bloggerId != null">
         blogger_id,
       </if>
-      <if test="phone != null">
-        phone,
-      </if>
-      <if test="email != null">
-        email,
-      </if>
-      <if test="avatarId != null">
-        avatar_id,
-      </if>
       <if test="aboutMe != null">
         about_me,
       </if>
-      <if test="intro != null">
-        intro,
+      <if test="nickname != null">
+        nickname,
+      </if>
+      <if test="avatarId != null">
+        avatar_id,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="bloggerId != null">
         #{bloggerId,jdbcType=BIGINT},
       </if>
-      <if test="phone != null">
-        #{phone,jdbcType=VARCHAR},
+      <if test="aboutMe != null">
+        #{aboutMe,jdbcType=VARCHAR},
       </if>
-      <if test="email != null">
-        #{email,jdbcType=VARCHAR},
+      <if test="nickname != null">
+        #{nickname,jdbcType=VARCHAR},
       </if>
       <if test="avatarId != null">
         #{avatarId,jdbcType=VARCHAR},
-      </if>
-      <if test="aboutMe != null">
-        #{aboutMe,jdbcType=LONGVARCHAR},
-      </if>
-      <if test="intro != null">
-        #{intro,jdbcType=LONGVARCHAR},
       </if>
     </trim>
   </insert>
@@ -186,34 +147,16 @@
       <if test="record.bloggerId != null">
         blogger_id = #{record.bloggerId,jdbcType=BIGINT},
       </if>
-      <if test="record.phone != null">
-        phone = #{record.phone,jdbcType=VARCHAR},
+      <if test="record.aboutMe != null">
+        about_me = #{record.aboutMe,jdbcType=VARCHAR},
       </if>
-      <if test="record.email != null">
-        email = #{record.email,jdbcType=VARCHAR},
+      <if test="record.nickname != null">
+        nickname = #{record.nickname,jdbcType=VARCHAR},
       </if>
       <if test="record.avatarId != null">
         avatar_id = #{record.avatarId,jdbcType=VARCHAR},
       </if>
-      <if test="record.aboutMe != null">
-        about_me = #{record.aboutMe,jdbcType=LONGVARCHAR},
-      </if>
-      <if test="record.intro != null">
-        intro = #{record.intro,jdbcType=LONGVARCHAR},
-      </if>
     </set>
-    <if test="_parameter != null">
-      <include refid="Update_By_Example_Where_Clause" />
-    </if>
-  </update>
-  <update id="updateByExampleWithBLOBs" parameterType="map">
-    update blogger_profile
-    set blogger_id = #{record.bloggerId,jdbcType=BIGINT},
-      phone = #{record.phone,jdbcType=VARCHAR},
-      email = #{record.email,jdbcType=VARCHAR},
-      avatar_id = #{record.avatarId,jdbcType=VARCHAR},
-      about_me = #{record.aboutMe,jdbcType=LONGVARCHAR},
-      intro = #{record.intro,jdbcType=LONGVARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -221,47 +164,32 @@
   <update id="updateByExample" parameterType="map">
     update blogger_profile
     set blogger_id = #{record.bloggerId,jdbcType=BIGINT},
-      phone = #{record.phone,jdbcType=VARCHAR},
-      email = #{record.email,jdbcType=VARCHAR},
+      about_me = #{record.aboutMe,jdbcType=VARCHAR},
+      nickname = #{record.nickname,jdbcType=VARCHAR},
       avatar_id = #{record.avatarId,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="run.app.entity.model.BloggerProfileWithBLOBs">
+  <update id="updateByPrimaryKeySelective" parameterType="run.app.entity.model.BloggerProfile">
     update blogger_profile
     <set>
-      <if test="phone != null">
-        phone = #{phone,jdbcType=VARCHAR},
+      <if test="aboutMe != null">
+        about_me = #{aboutMe,jdbcType=VARCHAR},
       </if>
-      <if test="email != null">
-        email = #{email,jdbcType=VARCHAR},
+      <if test="nickname != null">
+        nickname = #{nickname,jdbcType=VARCHAR},
       </if>
       <if test="avatarId != null">
         avatar_id = #{avatarId,jdbcType=VARCHAR},
       </if>
-      <if test="aboutMe != null">
-        about_me = #{aboutMe,jdbcType=LONGVARCHAR},
-      </if>
-      <if test="intro != null">
-        intro = #{intro,jdbcType=LONGVARCHAR},
-      </if>
     </set>
-    where blogger_id = #{bloggerId,jdbcType=BIGINT}
-  </update>
-  <update id="updateByPrimaryKeyWithBLOBs" parameterType="run.app.entity.model.BloggerProfileWithBLOBs">
-    update blogger_profile
-    set phone = #{phone,jdbcType=VARCHAR},
-      email = #{email,jdbcType=VARCHAR},
-      avatar_id = #{avatarId,jdbcType=VARCHAR},
-      about_me = #{aboutMe,jdbcType=LONGVARCHAR},
-      intro = #{intro,jdbcType=LONGVARCHAR}
     where blogger_id = #{bloggerId,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="run.app.entity.model.BloggerProfile">
     update blogger_profile
-    set phone = #{phone,jdbcType=VARCHAR},
-      email = #{email,jdbcType=VARCHAR},
+    set about_me = #{aboutMe,jdbcType=VARCHAR},
+      nickname = #{nickname,jdbcType=VARCHAR},
       avatar_id = #{avatarId,jdbcType=VARCHAR}
     where blogger_id = #{bloggerId,jdbcType=BIGINT}
   </update>

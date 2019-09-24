@@ -5,26 +5,15 @@ import org.apache.ibatis.annotations.Param;
 import run.app.entity.model.BlogLog;
 import run.app.entity.model.BlogLogExample;
 
-public interface BlogLogMapper {
+public interface BlogLogMapper extends BaseMapper<BlogLog,Long>{
     long countByExample(BlogLogExample example);
 
     int deleteByExample(BlogLogExample example);
 
-    int deleteByPrimaryKey(Long id);
-
-    int insert(BlogLog record);
-
-    int insertSelective(BlogLog record);
-
     List<BlogLog> selectByExample(BlogLogExample example);
-
-    BlogLog selectByPrimaryKey(Long id);
 
     int updateByExampleSelective(@Param("record") BlogLog record, @Param("example") BlogLogExample example);
 
     int updateByExample(@Param("record") BlogLog record, @Param("example") BlogLogExample example);
 
-    int updateByPrimaryKeySelective(BlogLog record);
-
-    int updateByPrimaryKey(BlogLog record);
 }

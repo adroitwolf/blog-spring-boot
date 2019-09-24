@@ -33,8 +33,6 @@ public class UserController {
     UserService userService;
 
 
-
-
     @MethodLog
     @ApiOperation("获取用户详细信息")
     @GetMapping("/getUserDetail")

@@ -32,4 +32,5 @@ public class ImageFile {
     private String thumbPath;
 
     private MediaType mediaType;
+
 }

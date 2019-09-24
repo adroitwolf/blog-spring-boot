@@ -197,7 +197,7 @@ public class ArtcileServiceImpl implements ArticleService {
         blogContent.setId(blogId);
         blogContent.setContentMd(articleParams.getContent());
         blogContent.setContent(articleParams.getHtmlContent());
-        blogContentMapper.updateByPrimaryKeyWithBLOBs(blogContent);
+        blogContentMapper.updateByPrimaryKey(blogContent);
         return true;
     }
 

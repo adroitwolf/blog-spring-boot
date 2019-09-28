@@ -44,8 +44,6 @@ public class AppUtil {
         return  new ArrayList<>(new HashSet<>(items));
     }
 
-
-
     public static AppUtil getInstance(){
         return SingleEnum.INSTANCE.getInstance();
     }

@@ -5,6 +5,7 @@ import com.github.pagehelper.PageInfo;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +15,7 @@ import run.app.entity.model.*;
 import run.app.entity.VO.ArticleParams;
 import run.app.entity.VO.PostQueryParams;
 import run.app.exception.BadRequestException;
+import run.app.exception.UnAuthenticationException;
 import run.app.mapper.BlogContentMapper;
 import run.app.mapper.BlogLabelMapper;
 import run.app.mapper.BlogMapper;
@@ -36,6 +38,13 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class ArtcileServiceImpl implements ArticleService {
+
+    public ArtcileServiceImpl() {
+        this.appUtil = AppUtil.getInstance();
+    }
+
+    AppUtil appUtil;
+
 
     /**
     * 功能描述: 新增两个标签服务的mapper层
@@ -81,7 +90,6 @@ public class ArtcileServiceImpl implements ArticleService {
 
         Blog blog = new Blog();
 
-
         Long bloggerId;
 //        if((bloggerId =userService.getUserIdByToken(token)) == -1){
         if((bloggerId =tokenService.getUserIdWithToken(token)) == -1){
@@ -90,15 +98,10 @@ public class ArtcileServiceImpl implements ArticleService {
         blog.setBloggerId(bloggerId);
         blog.setReleaseDate(new Date());
         blog.setNearestModifyDate(new Date());
-        blog.setSummary(articleParams.getSummary());
-        blog.setTitle(articleParams.getTitle());
+        BeanUtils.copyProperties(articleParams,blog);
 
         /*生成文章id 10-9 - 19 WHOAMI*/
-
-        AppUtil instance = AppUtil.getInstance();
-
-        long blog_id = instance.nextId();
-
+        Long blog_id = appUtil.nextId();
         blog.setId(blog_id);
 
         /*增加代码结束*/
@@ -108,7 +111,6 @@ public class ArtcileServiceImpl implements ArticleService {
          * @Author: WHOAMI
          * @Date: 2019/9/4 20:17
          */
-
 
         if(!StringUtils.isBlank(articleParams.getPicture())){
             blog.setPictureId(attachmentService.getIdByTitle(articleParams.getPicture()));
@@ -136,10 +138,8 @@ public class ArtcileServiceImpl implements ArticleService {
 
         BlogContent blogContent = new BlogContent();
 
+        BeanUtils.copyProperties(articleParams,blogContent);
         blogContent.setId(blog.getId());
-        blogContent.setContent(articleParams.getHtmlContent());
-        blogContent.setContentMd(articleParams.getContent());
-
         blogContentMapper.insert(blogContent);
 
         return true;
@@ -148,6 +148,8 @@ public class ArtcileServiceImpl implements ArticleService {
     @Override
     @Transactional
     public boolean updateArticle(@NonNull ArticleParams articleParams, @NonNull Long blogId, @NonNull String token) {
+
+        authentication(blogId,token);
 
 
         /**
@@ -174,14 +176,10 @@ public class ArtcileServiceImpl implements ArticleService {
         /*增加代码结束*/
 
         Blog blog = new Blog();
-//        if((userService.getUserIdByToken(token)) == -1){
-        if((tokenService.getUserIdWithToken(token)) == -1){
-            throw  new BadRequestException("用户信息错误！");
-        }
         blog.setId(blogId);
         blog.setNearestModifyDate(new Date());
-        blog.setSummary(articleParams.getSummary());
-        blog.setTitle(articleParams.getTitle());
+
+        BeanUtils.copyProperties(articleParams,blog);
         //todo tag问题
         blog.setTagTitle(nowTagsString);
 //        blog.setTagTitle(articleParams.getTag());
@@ -189,20 +187,22 @@ public class ArtcileServiceImpl implements ArticleService {
         if(picture_id != -1){
             blog.setPictureId(picture_id);
         }
-
         blogMapper.updateByPrimaryKeySelective(blog);
 
         BlogContent blogContent = new BlogContent();
 
-        blogContent.setId(blogId);
-        blogContent.setContentMd(articleParams.getContent());
-        blogContent.setContent(articleParams.getHtmlContent());
+        BeanUtils.copyProperties(articleParams,blogContent);
+
         blogContentMapper.updateByPrimaryKey(blogContent);
         return true;
     }
 
     @Override
-    public boolean updateArticleStatus(@NonNull Long blogId, @NonNull String status) {
+    public boolean updateArticleStatus(@NonNull Long blogId, @NonNull String status,String token) {
+
+        Blog blog1 = blogMapper.selectByPrimaryKey(blogId);
+
+        authentication(blog1.getId(),token);
 
         Blog blog = new Blog();
         blog.setStatus(status);
@@ -212,25 +212,21 @@ public class ArtcileServiceImpl implements ArticleService {
     }
 
     @Override
-    public BlogDetail getArticleDetail(@NonNull Long blogId) {
+    public BlogDetail getArticleDetail(@NonNull Long blogId,String token) {
+
 
         Blog blog = blogMapper.selectByPrimaryKey(blogId);
 
+        authentication(blog.getId(),token);
 
         BlogContent blogContent = blogContentMapper.selectByPrimaryKey(blogId);
 
         BlogDetail blogDetail = new BlogDetail();
 
-        blogDetail.setId(blog.getId());
-        blogDetail.setContent(blogContent.getContent());
-        blogDetail.setContentMd(blogContent.getContentMd());
-        blogDetail.setNearestModifyDate(blog.getNearestModifyDate());
-        blogDetail.setReleaseDate(blog.getReleaseDate());
-        blogDetail.setStatus(blog.getStatus());
-        blogDetail.setTitle(blog.getTitle());
+        BeanUtils.copyProperties(blog,blogDetail);
+        BeanUtils.copyProperties(blogContent,blogDetail);
+
 //        todo tag标签问题
-
-
 
         if(!StringUtils.isBlank(blog.getTagTitle())) {
             blogDetail.setTagsTitle(tagService.selectTagTitleByIdString(blog.getTagTitle()));
@@ -240,8 +236,6 @@ public class ArtcileServiceImpl implements ArticleService {
         if(null != blog.getPictureId()){
             blogDetail.setPicture(attachmentService.selectPicById(blog.getPictureId()));
         }
-        blogDetail.setSummary(blog.getSummary());
-
         return blogDetail;
     }
 
@@ -249,6 +243,8 @@ public class ArtcileServiceImpl implements ArticleService {
 
     @Override
     public DataGrid getArticleListByExample(@NonNull int pageNum, @NonNull int pageSize, PostQueryParams postQueryParams, @NonNull String token) {
+
+
         PageHelper.startPage(pageNum,pageSize);
         List<Blog> blogList = blogMapper.selectByUserExample(postQueryParams, tokenService.getUserIdWithToken(token));
 
@@ -264,20 +260,16 @@ public class ArtcileServiceImpl implements ArticleService {
 
                 tagsTitle = tagService.selectTagTitleByIdString(item.getTagTitle());
             }
-
             String pic = "";
 //            获取博客图片名称
             if(null != item.getPictureId()){
                 pic = attachmentService.selectPicById(item.getPictureId());
             }
-            return new run.app.entity.DTO.Blog(item.getId()
-                    ,item.getStatus(),
-                    item.getTitle(),
-                    item.getSummary(),
-                    item.getReleaseDate(),
-                    item.getNearestModifyDate(),
-                    tagsTitle,
-                    pic);
+            run.app.entity.DTO.Blog blog = new run.app.entity.DTO.Blog();
+            BeanUtils.copyProperties(item,blog);
+            blog.setPicture(pic);
+            blog.setTagsTitle(tagsTitle);
+            return  blog;
         }).collect(Collectors.toList());
 
 
@@ -291,8 +283,9 @@ public class ArtcileServiceImpl implements ArticleService {
 
     @Override
     @Transactional
-    public void deleteBlog(@NonNull Long blogId) {
+    public void deleteBlog(@NonNull Long blogId,String token) {
 
+        authentication(blogId,token);
 
         /**
         * 功能描述:这里应该先查询此文章的所有标签，然后删除，顺序不可以变
@@ -324,4 +317,13 @@ public class ArtcileServiceImpl implements ArticleService {
        return blogMapper.countByExample(blogExample);
 
     }
+
+
+
+    public void authentication(Long id,String token){
+        if(!id.equals(tokenService.getUserIdWithToken(token))){
+            throw new UnAuthenticationException("您没有权限进行该操作");
+        }
+    }
+
 }

@@ -25,8 +25,6 @@ public class RegisterParams {
     @Size(max=100,message = "密码长度不能超过{max}")
     private String password;
 
-    private String username;
-
 
     @NotBlank(message = "手机号不能为空！")
     @Size(max = 11,message = "手机号位数不正确")

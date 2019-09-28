@@ -54,15 +54,8 @@ public class UserServiceImpl implements UserService {
     public @NonNull UserDetail updateProfileById(@NonNull UserParams userParams, @NonNull String token) {
 
 
-//        Integer userId = getUserIdByToken(token);
         Long userId = tokenService.getUserIdWithToken(token);
         BloggerProfile bloggerProfile = new BloggerProfile();
-
-//        BloggerProfileExample bloggerProfileExample = new BloggerProfileExample();
-//
-//        BloggerProfileExample.Criteria criteria = bloggerProfileExample.createCriteria();
-//
-//        criteria.andBloggerIdEqualTo(userId);
 
 //    这个才是昵称
         bloggerProfile.setBloggerId(userId);
@@ -104,20 +97,6 @@ public class UserServiceImpl implements UserService {
     public void uploadAvatarId(@NonNull String avatar, @NonNull String token) {
         Long id = tokenService.getUserIdWithToken(token);
 
-
-//        BloggerProfileExample bloggerProfileExample = new BloggerProfileExample();
-//        BloggerProfileExample.Criteria criteria = bloggerProfileExample.createCriteria();
-//        criteria.andBloggerIdEqualTo(id);
-//        List<BloggerProfileWithBLOBs> withBLOBs = bloggerProfileMapper.selectByExampleWithBLOBs(bloggerProfileExample);
-//
-////        如果该账户目前有头像，要先删除当前头像
-//        withBLOBs.stream().filter(Objects::nonNull).findFirst().ifPresent(a->{
-//            if(!StringUtils.isBlank(a.getAvatarId())){
-//                UploadUtil instance = UploadUtil.getInstance();
-//                instance.delFile(a.getAvatarId());
-//            }
-//        });
-
         BloggerProfile bloggerProfile = bloggerProfileMapper.selectByPrimaryKey(id);
 
         if (!StringUtils.isBlank(bloggerProfile.getAvatarId())) {
@@ -125,41 +104,12 @@ public class UserServiceImpl implements UserService {
             instance.delFile(bloggerProfile.getAvatarId());
         }
 
-
         BloggerProfile profile = new BloggerProfile();
         profile.setBloggerId(id);
         profile.setAvatarId(avatar);
         bloggerProfileMapper.updateByPrimaryKeySelective(profile);
 
-//        criteria.andBloggerIdEqualTo(id);
-//
-//        BloggerProfileWithBLOBs bloggerProfileWithBLOBs = new BloggerProfileWithBLOBs();
-//        bloggerProfileWithBLOBs.setAvatarId(avatar);
-//        bloggerProfileMapper.updateByExampleSelective(bloggerProfileWithBLOBs,bloggerProfileExample);
     }
-
-
-//    @Override
-//    public Integer getUserIdByToken(@NonNull String token) {
-//
-//        String username = tokenService.getUsernameByToken(token);
-//
-//
-//        BloggerAccountExample bloggerAccountExample = new BloggerAccountExample();
-//        BloggerAccountExample.Criteria criteria = bloggerAccountExample.createCriteria();
-//        criteria.andUsernameEqualTo(username);
-//        List<BloggerAccount> bloggerAccounts = bloggerAccountMapper.selectByExample(bloggerAccountExample);
-//
-//        if(bloggerAccounts.isEmpty()){
-//            throw new BadRequestException("用户信息错误，请重试！");
-//        }
-//
-//        for (BloggerAccount bloggerAccount:bloggerAccounts) {
-//            return bloggerAccount.getId();
-//        }
-//
-//        return -1;
-//    }
 
     @Override
     public boolean logout(String token) {

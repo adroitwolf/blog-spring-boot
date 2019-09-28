@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import run.app.entity.DTO.BlogDetailWithAuthor;
@@ -92,12 +93,13 @@ public class PostServiceImpl implements PostService {
                 pic = attachmentService.selectPicById(item.getPictureId());
             }
 
-            return new run.app.entity.DTO.Blog(item.getId(),
-                    item.getTitle(),
-                    item.getSummary(),
-                    item.getReleaseDate(),
-                    tagsTitle,
-                    pic);}).collect(Collectors.toList());
+            run.app.entity.DTO.Blog blog = new run.app.entity.DTO.Blog();
+
+            BeanUtils.copyProperties(item,blog);
+            blog.setTagsTitle(tagsTitle);
+            blog.setPicture(pic);
+            return blog;
+        }).collect(Collectors.toList());
         DataGrid dataGrid = new DataGrid();
 
         dataGrid.setRows(resultX);
@@ -134,12 +136,12 @@ public class PostServiceImpl implements PostService {
                 pic = attachmentService.selectPicById(item.getPictureId());
             }
 
-            return new run.app.entity.DTO.Blog(item.getId(),
-                    item.getTitle(),
-                    item.getSummary(),
-                    item.getReleaseDate(),
-                    tagsTitle,
-                    pic);
+            run.app.entity.DTO.Blog blog = new run.app.entity.DTO.Blog();
+
+            BeanUtils.copyProperties(item,blog);
+            blog.setTagsTitle(tagsTitle);
+            blog.setPicture(pic);
+            return blog;
         }).collect(Collectors.toList());
 
 
@@ -162,10 +164,10 @@ public class PostServiceImpl implements PostService {
 
 
         //todo: tags
-        List<String> nowTagsId = new ArrayList<>();
+        List<String> nowTags = new ArrayList<>();
         if(!StringUtils.isBlank(blog.getTagTitle())){
 
-          nowTagsId = tagService.selectTagTitleByIdString(blog.getTagTitle());
+          nowTags = tagService.selectTagTitleByIdString(blog.getTagTitle());
         }
 
         String pic = "";
@@ -175,9 +177,7 @@ public class PostServiceImpl implements PostService {
         }
 
 
-        BlogDetailWithAuthor blogDetailWithAuthor = new BlogDetailWithAuthor(blogId,blog.getTitle(),blog.getSummary(),blog.getReleaseDate(),nowTagsId,blogContent.getContent(),pic,bloggerProfile.getNickname(),bloggerProfile.getAvatarId());
-
-
+        BlogDetailWithAuthor blogDetailWithAuthor = new BlogDetailWithAuthor(blogId,blog.getTitle(),blog.getSummary(),blog.getReleaseDate(),nowTags,blogContent.getContent(),pic,bloggerProfile.getNickname(),bloggerProfile.getAvatarId());
         return blogDetailWithAuthor;
     }
 
@@ -186,7 +186,6 @@ public class PostServiceImpl implements PostService {
 
         Long id = tagService.selectIdWithName(tag);
 
-        log.debug("id:"+ id);
 
         DataGrid dataGrid = new DataGrid();
 
@@ -203,10 +202,7 @@ public class PostServiceImpl implements PostService {
             list.stream().forEach(x -> {
                 run.app.entity.DTO.Blog blogx = new run.app.entity.DTO.Blog();
                 Blog blog = blogMapper.selectByPrimaryKey(x);
-                blogx.setId(blog.getId());
-                blogx.setSummary(blog.getSummary());
-                blogx.setTitle(blog.getTitle());
-                blogx.setReleaseDate(blog.getReleaseDate());
+                BeanUtils.copyProperties(blog,blogx);
 
                 if (!StringUtils.isBlank(blog.getTagTitle())) {
                     blogx.setTagsTitle(tagService.selectTagTitleByIdString(blog.getTagTitle()));

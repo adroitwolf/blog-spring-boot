@@ -29,8 +29,6 @@ public interface UserService {
      void uploadAvatarId(@NonNull String avatar,@NonNull String token);
 
 
-
-
 //     Integer getUserIdByToken(@NonNull String token);
 
      boolean logout(String token);

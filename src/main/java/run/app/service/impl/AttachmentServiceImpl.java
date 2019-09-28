@@ -3,6 +3,7 @@ package run.app.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -108,8 +109,6 @@ public class AttachmentServiceImpl implements AttachmentService {
         UploadUtil instance = UploadUtil.getInstance();
         ImageFile imageFile = instance.uploadFile(file).orElseThrow(()->new BadRequestException("用户上传图片失败"));
 
-
-
         Long user_id = tokenService.getUserIdWithToken(token);
 
         BloggerPicture bloggerPicture = new BloggerPicture();
@@ -117,9 +116,6 @@ public class AttachmentServiceImpl implements AttachmentService {
         bloggerPicture.setId(appUtil.nextId());
 
         bloggerPicture.setBloggerId(user_id);
-
-
-        bloggerPicture.setTitle(imageFile.getTitle());
 
         bloggerPicture.setUploadDate(new Date());
 
@@ -129,29 +125,12 @@ public class AttachmentServiceImpl implements AttachmentService {
 
         bloggerPicture.setMediaType(imageFile.getMediaType().getType());
 
-        bloggerPicture.setSuffx(imageFile.getSuffx());
-
-        bloggerPicture.setThumbPath(imageFile.getThumbPath());
-
-        bloggerPicture.setHeight(imageFile.getHeight());
-
-        bloggerPicture.setWidth(imageFile.getWidth());
-
-        bloggerPicture.setSize(imageFile.getSize());
-
-        bloggerPicture.setPath(imageFile.getPath());
-
-        bloggerPicture.setFileKey(imageFile.getFileKey());
-
+        BeanUtils.copyProperties(imageFile,bloggerPicture);
 
         bloggerPictureMapper.insertSelective(bloggerPicture);
-
         BaseResponse baseResponse = new BaseResponse();
 
-
-
         baseResponse.setStatus(HttpStatus.OK.value());
-
         baseResponse.setData(imageFile.getTitle());
 
         return baseResponse;

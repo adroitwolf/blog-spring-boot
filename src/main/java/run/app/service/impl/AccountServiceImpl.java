@@ -3,6 +3,7 @@ package run.app.service.impl;
 import cn.hutool.core.lang.Validator;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -151,14 +152,12 @@ public class AccountServiceImpl implements AccountService {
         }
 
         BloggerAccount bloggerAccount = new BloggerAccount();
+
+        BeanUtils.copyProperties(registerParams,bloggerAccount);
+
         bloggerAccount.setId(appUtil.nextId());
-
         bloggerAccount.setUsername(registerParams.getAccount());
-        bloggerAccount.setPassword(registerParams.getPassword());
-
         //todo 设置发送邮件
-        bloggerAccount.setEmail(registerParams.getEmail());
-        bloggerAccount.setPhone(registerParams.getPhone());
         bloggerAccount.setRegisterDate(new Date());
 
         log.debug(bloggerAccount.toString());
@@ -171,12 +170,11 @@ public class AccountServiceImpl implements AccountService {
 
         BloggerProfile bloggerProfile = new BloggerProfile();
 
-        bloggerProfile.setNickname(registerParams.getUsername());
+        //初始用户名就是你的账号名
+        bloggerProfile.setNickname(registerParams.getAccount());
         bloggerProfile.setBloggerId(bloggerAccount.getId());
 
         bloggerProfileMapper.insertSelective(bloggerProfile);
-
-
         baseResponse.setStatus(HttpStatus.OK.value());
 
         return baseResponse;

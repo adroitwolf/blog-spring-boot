@@ -91,13 +91,10 @@ public class UploadUtil {
 
         imageFile.setFileKey(filename  + (null == type ? "" :("."+ type)));
 
-
         // 读取文件属性
         imageFile.setSize(file.getSize());
         imageFile.setHeight(image.getHeight());
         imageFile.setWidth(image.getWidth());
-
-
 
         return  Optional.ofNullable(imageFile);
     }

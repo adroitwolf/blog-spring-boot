@@ -18,4 +18,6 @@ public interface BlogMapper extends BaseMapper<Blog,Long>{
     int updateByExampleSelective(@Param("record") Blog record, @Param("example") BlogExample example);
 
     int updateByExample(@Param("record") Blog record, @Param("example") BlogExample example);
+
+    void deletePicByPicId(Long picId);
 }

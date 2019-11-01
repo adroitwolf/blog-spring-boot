@@ -1,6 +1,7 @@
 package run.app.service;
 
 import lombok.NonNull;
+import run.app.entity.DTO.BaseResponse;
 import run.app.entity.DTO.BlogDetail;
 import run.app.entity.DTO.DataGrid;
 import run.app.entity.VO.ArticleParams;
@@ -25,7 +26,7 @@ public interface ArticleService {
     BlogDetail getArticleDetail(@NonNull Long blogId,String token);
 
 
-    DataGrid getArticleListByExample(@NonNull int pageNum, @NonNull int pageSize, PostQueryParams postQueryParams, @NonNull String token);
+    BaseResponse getArticleListByExample(@NonNull int pageNum, @NonNull int pageSize, PostQueryParams postQueryParams, @NonNull String token);
 
 
     void deleteBlog(@NonNull Long blogId,String token);
@@ -33,4 +34,6 @@ public interface ArticleService {
     long getArticleCount(@NonNull String token);
 
 
+
+    void deleteQuotePic(Long picId);
 }

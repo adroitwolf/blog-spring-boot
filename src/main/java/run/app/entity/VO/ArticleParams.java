@@ -11,7 +11,7 @@ import java.util.List;
  * Created with IntelliJ IDEA.
  * User: WHOAMI
  * Time: 2019 2019/7/26 6:14
- * Description: ://TODO ${END}
+ * Description:文章参数
  */
 
 @Data
@@ -24,7 +24,7 @@ public class ArticleParams {
 
 
     @NotBlank(message = "文章内容不能为空")
-    private String htmlContent;
+    private String contentMd;
 
     @NotBlank(message = "文章内容不能为空")
     private String content;

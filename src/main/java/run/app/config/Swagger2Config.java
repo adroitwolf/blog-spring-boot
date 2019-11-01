@@ -15,7 +15,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  * Created with IntelliJ IDEA.
  * User: WHOAMI
  * Time: 2019 2019/6/26 21:15
- * Description: ://TODO ${END}
+ * Description: API配置文件
  */
 @EnableSwagger2
 @Configuration
@@ -33,8 +33,8 @@ public class Swagger2Config {
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("springboot利用swagger构建api文档")
-                .description("简单优雅的restfun风格")
+                .title("WHOAMI博客API")
+                .description("多用户博客门户网站")
                 .termsOfServiceUrl("https://whoami1231.github.io")
                 .version("1.0")
                 .build();

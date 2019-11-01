@@ -10,7 +10,7 @@ import javax.validation.constraints.Size;
  * Created with IntelliJ IDEA.
  * User: WHOAMI
  * Time: 2019 2019/7/22 7:36
- * Description: ://TODO ${END}
+ * Description: 用户登陆密码
  */
 @Data
 @ToString

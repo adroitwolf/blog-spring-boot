@@ -9,15 +9,22 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import run.app.config.properties.AppProperties;
+import run.app.config.properties.JWTProperties;
+import run.app.entity.enums.Role;
 import run.app.filter.LogFilter;
 import run.app.security.filter.AuthenticationFilter;
 import run.app.security.token.TokenService;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created with IntelliJ IDEA.
  * User: WHOAMI
  * Time: 2019 2019/6/27 9:48
- * Description: ://TODO ${END}
+ * Description: :过滤器配置
  */
 @Slf4j
 @Configuration
@@ -56,13 +63,25 @@ public class FilterConfiguration {
         FilterRegistrationBean<AuthenticationFilter> authenticationFilterFilter = new FilterRegistrationBean<>();
         AuthenticationFilter authenticationFilter = new AuthenticationFilter(tokenService);
 
-        authenticationFilter.addExcludePatterns("/api/admin/login","/api/admin/register","/post/");
+//        添加拦截路径
+        authenticationFilter.addExcludePatterns("/api/admin/login","/api/admin/register");
+
+
+//        添加拦截角色路径
+        Map< Role,List<String>> pattern = new HashMap<Role,List<String>>(){
+            {
+                put(Role.USER,Arrays.asList("/api/**/*"));
+                put(Role.ADMIN,Arrays.asList("/manage/**/*"));
+            }
+        };
+
+        authenticationFilter.addAuthorityPatterns(pattern);
 
         authenticationFilterFilter.setFilter(authenticationFilter);
 
         authenticationFilterFilter.setOrder(Ordered.LOWEST_PRECEDENCE);
 
-        authenticationFilterFilter.addUrlPatterns("/api/*");
+        authenticationFilterFilter.addUrlPatterns("/api/*","/manage/*");
 
         return authenticationFilterFilter;
     }

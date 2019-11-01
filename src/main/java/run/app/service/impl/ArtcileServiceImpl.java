@@ -7,19 +7,19 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import run.app.entity.DTO.BaseResponse;
 import run.app.entity.DTO.BlogDetail;
 import run.app.entity.DTO.DataGrid;
+import run.app.entity.enums.ArticleStatus;
 import run.app.entity.model.*;
 import run.app.entity.VO.ArticleParams;
 import run.app.entity.VO.PostQueryParams;
 import run.app.exception.BadRequestException;
 import run.app.exception.UnAuthenticationException;
-import run.app.mapper.BlogContentMapper;
-import run.app.mapper.BlogLabelMapper;
-import run.app.mapper.BlogMapper;
-import run.app.mapper.BlogTagMapMapper;
+import run.app.mapper.*;
 import run.app.security.token.TokenService;
 import run.app.service.ArticleService;
 import run.app.service.AttachmentService;
@@ -84,6 +84,10 @@ public class ArtcileServiceImpl implements ArticleService {
     BlogContentMapper blogContentMapper;
 
 
+    @Autowired
+    BloggerPictureMapper bloggerPictureMapper;
+
+
     @Override
     @Transactional
     public @NonNull boolean submitArticle(@NonNull ArticleParams articleParams,@NonNull String token) {
@@ -114,13 +118,15 @@ public class ArtcileServiceImpl implements ArticleService {
 
         if(!StringUtils.isBlank(articleParams.getPicture())){
             blog.setPictureId(attachmentService.getIdByTitle(articleParams.getPicture()));
+//            相对应的应该让改图片引用人数+1
+
         }
 
         /*增加代码结束*/
 
 //        blog.setTagTitle(articleParams.getTag());
 
-        blog.setStatus("PUBLISHED");
+        blog.setStatus(ArticleStatus.PUBLISHED.getName());
 
 
         /**
@@ -149,7 +155,9 @@ public class ArtcileServiceImpl implements ArticleService {
     @Transactional
     public boolean updateArticle(@NonNull ArticleParams articleParams, @NonNull Long blogId, @NonNull String token) {
 
-        authentication(blogId,token);
+        Blog blog1 = blogMapper.selectByPrimaryKey(blogId);
+
+        tokenService.authentication(blog1.getBloggerId(),token);
 
 
         /**
@@ -191,6 +199,8 @@ public class ArtcileServiceImpl implements ArticleService {
 
         BlogContent blogContent = new BlogContent();
 
+        blogContent.setId(blogId);
+
         BeanUtils.copyProperties(articleParams,blogContent);
 
         blogContentMapper.updateByPrimaryKey(blogContent);
@@ -202,7 +212,7 @@ public class ArtcileServiceImpl implements ArticleService {
 
         Blog blog1 = blogMapper.selectByPrimaryKey(blogId);
 
-        authentication(blog1.getId(),token);
+        tokenService.authentication(blog1.getBloggerId(),token);
 
         Blog blog = new Blog();
         blog.setStatus(status);
@@ -217,7 +227,7 @@ public class ArtcileServiceImpl implements ArticleService {
 
         Blog blog = blogMapper.selectByPrimaryKey(blogId);
 
-        authentication(blog.getId(),token);
+        tokenService.authentication(blog.getBloggerId(),token);
 
         BlogContent blogContent = blogContentMapper.selectByPrimaryKey(blogId);
 
@@ -242,8 +252,9 @@ public class ArtcileServiceImpl implements ArticleService {
 
 
     @Override
-    public DataGrid getArticleListByExample(@NonNull int pageNum, @NonNull int pageSize, PostQueryParams postQueryParams, @NonNull String token) {
+    public BaseResponse getArticleListByExample(@NonNull int pageNum, @NonNull int pageSize, PostQueryParams postQueryParams, @NonNull String token) {
 
+        log.info("查询目标" + postQueryParams.toString());
 
         PageHelper.startPage(pageNum,pageSize);
         List<Blog> blogList = blogMapper.selectByUserExample(postQueryParams, tokenService.getUserIdWithToken(token));
@@ -277,7 +288,12 @@ public class ArtcileServiceImpl implements ArticleService {
 
         dataGrid.setTotal(list.getTotal());
 
-        return dataGrid;
+        BaseResponse baseResponse = new BaseResponse();
+        baseResponse.setStatus(HttpStatus.OK.value());
+        baseResponse.setData(dataGrid);
+
+
+        return baseResponse;
     }
 
 
@@ -285,7 +301,9 @@ public class ArtcileServiceImpl implements ArticleService {
     @Transactional
     public void deleteBlog(@NonNull Long blogId,String token) {
 
-        authentication(blogId,token);
+        Blog blog1 = blogMapper.selectByPrimaryKey(blogId);
+
+        tokenService.authentication(blog1.getBloggerId(),token);
 
         /**
         * 功能描述:这里应该先查询此文章的所有标签，然后删除，顺序不可以变
@@ -318,12 +336,12 @@ public class ArtcileServiceImpl implements ArticleService {
 
     }
 
+    @Override
+    @Transactional
+    public void deleteQuotePic(Long picId) {
+        blogMapper.deletePicByPicId(picId);
 
-
-    public void authentication(Long id,String token){
-        if(!id.equals(tokenService.getUserIdWithToken(token))){
-            throw new UnAuthenticationException("您没有权限进行该操作");
-        }
     }
+
 
 }

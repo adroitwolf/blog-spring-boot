@@ -100,7 +100,7 @@
                 and concat(a.title,a.summary,a.tag_title,b.content_md) like #{pattern}
             </if>
             <if test="query.status != '' and query.status != null">
-                and a.status = #{query.status}
+              and a.status = #{query.status}
             </if>
             <if test="blogger_id != '' and blogger_id != null">
                 and a.blogger_id = #{blogger_id,jdbcType=BIGINT}
@@ -295,4 +295,12 @@
       tag_title = #{tagTitle,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
+
+
+   <update id="deletePicByPicId" parameterType="java.lang.Long">
+       update blog
+       set picture_id = null
+       where picture_id = #{picId,jdbcType=BIGINT}
+
+   </update>
 </mapper>

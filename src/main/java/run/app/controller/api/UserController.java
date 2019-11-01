@@ -11,7 +11,7 @@ import run.app.entity.DTO.ImageFile;
 import run.app.entity.DTO.UserDetail;
 import run.app.entity.VO.UserParams;
 import run.app.exception.BadRequestException;
-import run.app.security.log.MethodLog;
+import run.app.security.annotation.MethodLog;
 import run.app.service.UserService;
 import run.app.util.UploadUtil;
 
@@ -36,7 +36,7 @@ public class UserController {
     @MethodLog
     @ApiOperation("获取用户详细信息")
     @GetMapping("/getUserDetail")
-    public UserDetail getUserDetail(HttpServletRequest request){
+    public BaseResponse getUserDetail(HttpServletRequest request){
 
         return userService.getUserDetailByToken(request.getHeader("Authentication"));
     }
@@ -71,7 +71,7 @@ public class UserController {
         //todo:保存到数据库
         userService.uploadAvatarId(imageFile.getPath(),token);
         baseResponse.setData(imageFile.getPath());
-
+        baseResponse.setStatus(HttpStatus.OK.value());
         return baseResponse;
     }
 

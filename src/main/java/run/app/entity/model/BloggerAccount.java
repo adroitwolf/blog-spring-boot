@@ -18,6 +18,8 @@ public class BloggerAccount {
 
     private String email;
 
+    private String isEnabled;
+
     public Long getId() {
         return id;
     }
@@ -64,5 +66,13 @@ public class BloggerAccount {
 
     public void setEmail(String email) {
         this.email = email == null ? null : email.trim();
+    }
+
+    public String getisEnabled() {
+        return isEnabled;
+    }
+
+    public void setisEnabled(String isEnabled) {
+        this.isEnabled = isEnabled == null ? null : isEnabled.trim();
     }
 }

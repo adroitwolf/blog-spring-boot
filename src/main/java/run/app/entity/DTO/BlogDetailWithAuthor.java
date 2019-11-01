@@ -10,7 +10,7 @@ import java.util.List;
  * Created with IntelliJ IDEA.
  * User: WHOAMI
  * Time: 2019 2019/8/14 19:48
- * Description: ://TODO ${END}
+ * Description: 前台博客返回带有作者的文章类
  */
 @Data
 @ToString

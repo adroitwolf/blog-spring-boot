@@ -23,7 +23,7 @@ public class ReceptionController {
 
     @GetMapping("/query")
     @ApiOperation("搜索文章")
-    public DataGrid getListByExample(@RequestParam int pageNum,
+    public BaseResponse getListByExample(@RequestParam int pageNum,
                                      @RequestParam int pageSize,
                                      @RequestParam String keyword){
         return postService.getListByExample(pageNum,pageSize,keyword);
@@ -31,7 +31,7 @@ public class ReceptionController {
 
     @GetMapping("tag")
     @ApiOperation("查询相应tag标签")
-    public DataGrid searchTagBlogList(@RequestParam int pageNum,
+    public BaseResponse searchTagBlogList(@RequestParam int pageNum,
                                       @RequestParam int pageSize,
                                       @RequestParam String tag){
         return postService.getListByTag(pageNum,pageSize,tag);
@@ -39,7 +39,7 @@ public class ReceptionController {
 
     @GetMapping("/list")
     @ApiOperation("获取当前所有文章，并且默认按照创建时间排序")
-    public DataGrid getList(@RequestParam int pageNum,
+    public BaseResponse getList(@RequestParam int pageNum,
                             @RequestParam int pageSize){
         return postService.getList(pageNum,pageSize);
     }

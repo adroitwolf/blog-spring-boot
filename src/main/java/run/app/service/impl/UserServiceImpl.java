@@ -3,16 +3,23 @@ package run.app.service.impl;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import run.app.entity.DTO.BaseResponse;
 import run.app.entity.DTO.UserDetail;
 import run.app.entity.model.*;
 import run.app.entity.VO.UserParams;
+import run.app.mapper.BloggerAccountMapper;
 import run.app.mapper.BloggerProfileMapper;
 import run.app.security.token.TokenService;
+import run.app.service.RoleService;
 import run.app.service.UserService;
 import run.app.util.UploadUtil;
+
+import java.util.stream.Collectors;
 
 /**
  * Created with IntelliJ IDEA.
@@ -24,9 +31,14 @@ import run.app.util.UploadUtil;
 @Service
 public class UserServiceImpl implements UserService {
 
+    @Autowired
+    BloggerAccountMapper bloggerAccountMapper;
 
     @Autowired
     BloggerProfileMapper bloggerProfileMapper;
+
+    @Autowired
+    RoleService roleService;
 
     @Autowired
     TokenService tokenService;
@@ -34,19 +46,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public @NonNull BloggerProfile findUserDetailByBloggerId(@NonNull Long bloggerId) {
-
-//        BloggerProfileExample bloggerProfileExample = new BloggerProfileExample();
-//        BloggerProfileExample.Criteria criteria = bloggerProfileExample.createCriteria();
-//
-//        criteria.andBloggerIdEqualTo(bloggerId);
-//
-//        List<BloggerProfileWithBLOBs> bloggerProfileWithBLOBs = bloggerProfileMapper.selectByExampleWithBLOBs(bloggerProfileExample);
-
-
-//        for (BloggerProfileWithBLOBs bloggerProfile: bloggerProfileWithBLOBs) {
-//            return bloggerProfile;
-//        }
-
         return bloggerProfileMapper.selectByPrimaryKey(bloggerId);
     }
 
@@ -75,18 +74,27 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDetail getUserDetailByToken(@NonNull String token) {
+    public BaseResponse getUserDetailByToken(@NonNull String token) {
         Long id = tokenService.getUserIdWithToken(token);
 
-        @NonNull BloggerProfile bloggerProfile = findUserDetailByBloggerId(id);
+        @NonNull
+        BloggerProfile bloggerProfile = findUserDetailByBloggerId(id);
 
 
         UserDetail userDetail = new UserDetail();
         userDetail.setAvatarId(bloggerProfile.getAvatarId());
-        userDetail.setUsername(bloggerProfile.getNickname());
-        userDetail.setAboutMe(bloggerProfile.getAboutMe());
 
-        return userDetail;
+        BloggerAccount bloggerAccount = bloggerAccountMapper.selectByPrimaryKey(id);
+
+        BeanUtils.copyProperties(bloggerAccount,userDetail);
+
+
+
+
+        //找到用户权限
+        userDetail.setRoles(roleService.getRolesByUserId(id).stream().map(n->n.getAuthority()).collect(Collectors.toList()));
+
+        return new BaseResponse(HttpStatus.OK.value(),"",userDetail);
 
 //        return tokenService.findUserDetailsByToken(token);
 

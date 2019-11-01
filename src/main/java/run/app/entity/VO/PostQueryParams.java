@@ -3,6 +3,7 @@ package run.app.entity.VO;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import run.app.entity.enums.ArticleStatus;
 
 /**
  * Created with IntelliJ IDEA.
@@ -14,6 +15,7 @@ import lombok.ToString;
 @ToString
 @NoArgsConstructor
 public class PostQueryParams {
+
     private String keyword;
 
     private String status;

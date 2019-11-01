@@ -10,7 +10,7 @@ import run.app.entity.DTO.BlogDetail;
 import run.app.entity.DTO.DataGrid;
 import run.app.entity.VO.ArticleParams;
 import run.app.entity.VO.PostQueryParams;
-import run.app.security.log.MethodLog;
+import run.app.security.annotation.MethodLog;
 import run.app.service.ArticleService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -44,6 +44,7 @@ public class BlogController {
         articleService.submitArticle(articleParams,token);
         BaseResponse baseResponse = new BaseResponse();
         baseResponse.setStatus(HttpStatus.OK.value());
+        baseResponse.setMessage("上传成功");
         return baseResponse;
     }
 
@@ -81,12 +82,10 @@ public class BlogController {
 
         log.debug(articleParams.toString());
 
-
         articleService.updateArticle(articleParams,blogId,request.getHeader(AUTHENICATION));
 
         BaseResponse baseResponse = new BaseResponse();
         baseResponse.setStatus(HttpStatus.OK.value());
-
         return baseResponse;
     }
 
@@ -94,7 +93,7 @@ public class BlogController {
     @MethodLog
     @ApiOperation("文章查询")
     @GetMapping("query")
-    public DataGrid getListByExample(@RequestParam int pageNum,
+    public BaseResponse getListByExample(@RequestParam int pageNum,
                                      @RequestParam int pageSize,
                                      PostQueryParams postQueryParams,
                                      HttpServletRequest request){
@@ -106,8 +105,9 @@ public class BlogController {
     @MethodLog
     @ApiOperation("删除博客")
     @DeleteMapping("{blogId:\\d+}")
-    public void deleteBlog(@PathVariable("blogId")Long blogId,HttpServletRequest request){
+    public BaseResponse deleteBlog(@PathVariable("blogId")Long blogId,HttpServletRequest request){
         articleService.deleteBlog(blogId,request.getHeader(AUTHENICATION));
+        return new BaseResponse(HttpStatus.OK.value(),"删除成功",null);
     }
 
     @ApiOperation("获取博客数量")

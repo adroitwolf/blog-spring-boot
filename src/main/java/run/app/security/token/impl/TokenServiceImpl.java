@@ -13,18 +13,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 import run.app.config.properties.JWTProperties;
+import run.app.entity.DTO.User;
 import run.app.entity.DTO.UserDetail;
+import run.app.entity.enums.Role;
 import run.app.entity.model.BloggerAccount;
 import run.app.entity.model.BloggerProfile;
 import run.app.exception.ServiceException;
+import run.app.exception.UnAccessException;
 import run.app.exception.UnAuthenticationException;
 import run.app.security.token.AuthToken;
 import run.app.security.token.TokenService;
 import run.app.service.AccountService;
 import run.app.service.UserService;
+import run.app.util.JwtUtil;
 import run.app.util.RedisUtil;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -32,12 +37,14 @@ import java.util.concurrent.TimeUnit;
  * Created with IntelliJ IDEA.
  * User: WHOAMI
  * Time: 2019 2019/7/22 16:30
- * Description: ://TODO ${END}
+ * Description: 令牌实现类
  */
 
 @Slf4j
 @Service
 public class TokenServiceImpl implements TokenService {
+
+
     @Autowired
     UserService userService;
 
@@ -48,34 +55,28 @@ public class TokenServiceImpl implements TokenService {
     @Autowired
     RedisUtil redisUtil;
 
-
     @Autowired
     JWTProperties jwtProperties;
 
 
-//    利用Jwt生成token
+
     @Override
-    public String getToken(BloggerAccount bloggerAccount) {
+    public void authentication(Long id, String token) {
+        if(!id.equals(getUserIdWithToken(token))){
+            throw new UnAccessException("您没有权限进行该操作");
+        }
+    }
 
-        long currentTimeMillis = System.currentTimeMillis();
-
-        return JWT.create()
-                .withIssuer(jwtProperties.getName())
-                .withExpiresAt(new Date(currentTimeMillis+jwtProperties.getJwtExpires()))
-                .withClaim("userId",bloggerAccount.getId())
-                .withAudience(bloggerAccount.getId().toString(),bloggerAccount.getUsername())
-                .sign(Algorithm.HMAC256(jwtProperties.getBase64Secret()));
+    //    利用Jwt生成token
+    @Override
+    public String getToken(User user) {
+        return JwtUtil.generateToken(user);
     }
 
     @Override
     public boolean verifierToken(String token) {
-
         try {
-            JWTVerifier build = JWT.require(Algorithm.HMAC256(jwtProperties.getBase64Secret()))
-                    .withIssuer(jwtProperties.getName())
-                    .build();
-
-            build.verify(token);
+            JwtUtil.generateVerifier().verify(token);
             return  true;
         }catch (JWTVerificationException e){
             log.error(e.getMessage());
@@ -88,9 +89,8 @@ public class TokenServiceImpl implements TokenService {
     @Override
     public boolean isExpire(String token) {
         try{
-            DecodedJWT decode = JWT.decode(token);
-
-            return decode.getExpiresAt().compareTo(new Date()) <= 0? true:false;
+            Date date = JwtUtil.generateExpirationDate(token);
+            return date.compareTo(new Date()) <= 0? true:false;
         }catch (JWTDecodeException e){
             return false;
         }catch (Exception e){
@@ -101,8 +101,14 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
+    public List<Role> getRoles(String token) {
+        return JwtUtil.generateRole(token);
+    }
+
+
+    @Override
     public JWTVerifier getVerifierWithToken(String token) {
-        return JWT.require(Algorithm.HMAC256(jwtProperties.getBase64Secret())).build();
+        return JwtUtil.generateVerifier();
     }
 
     @Override

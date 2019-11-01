@@ -9,11 +9,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import run.app.entity.DTO.BaseResponse;
+import run.app.entity.DTO.User;
+import run.app.entity.enums.Role;
 import run.app.entity.model.BloggerAccount;
 import run.app.entity.model.BloggerAccountExample;
 import run.app.entity.VO.LoginParams;
 import run.app.entity.VO.RegisterParams;
 import run.app.entity.model.BloggerProfile;
+import run.app.entity.model.BloggerRole;
 import run.app.exception.BadRequestException;
 import run.app.exception.NotFoundException;
 import run.app.exception.ServiceException;
@@ -21,12 +24,11 @@ import run.app.mapper.BloggerAccountMapper;
 import run.app.mapper.BloggerProfileMapper;
 import run.app.security.token.TokenService;
 import run.app.service.AccountService;
+import run.app.service.RoleService;
 import run.app.util.AppUtil;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created with IntelliJ IDEA.
@@ -37,7 +39,7 @@ import java.util.Optional;
 @Service
 @Slf4j
 @Transactional
-public class AccountServiceImpl implements AccountService {
+public class AccountServiceImpl implements AccountService{
 
     public AccountServiceImpl() {
         this.appUtil = AppUtil.getInstance();
@@ -51,21 +53,30 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     BloggerProfileMapper bloggerProfileMapper;
 
+
+    @Autowired
+    RoleService roleService;
+
     @Autowired
     TokenService tokenService;
 
 
+
+
+
     private final static  String NOTFOUND = "用户名或密码不正确";
 
+    private final static  String LOGINSUCCESS ="用户登陆成功";
+
     @Override
-    public @NonNull Optional<String> loginService(@NonNull LoginParams loginParams) {
+    public @NonNull BaseResponse loginService(@NonNull LoginParams loginParams) {
 
 //        if(tokenService.islogined(loginParams.getUsername())){
 ////            throw new BadRequestException("用户已经在别处登陆！");
 ////        }
-        //判断用户是用用户还是账号登陆的
+        //判断用户是用邮箱还是账号登陆的
         final BloggerAccount user;
-
+        User userRs = new User();
         Optional<String> token = Optional.ofNullable(null);
 
         try {
@@ -77,14 +88,24 @@ public class AccountServiceImpl implements AccountService {
         if(user.getPassword().equals(loginParams.getPassword())){
 //                  token = Optional.ofNullable(Optional.ofNullable(tokenService.generateToken(loginParams.getUsername())).orElseThrow(() -> new ServiceException("系统服务错误")));
 //                 tokenService.storage(token.get(),loginParams.getUsername());
-                token  = Optional.ofNullable(Optional.ofNullable( tokenService.getToken(user))).orElseThrow(() -> new ServiceException("服务异常"));
+
+            BeanUtils.copyProperties(user,userRs);
+            userRs.setRoles(roleService.getRolesByUserId(userRs.getId())
+                    .stream().map(n->n.getAuthority()).collect(Collectors.toList()));
+                token  = Optional.ofNullable(Optional.ofNullable( tokenService.getToken(userRs))).orElseThrow(() -> new ServiceException("服务异常"));
         }else{
-                throw new BadRequestException("密码不正确");
+                throw new BadRequestException(NOTFOUND);
         }
 
 //        return tokenService.creatAuthToken(token.get());
-
-        return token;
+        BaseResponse baseResponse = new BaseResponse();
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("token",token.get());
+        map.put("user",userRs);
+        baseResponse.setData(map);
+        baseResponse.setMessage(LOGINSUCCESS);
+        baseResponse.setStatus(HttpStatus.OK.value());
+        return baseResponse;
     }
 
 
@@ -162,6 +183,8 @@ public class AccountServiceImpl implements AccountService {
 
         log.debug(bloggerAccount.toString());
 
+
+
         if(bloggerAccountMapper.insertSelective(bloggerAccount) == 0){
             baseResponse.setStatus(HttpStatus.BAD_REQUEST.value());
             baseResponse.setData("服务异常，请稍后重试");
@@ -176,6 +199,13 @@ public class AccountServiceImpl implements AccountService {
 
         bloggerProfileMapper.insertSelective(bloggerProfile);
         baseResponse.setStatus(HttpStatus.OK.value());
+
+
+        //设置用户角色
+        //默认都是User用户
+
+        roleService.setRoleWithUserId(Role.USER,bloggerAccount.getId());
+
 
         return baseResponse;
     }
@@ -207,6 +237,7 @@ public class AccountServiceImpl implements AccountService {
 
         return user.orElseThrow(() -> new NotFoundException("用户账号不存在"));
     }
+
 
 
 }

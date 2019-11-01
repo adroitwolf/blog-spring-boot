@@ -11,7 +11,7 @@ import javax.validation.constraints.Size;
  * Created with IntelliJ IDEA.
  * User: WHOAMI
  * Time: 2019 2019/8/17 8:56
- * Description: ://TODO ${END}
+ * Description: 注册变量
  */
 @Data
 @ToString
@@ -34,6 +34,10 @@ public class RegisterParams {
     @NotBlank(message = "邮箱不能为空！")
     @Size(max = 127,message = "邮箱长度不能超过{max}")
     private String email;
+
+
+    @Size(max=10,message = "邀请码格式不正确")
+    private String Code;
 
 
 

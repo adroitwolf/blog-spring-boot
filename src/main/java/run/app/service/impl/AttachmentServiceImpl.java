@@ -9,15 +9,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import run.app.entity.DTO.BaseResponse;
-import run.app.entity.DTO.DataGrid;
-import run.app.entity.DTO.ImageFile;
-import run.app.entity.DTO.Picture;
+import run.app.entity.DTO.*;
+import run.app.entity.VO.AttachmentParams;
 import run.app.entity.model.BloggerPicture;
 import run.app.entity.model.BloggerPictureExample;
 import run.app.exception.BadRequestException;
 import run.app.mapper.BloggerPictureMapper;
 import run.app.security.token.TokenService;
+import run.app.service.ArticleService;
 import run.app.service.AttachmentService;
 import run.app.service.UserService;
 import run.app.util.AppUtil;
@@ -40,8 +39,6 @@ import java.util.stream.Collectors;
 public class AttachmentServiceImpl implements AttachmentService {
 
 
-
-
     @Autowired
     BloggerPictureMapper bloggerPictureMapper;
 
@@ -50,15 +47,21 @@ public class AttachmentServiceImpl implements AttachmentService {
     @Autowired
     UserService userService;
 
+    @Autowired
+    ArticleService articleService;
 
     @Autowired
     TokenService tokenService;
 
 
+
     AppUtil appUtil;
+
+    UploadUtil uploadUtil;
 
     public AttachmentServiceImpl() {
         this.appUtil =  AppUtil.getInstance();
+        this.uploadUtil = UploadUtil.getInstance();
     }
 
 
@@ -69,7 +72,7 @@ public class AttachmentServiceImpl implements AttachmentService {
 
 
     @Override
-    public DataGrid getAttachmentList(int pageSize, int pageNum, String token) {
+    public BaseResponse getAttachmentList(int pageSize, int pageNum, String token) {
 
         Long id = tokenService.getUserIdWithToken(token);
 
@@ -90,7 +93,8 @@ public class AttachmentServiceImpl implements AttachmentService {
 
         //todo:
         List<Picture> pictures = bloggerPictures.stream().filter(Objects::nonNull).map(item ->{
-            return new Picture(item.getId(),item.getPath());
+            return new Picture(item.getId(),item.getPath(),item.getTitle());
+
                 }
         ).collect(Collectors.toList());
 
@@ -100,7 +104,12 @@ public class AttachmentServiceImpl implements AttachmentService {
         dataGrid.setTotal(bloggerPicturePageInfo.getTotal());
         dataGrid.setRows(pictures);
 
-        return dataGrid;
+        BaseResponse baseResponse = new BaseResponse();
+
+        baseResponse.setStatus(HttpStatus.OK.value());
+        baseResponse.setData(dataGrid);
+
+        return baseResponse;
     }
 
     @Override
@@ -121,7 +130,8 @@ public class AttachmentServiceImpl implements AttachmentService {
 
         bloggerPicture.setUpdateDate(new Date());
 
-        bloggerPicture.setCiteNum(1);
+//        修复上传逻辑错误，开始上传的图片引用人数应该是0
+        bloggerPicture.setCiteNum(0);
 
         bloggerPicture.setMediaType(imageFile.getMediaType().getType());
 
@@ -145,6 +155,73 @@ public class AttachmentServiceImpl implements AttachmentService {
         BloggerPicture bloggerPicture = bloggerPictures.stream().filter(Objects::nonNull).findFirst().orElseThrow(() -> new BadRequestException("图片名称有误,或附件已被删除！"));
         return bloggerPicture.getId();
 
+    }
+
+    @Override
+    @Transactional
+    public BaseResponse updateInfo(Long id, AttachmentParams attachmentParams , String token) {
+
+        BloggerPicture bloggerPicture = bloggerPictureMapper.selectByPrimaryKey(id);
+
+        tokenService.authentication(bloggerPicture.getBloggerId(),token);
+
+        BloggerPicture bloggerPicture1 = new BloggerPicture();
+
+        bloggerPicture1.setTitle(attachmentParams.getTitle());
+        bloggerPicture1.setId(id);
+        bloggerPictureMapper.updateByPrimaryKeySelective(bloggerPicture1);
+
+        BaseResponse baseResponse = new BaseResponse();
+
+        baseResponse.setStatus(HttpStatus.OK.value());
+
+        return baseResponse;
+    }
+
+    @Override
+    public BaseResponse getInfo(Long id, String token) {
+        BloggerPicture bloggerPicture = bloggerPictureMapper.selectByPrimaryKey(id);
+
+
+        //需要处理空字符问题
+        tokenService.authentication(bloggerPicture.getBloggerId(),token);
+
+        PictureInfo pictureInfo = new PictureInfo();
+
+        BeanUtils.copyProperties(bloggerPicture,pictureInfo);
+
+        BaseResponse baseResponse = new BaseResponse();
+
+        baseResponse.setData(pictureInfo);
+
+        baseResponse.setStatus(HttpStatus.OK.value());
+        return baseResponse;
+    }
+
+    @Override
+    @Transactional
+    public BaseResponse deletePic(Long id, String token) {
+        BloggerPicture bloggerPicture = bloggerPictureMapper.selectByPrimaryKey(id);
+
+
+        //需要处理空字符问题
+        tokenService.authentication(bloggerPicture.getBloggerId(),token);
+
+        bloggerPictureMapper.deleteByPrimaryKey(id);
+
+        articleService.deleteQuotePic(id);
+
+        uploadUtil.delFile(bloggerPicture.getPath());
+        uploadUtil.delFile(bloggerPicture.getThumbPath());
+
+        BaseResponse baseResponse = new BaseResponse();
+        baseResponse.setStatus(HttpStatus.OK.value());
+
+        baseResponse.setMessage("图片删除成功");
+
+
+
+        return baseResponse;
     }
 
 

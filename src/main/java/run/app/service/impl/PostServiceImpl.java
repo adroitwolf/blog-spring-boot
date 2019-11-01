@@ -6,9 +6,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import run.app.entity.DTO.BaseResponse;
 import run.app.entity.DTO.BlogDetailWithAuthor;
 import run.app.entity.DTO.DataGrid;
+import run.app.entity.enums.ArticleStatus;
 import run.app.entity.model.*;
 import run.app.entity.VO.PostQueryParams;
 import run.app.mapper.*;
@@ -62,7 +65,7 @@ public class PostServiceImpl implements PostService {
     BloggerProfileMapper bloggerProfileMapper;
 
     @Override
-    public DataGrid getList(int pageNum, int pageSize) {
+    public BaseResponse getList(int pageNum, int pageSize) {
 
 
         BlogExample blogExample = new BlogExample();
@@ -106,11 +109,13 @@ public class PostServiceImpl implements PostService {
         dataGrid.setTotal(list.getTotal());
 
 
-        return dataGrid;
+
+
+        return  new BaseResponse(HttpStatus.OK.value(),"",dataGrid);
     }
 
     @Override
-    public DataGrid getListByExample(int pageNum, int pageSize, String keyword) {
+    public BaseResponse getListByExample(int pageNum, int pageSize, String keyword) {
 
         PostQueryParams postQueryParams = new PostQueryParams();
 
@@ -149,7 +154,7 @@ public class PostServiceImpl implements PostService {
 
         dataGrid.setTotal(list.getTotal());
 
-        return dataGrid;
+        return new BaseResponse(HttpStatus.OK.value(),"",dataGrid);
     }
 
     @Override
@@ -182,7 +187,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public DataGrid getListByTag(int pageNum, int pageSize, String tag) {
+    public BaseResponse getListByTag(int pageNum, int pageSize, String tag) {
 
         Long id = tagService.selectIdWithName(tag);
 
@@ -219,11 +224,11 @@ public class PostServiceImpl implements PostService {
 
             dataGrid.setRows(blogs);
             dataGrid.setTotal(longPageInfo.getTotal());
-            return dataGrid;
+            return new BaseResponse(HttpStatus.OK.value(),"",dataGrid);
         }
 
         dataGrid.setTotal(0);
 
-        return dataGrid;
+        return new BaseResponse(HttpStatus.OK.value(),"",dataGrid);
     }
 }

@@ -2,6 +2,7 @@ package run.app.service;
 
 
 import lombok.NonNull;
+import run.app.entity.DTO.BaseResponse;
 import run.app.entity.DTO.UserDetail;
 import run.app.entity.model.BloggerProfile;
 import run.app.entity.VO.UserParams;
@@ -23,7 +24,7 @@ public interface UserService {
 
      @NonNull UserDetail updateProfileById(@NonNull UserParams userParams,@NonNull String token);
 
-     UserDetail getUserDetailByToken(@NonNull String token);
+     BaseResponse getUserDetailByToken(@NonNull String token);
 
 
      void uploadAvatarId(@NonNull String avatar,@NonNull String token);

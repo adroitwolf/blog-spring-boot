@@ -1,9 +1,12 @@
 package run.app.entity.model;
 
+import lombok.ToString;
+
 import java.util.Date;
 
+@ToString
 public class BloggerAccount {
-    private Integer id;
+    private Long id;
 
     private String username;
 
@@ -11,11 +14,17 @@ public class BloggerAccount {
 
     private Date registerDate;
 
-    public Integer getId() {
+    private String phone;
+
+    private String email;
+
+    private String isEnabled;
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -41,5 +50,29 @@ public class BloggerAccount {
 
     public void setRegisterDate(Date registerDate) {
         this.registerDate = registerDate;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone == null ? null : phone.trim();
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email == null ? null : email.trim();
+    }
+
+    public String getisEnabled() {
+        return isEnabled;
+    }
+
+    public void setisEnabled(String isEnabled) {
+        this.isEnabled = isEnabled == null ? null : isEnabled.trim();
     }
 }

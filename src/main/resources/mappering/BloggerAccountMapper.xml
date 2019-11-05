@@ -2,10 +2,13 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="run.app.mapper.BloggerAccountMapper">
   <resultMap id="BaseResultMap" type="run.app.entity.model.BloggerAccount">
-    <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="username" jdbcType="VARCHAR" property="username" />
-    <result column="password" jdbcType="VARCHAR" property="password" />
-    <result column="register_date" jdbcType="TIMESTAMP" property="registerDate" />
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="USERNAME" jdbcType="VARCHAR" property="username" />
+    <result column="PASSWORD" jdbcType="VARCHAR" property="password" />
+    <result column="REGISTER_DATE" jdbcType="TIMESTAMP" property="registerDate" />
+    <result column="PHONE" jdbcType="VARCHAR" property="phone" />
+    <result column="EMAIL" jdbcType="VARCHAR" property="email" />
+    <result column="IS_ENABLED" jdbcType="VARCHAR" property="isEnabled" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -66,7 +69,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, username, password, register_date
+    ID, USERNAME, PASSWORD, REGISTER_DATE, PHONE, EMAIL, IS_ENABLED
   </sql>
   <select id="selectByExample" parameterType="run.app.entity.model.BloggerAccountExample" resultMap="BaseResultMap">
     select
@@ -82,15 +85,15 @@
       order by ${orderByClause}
     </if>
   </select>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from blogger_account
-    where id = #{id,jdbcType=INTEGER}
+    where ID = #{id,jdbcType=BIGINT}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from blogger_account
-    where id = #{id,jdbcType=INTEGER}
+    where ID = #{id,jdbcType=BIGINT}
   </delete>
   <delete id="deleteByExample" parameterType="run.app.entity.model.BloggerAccountExample">
     delete from blogger_account
@@ -99,31 +102,42 @@
     </if>
   </delete>
   <insert id="insert" parameterType="run.app.entity.model.BloggerAccount">
-    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
-      SELECT LAST_INSERT_ID()
-    </selectKey>
-    insert into blogger_account (username, password, register_date
-      )
-    values (#{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{registerDate,jdbcType=TIMESTAMP}
-      )
+    insert into blogger_account (ID, USERNAME, PASSWORD, 
+      REGISTER_DATE, PHONE, EMAIL, 
+      IS_ENABLED)
+    values (#{id,jdbcType=BIGINT}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
+      #{registerDate,jdbcType=TIMESTAMP}, #{phone,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, 
+      #{isEnabled,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="run.app.entity.model.BloggerAccount">
-    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
-      SELECT LAST_INSERT_ID()
-    </selectKey>
     insert into blogger_account
     <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
       <if test="username != null">
-        username,
+        USERNAME,
       </if>
       <if test="password != null">
-        password,
+        PASSWORD,
       </if>
       <if test="registerDate != null">
-        register_date,
+        REGISTER_DATE,
+      </if>
+      <if test="phone != null">
+        PHONE,
+      </if>
+      <if test="email != null">
+        EMAIL,
+      </if>
+      <if test="isEnabled != null">
+        IS_ENABLED,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
       <if test="username != null">
         #{username,jdbcType=VARCHAR},
       </if>
@@ -132,6 +146,15 @@
       </if>
       <if test="registerDate != null">
         #{registerDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="phone != null">
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null">
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="isEnabled != null">
+        #{isEnabled,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -145,16 +168,25 @@
     update blogger_account
     <set>
       <if test="record.id != null">
-        id = #{record.id,jdbcType=INTEGER},
+        ID = #{record.id,jdbcType=BIGINT},
       </if>
       <if test="record.username != null">
-        username = #{record.username,jdbcType=VARCHAR},
+        USERNAME = #{record.username,jdbcType=VARCHAR},
       </if>
       <if test="record.password != null">
-        password = #{record.password,jdbcType=VARCHAR},
+        PASSWORD = #{record.password,jdbcType=VARCHAR},
       </if>
       <if test="record.registerDate != null">
-        register_date = #{record.registerDate,jdbcType=TIMESTAMP},
+        REGISTER_DATE = #{record.registerDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.phone != null">
+        PHONE = #{record.phone,jdbcType=VARCHAR},
+      </if>
+      <if test="record.email != null">
+        EMAIL = #{record.email,jdbcType=VARCHAR},
+      </if>
+      <if test="record.isEnabled != null">
+        IS_ENABLED = #{record.isEnabled,jdbcType=VARCHAR},
       </if>
     </set>
     <if test="_parameter != null">
@@ -163,10 +195,13 @@
   </update>
   <update id="updateByExample" parameterType="map">
     update blogger_account
-    set id = #{record.id,jdbcType=INTEGER},
-      username = #{record.username,jdbcType=VARCHAR},
-      password = #{record.password,jdbcType=VARCHAR},
-      register_date = #{record.registerDate,jdbcType=TIMESTAMP}
+    set ID = #{record.id,jdbcType=BIGINT},
+      USERNAME = #{record.username,jdbcType=VARCHAR},
+      PASSWORD = #{record.password,jdbcType=VARCHAR},
+      REGISTER_DATE = #{record.registerDate,jdbcType=TIMESTAMP},
+      PHONE = #{record.phone,jdbcType=VARCHAR},
+      EMAIL = #{record.email,jdbcType=VARCHAR},
+      IS_ENABLED = #{record.isEnabled,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -175,22 +210,34 @@
     update blogger_account
     <set>
       <if test="username != null">
-        username = #{username,jdbcType=VARCHAR},
+        USERNAME = #{username,jdbcType=VARCHAR},
       </if>
       <if test="password != null">
-        password = #{password,jdbcType=VARCHAR},
+        PASSWORD = #{password,jdbcType=VARCHAR},
       </if>
       <if test="registerDate != null">
-        register_date = #{registerDate,jdbcType=TIMESTAMP},
+        REGISTER_DATE = #{registerDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="phone != null">
+        PHONE = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null">
+        EMAIL = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="isEnabled != null">
+        IS_ENABLED = #{isEnabled,jdbcType=VARCHAR},
       </if>
     </set>
-    where id = #{id,jdbcType=INTEGER}
+    where ID = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="run.app.entity.model.BloggerAccount">
     update blogger_account
-    set username = #{username,jdbcType=VARCHAR},
-      password = #{password,jdbcType=VARCHAR},
-      register_date = #{registerDate,jdbcType=TIMESTAMP}
-    where id = #{id,jdbcType=INTEGER}
+    set USERNAME = #{username,jdbcType=VARCHAR},
+      PASSWORD = #{password,jdbcType=VARCHAR},
+      REGISTER_DATE = #{registerDate,jdbcType=TIMESTAMP},
+      PHONE = #{phone,jdbcType=VARCHAR},
+      EMAIL = #{email,jdbcType=VARCHAR},
+      IS_ENABLED = #{isEnabled,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

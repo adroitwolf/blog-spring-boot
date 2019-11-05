@@ -1,32 +1,25 @@
 package run.app.service.impl;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.interfaces.Claim;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import run.app.entity.DTO.BaseResponse;
 import run.app.entity.DTO.UserDetail;
 import run.app.entity.model.*;
-import run.app.entity.params.LoginParams;
-import run.app.entity.params.UserParams;
-import run.app.exception.BadRequestException;
-import run.app.exception.ServiceException;
+import run.app.entity.VO.UserParams;
 import run.app.mapper.BloggerAccountMapper;
 import run.app.mapper.BloggerProfileMapper;
-import run.app.security.token.AuthToken;
 import run.app.security.token.TokenService;
+import run.app.service.RoleService;
 import run.app.service.UserService;
-import run.app.util.RedisUtil;
 import run.app.util.UploadUtil;
 
-import java.io.File;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * Created with IntelliJ IDEA.
@@ -38,37 +31,21 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class UserServiceImpl implements UserService {
 
-
-
-
+    @Autowired
+    BloggerAccountMapper bloggerAccountMapper;
 
     @Autowired
     BloggerProfileMapper bloggerProfileMapper;
 
     @Autowired
+    RoleService roleService;
+
+    @Autowired
     TokenService tokenService;
 
 
-
-
-
-
     @Override
-    public @NonNull BloggerProfileWithBLOBs findUserDetailByBloggerId(@NonNull Integer bloggerId) {
-
-//        BloggerProfileExample bloggerProfileExample = new BloggerProfileExample();
-//        BloggerProfileExample.Criteria criteria = bloggerProfileExample.createCriteria();
-//
-//        criteria.andBloggerIdEqualTo(bloggerId);
-//
-//        List<BloggerProfileWithBLOBs> bloggerProfileWithBLOBs = bloggerProfileMapper.selectByExampleWithBLOBs(bloggerProfileExample);
-
-
-
-//        for (BloggerProfileWithBLOBs bloggerProfile: bloggerProfileWithBLOBs) {
-//            return bloggerProfile;
-//        }
-
+    public @NonNull BloggerProfile findUserDetailByBloggerId(@NonNull Long bloggerId) {
         return bloggerProfileMapper.selectByPrimaryKey(bloggerId);
     }
 
@@ -76,56 +53,48 @@ public class UserServiceImpl implements UserService {
     public @NonNull UserDetail updateProfileById(@NonNull UserParams userParams, @NonNull String token) {
 
 
-//        Integer userId = getUserIdByToken(token);
-        Integer userId = tokenService.getUserIdWithToken(token);
-        BloggerProfileWithBLOBs bloggerProfileWithBLOBs = new BloggerProfileWithBLOBs();
-
-//        BloggerProfileExample bloggerProfileExample = new BloggerProfileExample();
-//
-//        BloggerProfileExample.Criteria criteria = bloggerProfileExample.createCriteria();
-//
-//        criteria.andBloggerIdEqualTo(userId);
+        Long userId = tokenService.getUserIdWithToken(token);
+        BloggerProfile bloggerProfile = new BloggerProfile();
 
 //    这个才是昵称
-        bloggerProfileWithBLOBs.setIntro(userParams.getUsername());
-
-        bloggerProfileWithBLOBs.setAboutMe(userParams.getAboutMe());
-
-        bloggerProfileWithBLOBs.setPhone(userParams.getPhone());
-        bloggerProfileWithBLOBs.setEmail(userParams.getEmail());
-
-
+        bloggerProfile.setBloggerId(userId);
+        bloggerProfile.setNickname(userParams.getUsername());
+        bloggerProfile.setAboutMe(userParams.getAboutMe());
 //        bloggerProfileMapper.updateByExampleSelective(bloggerProfileWithBLOBs,bloggerProfileExample);
 
 
-        bloggerProfileMapper.updateByPrimaryKeySelective(bloggerProfileWithBLOBs);
+        bloggerProfileMapper.updateByPrimaryKeySelective(bloggerProfile);
 
         UserDetail userDetail = new UserDetail();
 
-        userDetail.setAboutMe(bloggerProfileWithBLOBs.getAboutMe());
-        userDetail.setUsername(bloggerProfileWithBLOBs.getIntro());
-
-        userDetail.setPhone(bloggerProfileWithBLOBs.getPhone());
-        userDetail.setEmail(bloggerProfileWithBLOBs.getEmail());
+        userDetail.setAboutMe(bloggerProfile.getAboutMe());
+        userDetail.setUsername(bloggerProfile.getNickname());
 
         return userDetail;
     }
 
     @Override
-    public UserDetail getUserDetailByToken(@NonNull String token) {
-        int id = tokenService.getUserIdWithToken(token);
+    public BaseResponse getUserDetailByToken(@NonNull String token) {
+        Long id = tokenService.getUserIdWithToken(token);
 
-        @NonNull BloggerProfileWithBLOBs bloggerProfile = findUserDetailByBloggerId(id);
+        @NonNull
+        BloggerProfile bloggerProfile = findUserDetailByBloggerId(id);
 
 
         UserDetail userDetail = new UserDetail();
         userDetail.setAvatarId(bloggerProfile.getAvatarId());
-        userDetail.setUsername(bloggerProfile.getIntro());
-        userDetail.setEmail(bloggerProfile.getEmail());
-        userDetail.setPhone(bloggerProfile.getPhone());
-        userDetail.setAboutMe(bloggerProfile.getAboutMe());
 
-        return userDetail;
+        BloggerAccount bloggerAccount = bloggerAccountMapper.selectByPrimaryKey(id);
+
+        BeanUtils.copyProperties(bloggerAccount,userDetail);
+
+
+
+
+        //找到用户权限
+        userDetail.setRoles(roleService.getRolesByUserId(id).stream().map(n->n.getAuthority()).collect(Collectors.toList()));
+
+        return new BaseResponse(HttpStatus.OK.value(),"",userDetail);
 
 //        return tokenService.findUserDetailsByToken(token);
 
@@ -134,66 +103,21 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void uploadAvatarId(@NonNull String avatar, @NonNull String token) {
-        int id = tokenService.getUserIdWithToken(token);
+        Long id = tokenService.getUserIdWithToken(token);
 
+        BloggerProfile bloggerProfile = bloggerProfileMapper.selectByPrimaryKey(id);
 
-//        BloggerProfileExample bloggerProfileExample = new BloggerProfileExample();
-//        BloggerProfileExample.Criteria criteria = bloggerProfileExample.createCriteria();
-//        criteria.andBloggerIdEqualTo(id);
-//        List<BloggerProfileWithBLOBs> withBLOBs = bloggerProfileMapper.selectByExampleWithBLOBs(bloggerProfileExample);
-//
-////        如果该账户目前有头像，要先删除当前头像
-//        withBLOBs.stream().filter(Objects::nonNull).findFirst().ifPresent(a->{
-//            if(!StringUtils.isBlank(a.getAvatarId())){
-//                UploadUtil instance = UploadUtil.getInstance();
-//                instance.delFile(a.getAvatarId());
-//            }
-//        });
-
-        BloggerProfileWithBLOBs bloggerProfileWithBLOBs = bloggerProfileMapper.selectByPrimaryKey(id);
-
-        if(!StringUtils.isBlank(bloggerProfileWithBLOBs.getAvatarId())){
-                UploadUtil instance = UploadUtil.getInstance();
-                instance.delFile(bloggerProfileWithBLOBs.getAvatarId());
+        if (!StringUtils.isBlank(bloggerProfile.getAvatarId())) {
+            UploadUtil instance = UploadUtil.getInstance();
+            instance.delFile(bloggerProfile.getAvatarId());
         }
 
-
-        BloggerProfileWithBLOBs profile = new BloggerProfileWithBLOBs();
+        BloggerProfile profile = new BloggerProfile();
         profile.setBloggerId(id);
         profile.setAvatarId(avatar);
         bloggerProfileMapper.updateByPrimaryKeySelective(profile);
 
-//        criteria.andBloggerIdEqualTo(id);
-//
-//        BloggerProfileWithBLOBs bloggerProfileWithBLOBs = new BloggerProfileWithBLOBs();
-//        bloggerProfileWithBLOBs.setAvatarId(avatar);
-//        bloggerProfileMapper.updateByExampleSelective(bloggerProfileWithBLOBs,bloggerProfileExample);
     }
-
-
-
-
-//    @Override
-//    public Integer getUserIdByToken(@NonNull String token) {
-//
-//        String username = tokenService.getUsernameByToken(token);
-//
-//
-//        BloggerAccountExample bloggerAccountExample = new BloggerAccountExample();
-//        BloggerAccountExample.Criteria criteria = bloggerAccountExample.createCriteria();
-//        criteria.andUsernameEqualTo(username);
-//        List<BloggerAccount> bloggerAccounts = bloggerAccountMapper.selectByExample(bloggerAccountExample);
-//
-//        if(bloggerAccounts.isEmpty()){
-//            throw new BadRequestException("用户信息错误，请重试！");
-//        }
-//
-//        for (BloggerAccount bloggerAccount:bloggerAccounts) {
-//            return bloggerAccount.getId();
-//        }
-//
-//        return -1;
-//    }
 
     @Override
     public boolean logout(String token) {

@@ -1,6 +1,7 @@
 package run.app.exception;
 
 import lombok.Data;
+import org.springframework.http.HttpStatus;
 
 /**
  * Created with IntelliJ IDEA.
@@ -10,8 +11,7 @@ import lombok.Data;
  */
 public abstract class AppException extends RuntimeException {
 
-    private String code;
-    private String msg;
+
 
     public AppException(String message){
         super(message);
@@ -20,6 +20,9 @@ public abstract class AppException extends RuntimeException {
     public AppException(String message, Throwable cause){
         super(message,cause);
     }
+
+
+    public abstract HttpStatus getStatus();
 
 
 }

@@ -3,15 +3,17 @@ package run.app.config.properties;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.annotation.Validated;
 
 /**
  * Created with IntelliJ IDEA.
  * User: WHOAMI
  * Time: 2019 2019/7/22 18:10
- * Description: ://TODO ${END}
+ * Description: jwt配置文件
  */
 @Data
 @Component
+@Validated
 @ConfigurationProperties(prefix = "jwt")
 public class JWTProperties {
     /**

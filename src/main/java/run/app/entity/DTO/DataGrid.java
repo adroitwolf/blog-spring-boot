@@ -10,7 +10,7 @@ import java.util.List;
  * Created with IntelliJ IDEA.
  * User: WHOAMI
  * Time: 2019 2019/7/26 9:06
- * Description: ://TODO ${END}
+ * Description: 列表类型的bean
  */
 @Data
 @ToString

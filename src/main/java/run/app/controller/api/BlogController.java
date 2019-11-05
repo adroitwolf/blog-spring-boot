@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.*;
 import run.app.entity.DTO.BaseResponse;
 import run.app.entity.DTO.BlogDetail;
 import run.app.entity.DTO.DataGrid;
-import run.app.entity.params.ArticleParams;
-import run.app.entity.params.PostQueryParams;
-import run.app.security.log.MethodLog;
+import run.app.entity.VO.ArticleParams;
+import run.app.entity.VO.PostQueryParams;
+import run.app.security.annotation.MethodLog;
 import run.app.service.ArticleService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,6 +29,8 @@ import java.util.Map;
 @RequestMapping("/api/blog")
 public class BlogController {
 
+    private final static String AUTHENICATION = "Authentication";
+
     @Autowired
     ArticleService articleService;
 
@@ -37,11 +39,12 @@ public class BlogController {
     @PostMapping("/submit")
     public BaseResponse submitArticle(@Valid @RequestBody ArticleParams articleParams, HttpServletRequest request){
         log.info(articleParams.toString());
-        String token = request.getHeader("Authentication");
+        String token = request.getHeader(AUTHENICATION);
 
         articleService.submitArticle(articleParams,token);
         BaseResponse baseResponse = new BaseResponse();
         baseResponse.setStatus(HttpStatus.OK.value());
+        baseResponse.setMessage("上传成功");
         return baseResponse;
     }
 
@@ -49,8 +52,8 @@ public class BlogController {
     @ApiOperation("博客-回收站之间的操作")
     @PutMapping("/{BlogId:\\d+}/status/{status}")
     public BaseResponse updateArticleStatus(@PathVariable("BlogId")Long blogId ,
-                              @PathVariable("status")String status){
-        articleService.updateArticleStatus(blogId,status);
+                              @PathVariable("status")String status,HttpServletRequest request){
+        articleService.updateArticleStatus(blogId,status,request.getHeader(AUTHENICATION));
         BaseResponse baseResponse = new BaseResponse();
         baseResponse.setStatus(HttpStatus.OK.value());
         Map<String,String> updateStatus = new HashMap<>();
@@ -62,8 +65,9 @@ public class BlogController {
 
     @ApiOperation("查看博客详细内容")
     @GetMapping("detail/{BlogId:\\d+}")
-    public BaseResponse getBlogDetail(@PathVariable("BlogId")Long blogId){
-        BlogDetail articleDetail = articleService.getArticleDetail(blogId);
+    public BaseResponse getBlogDetail(@PathVariable("BlogId")Long blogId,HttpServletRequest request){
+
+        BlogDetail articleDetail = articleService.getArticleDetail(blogId,request.getHeader(AUTHENICATION));
         BaseResponse baseResponse = new BaseResponse();
         baseResponse.setStatus(HttpStatus.OK.value());
         baseResponse.setData(articleDetail);
@@ -78,13 +82,10 @@ public class BlogController {
 
         log.debug(articleParams.toString());
 
-        String token = request.getHeader("Authentication");
-
-        articleService.updateArticle(articleParams,blogId,token);
+        articleService.updateArticle(articleParams,blogId,request.getHeader(AUTHENICATION));
 
         BaseResponse baseResponse = new BaseResponse();
         baseResponse.setStatus(HttpStatus.OK.value());
-
         return baseResponse;
     }
 
@@ -92,29 +93,28 @@ public class BlogController {
     @MethodLog
     @ApiOperation("文章查询")
     @GetMapping("query")
-    public DataGrid getListByExample(@RequestParam int pageNum,
+    public BaseResponse getListByExample(@RequestParam int pageNum,
                                      @RequestParam int pageSize,
                                      PostQueryParams postQueryParams,
                                      HttpServletRequest request){
 
         log.info(postQueryParams.toString());
-        String token = request.getHeader("Authentication");
-        return articleService.getArticleListByExample(pageNum,pageSize,postQueryParams,token);
+        return articleService.getArticleListByExample(pageNum,pageSize,postQueryParams,request.getHeader(AUTHENICATION));
     }
 
     @MethodLog
     @ApiOperation("删除博客")
     @DeleteMapping("{blogId:\\d+}")
-    public void deleteBlog(@PathVariable("blogId")Long blogId){
-        articleService.deleteBlog(blogId);
+    public BaseResponse deleteBlog(@PathVariable("blogId")Long blogId,HttpServletRequest request){
+        articleService.deleteBlog(blogId,request.getHeader(AUTHENICATION));
+        return new BaseResponse(HttpStatus.OK.value(),"删除成功",null);
     }
 
     @ApiOperation("获取博客数量")
     @GetMapping("count")
     public BaseResponse countList(HttpServletRequest request){
-        String token = request.getHeader("Authentication");
 
-        long articleCount = articleService.getArticleCount(token);
+        long articleCount = articleService.getArticleCount( request.getHeader(AUTHENICATION));
 
         BaseResponse baseResponse = new BaseResponse();
         baseResponse.setStatus(HttpStatus.OK.value());

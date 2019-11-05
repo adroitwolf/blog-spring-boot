@@ -24,5 +24,5 @@ public interface TagService {
 
 
 
-    List<Long> selectBlogIdByTagId(Long id);
+    List<Long> selectBlogIdByTagId(int pageSize,int pageNum,Long id);
 }

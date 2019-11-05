@@ -1,11 +1,11 @@
 package run.app.service;
 
-import io.swagger.models.auth.In;
 import lombok.NonNull;
+import run.app.entity.DTO.BaseResponse;
 import run.app.entity.DTO.BlogDetail;
 import run.app.entity.DTO.DataGrid;
-import run.app.entity.params.ArticleParams;
-import run.app.entity.params.PostQueryParams;
+import run.app.entity.VO.ArticleParams;
+import run.app.entity.VO.PostQueryParams;
 
 /**
  * Created with IntelliJ IDEA.
@@ -20,19 +20,20 @@ public interface ArticleService {
 
     boolean updateArticle(@NonNull ArticleParams articleParams,@NonNull Long blogId,@NonNull String token);
 
-    boolean updateArticleStatus(@NonNull Long blogId,@NonNull String status);
+    boolean updateArticleStatus(@NonNull Long blogId,@NonNull String status,String token);
 
 
-    BlogDetail getArticleDetail(@NonNull Long blogId);
+    BlogDetail getArticleDetail(@NonNull Long blogId,String token);
 
 
-    DataGrid getArticleListByExample(@NonNull int pageNum, @NonNull int pageSize, PostQueryParams postQueryParams, @NonNull String token);
+    BaseResponse getArticleListByExample(@NonNull int pageNum, @NonNull int pageSize, PostQueryParams postQueryParams, @NonNull String token);
 
 
-
-    void deleteBlog(@NonNull Long blogId);
+    void deleteBlog(@NonNull Long blogId,String token);
 
     long getArticleCount(@NonNull String token);
 
 
+
+    void deleteQuotePic(Long picId);
 }

@@ -1,20 +1,17 @@
 package run.app.entity.model;
 
-import lombok.ToString;
-
 import java.util.Date;
 
-@ToString
 public class Blog {
     private Long id;
 
-    private Integer bloggerId;
+    private Long bloggerId;
 
     private String status;
 
     private String title;
 
-    private Integer pictureId;
+    private Long pictureId;
 
     private String summary;
 
@@ -32,11 +29,11 @@ public class Blog {
         this.id = id;
     }
 
-    public Integer getBloggerId() {
+    public Long getBloggerId() {
         return bloggerId;
     }
 
-    public void setBloggerId(Integer bloggerId) {
+    public void setBloggerId(Long bloggerId) {
         this.bloggerId = bloggerId;
     }
 
@@ -56,11 +53,11 @@ public class Blog {
         this.title = title == null ? null : title.trim();
     }
 
-    public Integer getPictureId() {
+    public Long getPictureId() {
         return pictureId;
     }
 
-    public void setPictureId(Integer pictureId) {
+    public void setPictureId(Long pictureId) {
         this.pictureId = pictureId;
     }
 

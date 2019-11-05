@@ -5,21 +5,16 @@ import org.apache.ibatis.annotations.Param;
 import run.app.entity.model.BlogTagMapExample;
 import run.app.entity.model.BlogTagMapKey;
 
-public interface BlogTagMapMapper {
+public interface BlogTagMapMapper extends BaseMapper<BlogTagMapKey,BlogTagMapKey>{
     long countByExample(BlogTagMapExample example);
 
     int deleteByExample(BlogTagMapExample example);
-
-    int deleteByPrimaryKey(BlogTagMapKey key);
-
-    int insert(BlogTagMapKey record);
-
-    int insertSelective(BlogTagMapKey record);
 
     /* 增加两条返回单一子段的代码  8-23-19 WHOAMI*/
     List<Long> selectByExampleForTag(BlogTagMapExample example);
     List<Long> selectByExampleForBlogId(BlogTagMapExample example);
     /* 增加代码结束*/
+
     List<BlogTagMapKey> selectByExample(BlogTagMapExample example);
 
     int updateByExampleSelective(@Param("record") BlogTagMapKey record, @Param("example") BlogTagMapExample example);

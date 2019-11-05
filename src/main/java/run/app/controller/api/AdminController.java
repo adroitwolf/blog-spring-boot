@@ -5,14 +5,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import run.app.entity.DTO.BaseResponse;
-import run.app.entity.params.LoginParams;
-import run.app.entity.params.PasswordParams;
-import run.app.entity.params.RegisterParams;
-import run.app.security.log.MethodLog;
+import run.app.entity.VO.LoginParams;
+import run.app.entity.VO.PasswordParams;
+import run.app.entity.VO.RegisterParams;
+import run.app.security.annotation.MethodLog;
 import run.app.service.AccountService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.HashMap;
 
 /**
  * Created with IntelliJ IDEA.
@@ -31,8 +32,9 @@ public class AdminController {
 
     @ApiOperation("用户登陆")
     @PostMapping("/login")
-    public String  login(@RequestBody @Valid LoginParams loginParams){
-        return accountService.loginService(loginParams).get();
+    public BaseResponse  login(@RequestBody @Valid LoginParams loginParams){
+
+        return accountService.loginService(loginParams);
     }
 
 
@@ -42,7 +44,7 @@ public class AdminController {
     @PutMapping("/changePassword")
     public BaseResponse updatePassword(@Valid @RequestBody PasswordParams passwordParams, HttpServletRequest request){
 //        String token = userService.getUsernameByToken(request.getHeader("Authentication"));
-        String token = request.getHeader("Authentication");
+            String token = request.getHeader("Authentication");
         BaseResponse baseResponse = new BaseResponse();
         if(accountService.updatePassword(passwordParams.getOldPassword(),passwordParams.getNewPassword(),token)){
             baseResponse.setStatus(HttpStatus.OK.value());

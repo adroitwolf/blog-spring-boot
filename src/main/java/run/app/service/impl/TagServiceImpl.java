@@ -1,5 +1,6 @@
 package run.app.service.impl;
 
+import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,11 +33,14 @@ public class TagServiceImpl implements TagService {
     @Autowired
     BlogLabelMapper blogLabelMapper;
 
+    private  AppUtil instance = AppUtil.getInstance();
+
 
     @Override
     public String submitArticleWithTagString(List<String> tags,Long blogId) {
 
-        AppUtil instance = AppUtil.getInstance();
+//        首先要去重
+       tags = (List<String>) instance.removeDuplicateListItem(tags);
 
         BlogLabelExample blogLabelExample = new BlogLabelExample();
 
@@ -48,7 +52,6 @@ public class TagServiceImpl implements TagService {
             blogLabelExampleCriteria1.andTitleEqualTo(item);
 
             Optional<String> temp = Optional.ofNullable( blogLabelMapper.selectByExampleForPrimaryKey(blogLabelExample));
-
             if(!temp.isPresent()){
 //                        需要新建标签
                 BlogLabel blogLabel = new BlogLabel();
@@ -58,16 +61,22 @@ public class TagServiceImpl implements TagService {
                 blogLabel.setId(instance.nextId());
                 blogLabelMapper.insertSelective(blogLabel);
 
-                blogTagMapMapper.insertSelective(new BlogTagMapKey(blogLabel.getId(),blogId));
+                blogTagMapMapper.insert(new BlogTagMapKey(blogLabel.getId(),blogId));
 
                 nowTags.add(blogLabel.getId());
 
 
             }else{
-                log.info("id:"+temp.get()) ;
+
                 blogLabelMapper.updateByPrimaryKeyForAddNum(Long.valueOf(temp.get()));
+                blogTagMapMapper.insert(new BlogTagMapKey(Long.valueOf(temp.get()),blogId));
                 nowTags.add(Long.valueOf(temp.get()));
+
             }
+
+
+
+
         });
 
         return StringUtils.join(nowTags,",");
@@ -84,18 +93,20 @@ public class TagServiceImpl implements TagService {
          * @Date: 2019/8/23 17:35
          */
 
-//        查询更新之前到相应的标签id 并且每一个都要在tag标签使用人数中自减1
+//        查询更新之前到相应的标签id 并且每一个都要在tag标签使用人数中自减1 并且删除掉tag_map标签中的 集合
 
         BlogTagMapExample blogTagMapExample = new BlogTagMapExample();
         BlogTagMapExample.Criteria criteria = blogTagMapExample.createCriteria();
         criteria.andBlogIdEqualTo(blogId);
 
-        AppUtil instance = AppUtil.getInstance();
 
         List<Long> updateTags = blogTagMapMapper.selectByExampleForTag(blogTagMapExample);
 
         updateTags.stream().filter(Objects::nonNull)
-                .forEach(tags->blogLabelMapper.updateByPrimaryKeyForReduceNum(tags));
+                .forEach(tags->{
+                    blogLabelMapper.updateByPrimaryKeyForReduceNum(tags);
+                    blogTagMapMapper.deleteByPrimaryKey(new BlogTagMapKey(tags,blogId));
+                });
 
 
 //        查询到现在的标签id没有的话新增
@@ -107,7 +118,6 @@ public class TagServiceImpl implements TagService {
         tagsParams.stream().filter(Objects::nonNull)
                 .forEach(value->{
                     log.info(value);
-
                     blogLabelExample.clear();
                     BlogLabelExample.Criteria blogLabelExampleCriteria1 = blogLabelExample.createCriteria();
                     blogLabelExampleCriteria1.andTitleEqualTo(value);
@@ -132,6 +142,7 @@ public class TagServiceImpl implements TagService {
                     }else{
                         log.info("id:"+temp.get()) ;
                         blogLabelMapper.updateByPrimaryKeyForAddNum(Long.valueOf(temp.get()));
+                        blogTagMapMapper.insert(new BlogTagMapKey(Long.valueOf(temp.get()),blogId));
                         nowTags.add(Long.valueOf(temp.get()));
                     }
 
@@ -197,10 +208,14 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    public List<Long> selectBlogIdByTagId(Long id) {
+    public List<Long> selectBlogIdByTagId(int pageSize,int pageNum,Long id) {
         BlogTagMapExample blogTagMapExample = new BlogTagMapExample();
         BlogTagMapExample.Criteria criteria = blogTagMapExample.createCriteria();
         criteria.andTagIdEqualTo(id);
+
+        PageHelper.startPage(pageNum,pageSize);
+
+
         return  blogTagMapMapper.selectByExampleForBlogId(blogTagMapExample);
 
 

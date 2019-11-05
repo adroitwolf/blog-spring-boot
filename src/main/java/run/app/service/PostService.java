@@ -1,5 +1,6 @@
 package run.app.service;
 
+import run.app.entity.DTO.BaseResponse;
 import run.app.entity.DTO.BlogDetailWithAuthor;
 import run.app.entity.DTO.DataGrid;
 
@@ -10,12 +11,12 @@ import run.app.entity.DTO.DataGrid;
  * Description: ://针对前台博客的服务
  */
 public interface PostService {
-    DataGrid getList(int pageNum,int pageSize);
+    BaseResponse getList(int pageNum,int pageSize);
 
-    DataGrid getListByExample(int pageNum,int pageSize,String keyword);
+    BaseResponse getListByExample(int pageNum, int pageSize, String keyword);
 
     BlogDetailWithAuthor getDetail(Long blogId);
 
-    DataGrid getListByTag(int pageNum,int pageSize,String tag);
+    BaseResponse getListByTag(int pageNum,int pageSize,String tag);
 
 }

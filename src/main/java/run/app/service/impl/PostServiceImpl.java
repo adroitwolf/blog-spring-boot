@@ -4,12 +4,16 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import run.app.entity.DTO.BaseResponse;
 import run.app.entity.DTO.BlogDetailWithAuthor;
 import run.app.entity.DTO.DataGrid;
+import run.app.entity.enums.ArticleStatus;
 import run.app.entity.model.*;
-import run.app.entity.params.PostQueryParams;
+import run.app.entity.VO.PostQueryParams;
 import run.app.mapper.*;
 import run.app.service.AttachmentService;
 import run.app.service.PostService;
@@ -61,7 +65,7 @@ public class PostServiceImpl implements PostService {
     BloggerProfileMapper bloggerProfileMapper;
 
     @Override
-    public DataGrid getList(int pageNum, int pageSize) {
+    public BaseResponse getList(int pageNum, int pageSize) {
 
 
         BlogExample blogExample = new BlogExample();
@@ -89,26 +93,29 @@ public class PostServiceImpl implements PostService {
             String pic = "";
 
             if(null != item.getPictureId()){
-                pic = attachmentService.selectPicById(item.getBloggerId());
+                pic = attachmentService.selectPicById(item.getPictureId());
             }
 
-            return new run.app.entity.DTO.Blog(item.getId(),
-                    item.getTitle(),
-                    item.getSummary(),
-                    item.getReleaseDate(),
-                    tagsTitle,
-                    pic);}).collect(Collectors.toList());
+            run.app.entity.DTO.Blog blog = new run.app.entity.DTO.Blog();
+
+            BeanUtils.copyProperties(item,blog);
+            blog.setTagsTitle(tagsTitle);
+            blog.setPicture(pic);
+            return blog;
+        }).collect(Collectors.toList());
         DataGrid dataGrid = new DataGrid();
 
         dataGrid.setRows(resultX);
         dataGrid.setTotal(list.getTotal());
 
 
-        return dataGrid;
+
+
+        return  new BaseResponse(HttpStatus.OK.value(),"",dataGrid);
     }
 
     @Override
-    public DataGrid getListByExample(int pageNum, int pageSize, String keyword) {
+    public BaseResponse getListByExample(int pageNum, int pageSize, String keyword) {
 
         PostQueryParams postQueryParams = new PostQueryParams();
 
@@ -131,15 +138,15 @@ public class PostServiceImpl implements PostService {
             String pic = "";
 
             if(null != item.getPictureId()){
-                pic = attachmentService.selectPicById(item.getBloggerId());
+                pic = attachmentService.selectPicById(item.getPictureId());
             }
 
-            return new run.app.entity.DTO.Blog(item.getId(),
-                    item.getTitle(),
-                    item.getSummary(),
-                    item.getReleaseDate(),
-                    tagsTitle,
-                    pic);
+            run.app.entity.DTO.Blog blog = new run.app.entity.DTO.Blog();
+
+            BeanUtils.copyProperties(item,blog);
+            blog.setTagsTitle(tagsTitle);
+            blog.setPicture(pic);
+            return blog;
         }).collect(Collectors.toList());
 
 
@@ -147,7 +154,7 @@ public class PostServiceImpl implements PostService {
 
         dataGrid.setTotal(list.getTotal());
 
-        return dataGrid;
+        return new BaseResponse(HttpStatus.OK.value(),"",dataGrid);
     }
 
     @Override
@@ -158,75 +165,70 @@ public class PostServiceImpl implements PostService {
 
         BlogContent blogContent = blogContentMapper.selectByPrimaryKey(blogId);
 
-        BloggerProfileWithBLOBs bloggerProfileWithBLOBs = bloggerProfileMapper.selectByPrimaryKey(blog.getBloggerId());
+        BloggerProfile bloggerProfile = bloggerProfileMapper.selectByPrimaryKey(blog.getBloggerId());
 
 
         //todo: tags
-        List<String> nowTagsId = new ArrayList<>();
+        List<String> nowTags = new ArrayList<>();
         if(!StringUtils.isBlank(blog.getTagTitle())){
 
-          nowTagsId = tagService.selectTagTitleByIdString(blog.getTagTitle());
+          nowTags = tagService.selectTagTitleByIdString(blog.getTagTitle());
         }
 
         String pic = "";
 
         if(null != blog.getPictureId()){
-            pic = attachmentService.selectPicById(blog.getBloggerId());
+            pic = attachmentService.selectPicById(blog.getPictureId());
         }
 
 
-        BlogDetailWithAuthor blogDetailWithAuthor = new BlogDetailWithAuthor(blogId,blog.getTitle(),blog.getSummary(),blog.getReleaseDate(),nowTagsId,blogContent.getContent(),pic,bloggerProfileWithBLOBs.getIntro(),bloggerProfileWithBLOBs.getAvatarId());
-
-
+        BlogDetailWithAuthor blogDetailWithAuthor = new BlogDetailWithAuthor(blogId,blog.getTitle(),blog.getSummary(),blog.getReleaseDate(),nowTags,blogContent.getContent(),pic,bloggerProfile.getNickname(),bloggerProfile.getAvatarId());
         return blogDetailWithAuthor;
     }
 
     @Override
-    public DataGrid getListByTag(int pageNum, int pageSize, String tag) {
+    public BaseResponse getListByTag(int pageNum, int pageSize, String tag) {
 
         Long id = tagService.selectIdWithName(tag);
 
-        log.debug("id:"+ id);
 
         DataGrid dataGrid = new DataGrid();
 
 
-
-
-        if(!StringUtils.isBlank(id.toString())) {
-            PageHelper.startPage(pageNum,pageSize);
-            List<Long> list = tagService.selectBlogIdByTagId(id);
-            PageInfo<Long> pageInfo = new PageInfo<>(list);
+        if(null != id) {
+            List<Long> list = tagService.selectBlogIdByTagId(pageSize,pageNum,id);
+            log.debug("tag集合"+list.size());
+            PageInfo<Long> longPageInfo = new PageInfo<>(list);
 //          采取分页的方式 10-9 -19
 //            List<Long> list1 = list.subList((pageNum - 1) * pageSize, list.size()>pageNum * pageSize?pageNum*pageSize:list.size());
 
             List<run.app.entity.DTO.Blog> blogs = new ArrayList<>();
 
-            pageInfo.getList().stream().forEach(x -> {
+            list.stream().forEach(x -> {
                 run.app.entity.DTO.Blog blogx = new run.app.entity.DTO.Blog();
                 Blog blog = blogMapper.selectByPrimaryKey(x);
-                blogx.setId(x);
-
-                blogx.setSummary(blog.getSummary());
-                blogx.setTitle(blog.getTitle());
-                blogx.setReleaseDate(blog.getReleaseDate());
+                BeanUtils.copyProperties(blog,blogx);
 
                 if (!StringUtils.isBlank(blog.getTagTitle())) {
                     blogx.setTagsTitle(tagService.selectTagTitleByIdString(blog.getTagTitle()));
                 }
+
+                if(null != blog.getPictureId()){
+                    blogx.setPicture(attachmentService.selectPicById(blog.getPictureId()));
+                }
+
                 blogs.add(blogx);
 
             });
 
 
             dataGrid.setRows(blogs);
-            dataGrid.setTotal(list.size());
-
-            return dataGrid;
+            dataGrid.setTotal(longPageInfo.getTotal());
+            return new BaseResponse(HttpStatus.OK.value(),"",dataGrid);
         }
 
         dataGrid.setTotal(0);
 
-        return dataGrid;
+        return new BaseResponse(HttpStatus.OK.value(),"",dataGrid);
     }
 }

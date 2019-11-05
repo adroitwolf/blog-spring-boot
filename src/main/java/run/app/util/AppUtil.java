@@ -6,8 +6,7 @@ import org.springframework.stereotype.Component;
 
 import javax.xml.crypto.Data;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -41,6 +40,9 @@ public class AppUtil {
     }
 
 
+    public List<?> removeDuplicateListItem(List<?> items){
+        return  new ArrayList<>(new HashSet<>(items));
+    }
 
     public static AppUtil getInstance(){
         return SingleEnum.INSTANCE.getInstance();

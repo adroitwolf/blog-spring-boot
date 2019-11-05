@@ -17,7 +17,6 @@ public class BlogTagMapKey {
         this.tagId = tagId;
     }
 
-
     public Long getTagId() {
         return tagId;
     }

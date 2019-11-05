@@ -6,6 +6,7 @@ import run.app.entity.model.BlogLog;
 import run.app.entity.model.BlogLogExample;
 import run.app.mapper.BlogLogMapper;
 import run.app.security.log.LogService;
+import run.app.util.AppUtil;
 
 /**
  * Created with IntelliJ IDEA.
@@ -17,14 +18,19 @@ import run.app.security.log.LogService;
 public class LogServiceImpl implements LogService {
 
 
+    public LogServiceImpl() {
+        this.appUtil = AppUtil.getInstance();
+    }
+
     @Autowired
     BlogLogMapper blogLogMapper;
 
 
+    AppUtil appUtil;
+
     @Override
     public void storageLog(BlogLog blogLog) {
-        BlogLogExample blogLogExample = new BlogLogExample();
-        BlogLogExample.Criteria criteria = blogLogExample.createCriteria();
+        blogLog.setId(appUtil.nextId());
         blogLogMapper.insertSelective(blogLog);
     }
 }

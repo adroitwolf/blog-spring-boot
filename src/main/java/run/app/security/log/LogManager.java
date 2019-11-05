@@ -25,7 +25,7 @@ import java.util.Date;
  * Created with IntelliJ IDEA.
  * User: WHOAMI
  * Time: 2019 2019/7/30 9:32
- * Description: ://TODO ${END}
+ * Description: 日志管理器
  */
 @Aspect
 @Slf4j
@@ -41,7 +41,7 @@ public class LogManager {
     @Autowired
     LogService logService;
 
-    @Around("@annotation(run.app.security.log.MethodLog)")
+    @Around("@annotation(run.app.security.annotation.MethodLog)")
     public Object storage(ProceedingJoinPoint joinPoint) throws Throwable {
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = requestAttributes.getRequest();

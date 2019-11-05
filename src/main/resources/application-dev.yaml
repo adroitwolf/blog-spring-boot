@@ -2,12 +2,13 @@ server:
   port: 8099
 
 spring:
+  application:
+    name: WHOAMI
   datasource:
-    name: dev
-    url: jdbc:mysql://127.0.0.1:3306/eblog?useUnicode=true&characterEncoding=UTF-8
+    url: jdbc:mysql://127.0.0.1:3306/eblog?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
     username: root
     password: 123
-    driver-class-name: com.mysql.jdbc.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
   redis:
     database: 0
     host: 127.0.0.1
@@ -15,6 +16,9 @@ spring:
     password: 123
   resources:
     static-locations: classpath:/META-INF/resources/,classpath:/resources/, classpath:/static/, classpath:/public/,file:${web.upload-path}
+  servlet:
+    multipart:
+      max-file-size: 10MB
 
 # pagehepler
 
@@ -29,7 +33,7 @@ mybatis:
 
 # 图片上传下载
 web:
-  upload-path: ${user.dir}\img
+  upload-path: ${user.dir}/img
 
 
 jwt:

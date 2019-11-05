@@ -13,7 +13,7 @@ import java.io.IOException;
  * Created with IntelliJ IDEA.
  * User: WHOAMI
  * Time: 2019 2019/6/27 9:27
- * Description: ://TODO ${END}
+ * Description: 日志拦截器
  */
 @Slf4j
 public class LogFilter extends OncePerRequestFilter {

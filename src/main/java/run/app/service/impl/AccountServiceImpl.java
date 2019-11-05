@@ -1,28 +1,34 @@
 package run.app.service.impl;
 
+import cn.hutool.core.lang.Validator;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import run.app.entity.DTO.BaseResponse;
+import run.app.entity.DTO.User;
+import run.app.entity.enums.Role;
 import run.app.entity.model.BloggerAccount;
 import run.app.entity.model.BloggerAccountExample;
+import run.app.entity.VO.LoginParams;
+import run.app.entity.VO.RegisterParams;
 import run.app.entity.model.BloggerProfile;
-import run.app.entity.model.BloggerProfileWithBLOBs;
-import run.app.entity.params.LoginParams;
-import run.app.entity.params.RegisterParams;
+import run.app.entity.model.BloggerRole;
 import run.app.exception.BadRequestException;
+import run.app.exception.NotFoundException;
 import run.app.exception.ServiceException;
 import run.app.mapper.BloggerAccountMapper;
 import run.app.mapper.BloggerProfileMapper;
 import run.app.security.token.TokenService;
 import run.app.service.AccountService;
+import run.app.service.RoleService;
+import run.app.util.AppUtil;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created with IntelliJ IDEA.
@@ -33,7 +39,13 @@ import java.util.Optional;
 @Service
 @Slf4j
 @Transactional
-public class AccountServiceImpl implements AccountService {
+public class AccountServiceImpl implements AccountService{
+
+    public AccountServiceImpl() {
+        this.appUtil = AppUtil.getInstance();
+
+    }
+    AppUtil appUtil;
 
     @Autowired
     BloggerAccountMapper bloggerAccountMapper;
@@ -41,45 +53,59 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     BloggerProfileMapper bloggerProfileMapper;
 
+
+    @Autowired
+    RoleService roleService;
+
     @Autowired
     TokenService tokenService;
 
+
+
+
+
+    private final static  String NOTFOUND = "用户名或密码不正确";
+
+    private final static  String LOGINSUCCESS ="用户登陆成功";
+
     @Override
-    public @NonNull Optional<String> loginService(@NonNull LoginParams loginParams) {
+    public @NonNull BaseResponse loginService(@NonNull LoginParams loginParams) {
 
 //        if(tokenService.islogined(loginParams.getUsername())){
 ////            throw new BadRequestException("用户已经在别处登陆！");
 ////        }
-
-        BloggerAccountExample bloggerAccountExample = new BloggerAccountExample();
-
-        BloggerAccountExample.Criteria criteria = bloggerAccountExample.createCriteria();
-
-        criteria.andUsernameEqualTo(loginParams.getUsername());
-
-        List<BloggerAccount> bloggerAccounts = bloggerAccountMapper.selectByExample(bloggerAccountExample);
-
-        if(bloggerAccounts.isEmpty()){
-            throw  new BadRequestException("用户名不正确");
-        }
-
+        //判断用户是用邮箱还是账号登陆的
+        final BloggerAccount user;
+        User userRs = new User();
         Optional<String> token = Optional.ofNullable(null);
 
+        try {
+            user = Validator.isEmail(loginParams.getP()) ? loginWithEmail(loginParams.getP()) : loginWithUsername(loginParams.getP());
+        }catch (NotFoundException e){
+                throw new BadRequestException(NOTFOUND);
+        }
 
-        for (BloggerAccount bloggerAccount:bloggerAccounts) {
-            if(bloggerAccount.getPassword().equals(loginParams.getPassword())){
-
+        if(user.getPassword().equals(loginParams.getPassword())){
 //                  token = Optional.ofNullable(Optional.ofNullable(tokenService.generateToken(loginParams.getUsername())).orElseThrow(() -> new ServiceException("系统服务错误")));
 //                 tokenService.storage(token.get(),loginParams.getUsername());
-                token  =Optional.ofNullable(Optional.ofNullable( tokenService.getToken(bloggerAccount))).orElseThrow(() -> new ServiceException("服务异常"));
-            }else{
-                throw new BadRequestException("密码不正确");
-            }
+
+            BeanUtils.copyProperties(user,userRs);
+            userRs.setRoles(roleService.getRolesByUserId(userRs.getId())
+                    .stream().map(n->n.getAuthority()).collect(Collectors.toList()));
+                token  = Optional.ofNullable(Optional.ofNullable( tokenService.getToken(userRs))).orElseThrow(() -> new ServiceException("服务异常"));
+        }else{
+                throw new BadRequestException(NOTFOUND);
         }
 
 //        return tokenService.creatAuthToken(token.get());
-
-        return token;
+        BaseResponse baseResponse = new BaseResponse();
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("token",token.get());
+        map.put("user",userRs);
+        baseResponse.setData(map);
+        baseResponse.setMessage(LOGINSUCCESS);
+        baseResponse.setStatus(HttpStatus.OK.value());
+        return baseResponse;
     }
 
 
@@ -111,7 +137,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public String getUsernameByToken(@NonNull String token) {
 
-        Integer id = tokenService.getUserIdWithToken(token);
+        Long id = tokenService.getUserIdWithToken(token);
 
 
         BloggerAccount bloggerAccount = bloggerAccountMapper.selectByPrimaryKey(id);
@@ -120,7 +146,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public @NonNull Integer findBloggerIdByUsername(@NonNull String username) {
+    public @NonNull Long findBloggerIdByUsername(@NonNull String username) {
 
         BloggerAccountExample bloggerAccountExample = new BloggerAccountExample();
         BloggerAccountExample.Criteria criteria = bloggerAccountExample.createCriteria();
@@ -131,7 +157,7 @@ public class AccountServiceImpl implements AccountService {
         for (BloggerAccount bloggerAccount: bloggerAccounts) {
             return bloggerAccount.getId();
         }
-        return new Integer(-1);
+        return new Long(-1L);
     }
 
     @Override
@@ -147,9 +173,17 @@ public class AccountServiceImpl implements AccountService {
         }
 
         BloggerAccount bloggerAccount = new BloggerAccount();
+
+        BeanUtils.copyProperties(registerParams,bloggerAccount);
+
+        bloggerAccount.setId(appUtil.nextId());
         bloggerAccount.setUsername(registerParams.getAccount());
-        bloggerAccount.setPassword(registerParams.getPassword());
+        //todo 设置发送邮件
         bloggerAccount.setRegisterDate(new Date());
+
+        log.debug(bloggerAccount.toString());
+
+
 
         if(bloggerAccountMapper.insertSelective(bloggerAccount) == 0){
             baseResponse.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -157,18 +191,53 @@ public class AccountServiceImpl implements AccountService {
             return baseResponse;
         }
 
-        BloggerProfileWithBLOBs bloggerProfileWithBLOBs = new BloggerProfileWithBLOBs();
+        BloggerProfile bloggerProfile = new BloggerProfile();
 
-        bloggerProfileWithBLOBs.setIntro(registerParams.getUsername());
-        bloggerProfileWithBLOBs.setBloggerId(bloggerAccount.getId());
+        //初始用户名就是你的账号名
+        bloggerProfile.setNickname(registerParams.getAccount());
+        bloggerProfile.setBloggerId(bloggerAccount.getId());
 
-        bloggerProfileMapper.insertSelective(bloggerProfileWithBLOBs);
-
-
+        bloggerProfileMapper.insertSelective(bloggerProfile);
         baseResponse.setStatus(HttpStatus.OK.value());
+
+
+        //设置用户角色
+        //默认都是User用户
+
+        roleService.setRoleWithUserId(Role.USER,bloggerAccount.getId());
+
 
         return baseResponse;
     }
+
+    @Override
+    public BloggerAccount loginWithEmail(String email) {
+
+        BloggerAccountExample bloggerAccountExample = new BloggerAccountExample();
+
+        BloggerAccountExample.Criteria criteria = bloggerAccountExample.createCriteria();
+        criteria.andEmailEqualTo(email);
+        List<BloggerAccount> bloggerAccounts = bloggerAccountMapper.selectByExample(bloggerAccountExample);
+
+        Optional<BloggerAccount> user = bloggerAccounts.stream().filter(Objects::nonNull).findFirst();
+
+        return user.orElseThrow(() -> new NotFoundException("用户邮箱不存在"));
+    }
+
+    @Override
+    public BloggerAccount loginWithUsername(String username) {
+
+        BloggerAccountExample bloggerAccountExample = new BloggerAccountExample();
+        BloggerAccountExample.Criteria criteria = bloggerAccountExample.createCriteria();
+        criteria.andUsernameEqualTo(username);
+
+        List<BloggerAccount> bloggerAccounts = bloggerAccountMapper.selectByExample(bloggerAccountExample);
+
+        Optional<BloggerAccount> user = bloggerAccounts.stream().filter(Objects::nonNull).findFirst();
+
+        return user.orElseThrow(() -> new NotFoundException("用户账号不存在"));
+    }
+
 
 
 }

@@ -9,9 +9,11 @@ import org.springframework.http.MediaType;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 import run.app.entity.DTO.BaseResponse;
+import run.app.entity.enums.Role;
 import run.app.entity.model.BloggerAccount;
 import run.app.entity.model.BloggerProfile;
 import run.app.exception.AppException;
+import run.app.exception.UnAccessException;
 import run.app.exception.UnAuthenticationException;
 import run.app.security.token.TokenService;
 import run.app.security.token.impl.TokenServiceImpl;
@@ -21,15 +23,13 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
  * User: WHOAMI
  * Time: 2019 2019/7/23 19:04
- * Description: ://TODO ${END}
+ * Description: :用户权限过滤器
  */
 @Slf4j
 public class AuthenticationFilter extends OncePerRequestFilter {
@@ -40,6 +40,9 @@ public class AuthenticationFilter extends OncePerRequestFilter {
     private AntPathMatcher antPathMatcher = new AntPathMatcher();
 
     private Set<String> excludeUrlPatterns  = new HashSet<>();
+
+    private Map<Role,List<String>> authorityPatterns = new HashMap<>();
+
 
     public AuthenticationFilter(TokenService tokenService){
         this.tokenService = tokenService;
@@ -63,8 +66,6 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         }
 
 
-
-
         if(!tokenService.verifierToken(authentication)){
             handlerOnFailure(httpServletRequest,httpServletResponse, new UnAuthenticationException("用户Token无效，请重新登陆！"));
             return;
@@ -74,6 +75,14 @@ public class AuthenticationFilter extends OncePerRequestFilter {
             handlerOnFailure(httpServletRequest,httpServletResponse, new UnAuthenticationException("用户Token已经过期，请重新登录！"));
             return;
         }
+
+
+//        验证用户角色
+        if(verifyAuthority(tokenService.getRoles(authentication),httpServletRequest)){
+            handlerOnFailure(httpServletRequest,httpServletResponse,new UnAccessException("用户没有权限"));
+            return;
+        }
+
 
         filterChain.doFilter(httpServletRequest,httpServletResponse);
 
@@ -90,15 +99,28 @@ public class AuthenticationFilter extends OncePerRequestFilter {
     }
 
 
+//    判断过滤  false表示有权限
+    private boolean verifyAuthority(List<Role> roles,HttpServletRequest request){
+            return roles.stream()
+                    .filter(p->
+                        authorityPatterns.get(p)
+                                .stream().anyMatch(x-> antPathMatcher
+                                .match(x,request.getServletPath()))).count()>0?false:true;
+    }
+    /**
+    * 功能描述: 添加权限控制
+     * 这里由于功能简单，只有管理员和用户，所以权限应该
+     */
+    public void addAuthorityPatterns(Map<Role,List<String>>url){
+        this.authorityPatterns = url;
+    }
+
     public void handlerOnFailure(HttpServletRequest request, HttpServletResponse response, AppException appException) throws IOException {
         BaseResponse baseResponse = new BaseResponse();
-        baseResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
-
+        baseResponse.setStatus(appException.getStatus().value());
         baseResponse.setMessage(appException.getMessage());
-
-
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        response.setStatus(HttpStatus.OK.value());
         response.getWriter().write(JSONObject.toJSON(baseResponse).toString());
     }
 

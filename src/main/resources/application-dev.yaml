@@ -1,9 +1,13 @@
 server:
   port: 8099
 
+
 spring:
   application:
     name: WHOAMI
+  devtools:
+    restart:
+      enabled: true
   datasource:
     url: jdbc:mysql://127.0.0.1:3306/eblog?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
     username: root
@@ -48,3 +52,26 @@ jwt:
 whoami:
   auto-scan: false
   auto-del: true
+
+
+# 系统监控
+management:
+  endpoint:
+    metrics:
+      enabled: true
+    health:
+      show-details: always
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+
+  endpoints:
+    web:
+      base-path: /monitor
+      exposure:
+        include: prometheus
+
+
+
+

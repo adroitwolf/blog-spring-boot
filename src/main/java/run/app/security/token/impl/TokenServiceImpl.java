@@ -168,16 +168,13 @@ public class TokenServiceImpl implements TokenService {
            throw new UnAuthenticationException("用户信息异常！请联系管理员处理");
        }
 
-        @NonNull BloggerProfile bloggerProfile = userService.findUserDetailByBloggerId(id);
+        @NonNull UserDetail userDetail = userService.findUserDetailByBloggerId(id);
 
-        if(bloggerProfile.equals(null)){
+        if(userDetail.equals(null)){
            throw new UnAuthenticationException("用户信息异常！请联系管理员处理");
        }
 
-        UserDetail userDetail = new UserDetail();
-       userDetail.setAvatarId(bloggerProfile.getAvatarId());
-       userDetail.setUsername(bloggerProfile.getNickname());
-        userDetail.setAboutMe(bloggerProfile.getAboutMe());
+
         return userDetail;
     }
 

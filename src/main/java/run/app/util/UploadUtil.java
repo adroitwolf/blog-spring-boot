@@ -67,7 +67,7 @@ public class UploadUtil {
         File file1 = new File(finalFilename);
 
         try {
-            String thumbFile = file1.getAbsolutePath() + filename + "-thumb.jpg";
+            String thumbFile = file1.getParent() + File.separator + filename + "-thumb.jpg";
             image = ImageIO.read(file.getInputStream());
             file.transferTo(file1);
             Thumbnails.of(file1)
@@ -86,7 +86,7 @@ public class UploadUtil {
                 file.getOriginalFilename().substring(0,file.getOriginalFilename().lastIndexOf(".")));
 
         imageFile.setSuffx(type);
-
+        //todo  有漏洞  容易被人修改请求头
         imageFile.setMediaType(MediaType.valueOf(Objects.requireNonNull(file.getContentType())));
 
         imageFile.setFileKey(filename  + (null == type ? "" :("."+ type)));
@@ -105,6 +105,8 @@ public class UploadUtil {
         File file = new File(imgPath+File.separator+ filename);
         if(file.exists()){
             log.info("文件删除"+file.delete() );
+        }else{
+            log.error("文件删除失败"+filename);
         }
     }
 

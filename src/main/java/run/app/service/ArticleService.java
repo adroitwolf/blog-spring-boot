@@ -11,7 +11,7 @@ import run.app.entity.VO.PostQueryParams;
  * Created with IntelliJ IDEA.
  * User: WHOAMI
  * Time: 2019 2019/7/26 7:21
- * Description: ://TODO ${END}
+ * Description: 文章服务接口
  */
 public interface ArticleService {
 

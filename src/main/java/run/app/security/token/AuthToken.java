@@ -8,7 +8,7 @@ import lombok.ToString;
  * Created with IntelliJ IDEA.
  * User: WHOAMI
  * Time: 2019 2019/7/22 11:06
- * Description: ://TODO ${END}
+ * Description:自定义token实体类
  */
 
 @Data

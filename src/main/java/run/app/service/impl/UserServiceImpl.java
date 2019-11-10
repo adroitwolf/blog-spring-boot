@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import run.app.entity.DTO.BaseResponse;
 import run.app.entity.DTO.UserDetail;
 import run.app.entity.model.*;
@@ -15,6 +16,7 @@ import run.app.entity.VO.UserParams;
 import run.app.mapper.BloggerAccountMapper;
 import run.app.mapper.BloggerProfileMapper;
 import run.app.security.token.TokenService;
+import run.app.service.AttachmentService;
 import run.app.service.RoleService;
 import run.app.service.UserService;
 import run.app.util.UploadUtil;
@@ -32,6 +34,9 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
 
     @Autowired
+    AttachmentService attachmentService;
+
+    @Autowired
     BloggerAccountMapper bloggerAccountMapper;
 
     @Autowired
@@ -44,9 +49,28 @@ public class UserServiceImpl implements UserService {
     TokenService tokenService;
 
 
+    private final String TITLE="用户头像";
+
     @Override
-    public @NonNull BloggerProfile findUserDetailByBloggerId(@NonNull Long bloggerId) {
-        return bloggerProfileMapper.selectByPrimaryKey(bloggerId);
+    public @NonNull UserDetail findUserDetailByBloggerId(@NonNull Long bloggerId) {
+
+        BloggerAccount bloggerAccount = bloggerAccountMapper.selectByPrimaryKey(bloggerId);
+        BloggerProfile bloggerProfile = bloggerProfileMapper.selectByPrimaryKey(bloggerId);
+
+        UserDetail userDetail = new UserDetail();
+        BeanUtils.copyProperties(bloggerAccount,userDetail);
+        BeanUtils.copyProperties(bloggerProfile,userDetail);
+        userDetail.setUsername(bloggerProfile.getNickname());
+//        需要判断是否为空
+        if(null != bloggerProfile.getAvatarId()){
+
+            userDetail.setAvatar(attachmentService.getPathById(bloggerProfile.getAvatarId()));
+        }
+
+        //找到用户权限
+        userDetail.setRoles(roleService.getRolesByUserId(bloggerId).stream().map(n->n.getAuthority()).collect(Collectors.toList()));
+
+        return userDetail;
     }
 
     @Override
@@ -62,7 +86,6 @@ public class UserServiceImpl implements UserService {
         bloggerProfile.setAboutMe(userParams.getAboutMe());
 //        bloggerProfileMapper.updateByExampleSelective(bloggerProfileWithBLOBs,bloggerProfileExample);
 
-
         bloggerProfileMapper.updateByPrimaryKeySelective(bloggerProfile);
 
         UserDetail userDetail = new UserDetail();
@@ -77,46 +100,30 @@ public class UserServiceImpl implements UserService {
     public BaseResponse getUserDetailByToken(@NonNull String token) {
         Long id = tokenService.getUserIdWithToken(token);
 
-        @NonNull
-        BloggerProfile bloggerProfile = findUserDetailByBloggerId(id);
-
-
-        UserDetail userDetail = new UserDetail();
-        userDetail.setAvatarId(bloggerProfile.getAvatarId());
-
-        BloggerAccount bloggerAccount = bloggerAccountMapper.selectByPrimaryKey(id);
-
-        BeanUtils.copyProperties(bloggerAccount,userDetail);
-
-
-
-
-        //找到用户权限
-        userDetail.setRoles(roleService.getRolesByUserId(id).stream().map(n->n.getAuthority()).collect(Collectors.toList()));
-
-        return new BaseResponse(HttpStatus.OK.value(),"",userDetail);
-
-//        return tokenService.findUserDetailsByToken(token);
+        return new BaseResponse(HttpStatus.OK.value(),"",findUserDetailByBloggerId(id));
 
     }
 
     @Transactional
     @Override
-    public void uploadAvatarId(@NonNull String avatar, @NonNull String token) {
+    public BaseResponse updateAvatar(@NonNull MultipartFile avatar, @NonNull String token) {
         Long id = tokenService.getUserIdWithToken(token);
+
+//        删除原有附件
 
         BloggerProfile bloggerProfile = bloggerProfileMapper.selectByPrimaryKey(id);
 
-        if (!StringUtils.isBlank(bloggerProfile.getAvatarId())) {
-            UploadUtil instance = UploadUtil.getInstance();
-            instance.delFile(bloggerProfile.getAvatarId());
+        if (null != bloggerProfile.getAvatarId()) {
+            attachmentService.deletePic(bloggerProfile.getAvatarId());
         }
 
+        //        添加现有附件
+        Long picId = attachmentService.uploadFile(avatar,id,TITLE);
         BloggerProfile profile = new BloggerProfile();
         profile.setBloggerId(id);
-        profile.setAvatarId(avatar);
+        profile.setAvatarId(picId);
         bloggerProfileMapper.updateByPrimaryKeySelective(profile);
-
+        return new BaseResponse(HttpStatus.OK.value(),"更新头像成功",attachmentService.getPathById(picId));
     }
 
     @Override

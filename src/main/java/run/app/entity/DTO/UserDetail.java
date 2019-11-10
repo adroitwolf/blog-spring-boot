@@ -1,6 +1,8 @@
 package run.app.entity.DTO;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
@@ -10,6 +12,9 @@ import java.util.List;
  * Time: 2019 2019/7/24 10:05
  * Description: :用户详细资料
  */
+
+@AllArgsConstructor
+@NoArgsConstructor
 @Data
 public class UserDetail {
     private String username;
@@ -18,7 +23,7 @@ public class UserDetail {
 
     private String email;
 
-    private String avatarId;
+    private String avatar;
 
     private String aboutMe;
 

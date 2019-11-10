@@ -18,10 +18,27 @@
     </properties>
 
     <dependencies>
+        <!--热部署-->
+        <!--<dependency>-->
+            <!--<groupId>org.springframework.boot</groupId>-->
+            <!--<artifactId>spring-boot-devtools</artifactId>-->
+            <!--<optional>true</optional>-->
+        <!--</dependency>-->
+        <!--资源监控-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+            <version>1.1.1</version>
+        </dependency>
+
+        <!--资源监控完毕-->
+
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -43,6 +60,9 @@
             <!--<groupId>org.springframework.boot</groupId>-->
             <!--<artifactId>spring-boot-starter-security</artifactId>-->
         <!--</dependency>-->
+
+
+        <!--数据库方面-->
 
         <!--分页-->
         <dependency>
@@ -76,6 +96,7 @@
             <scope>test</scope>
         </dependency>
 
+        <!--快速生成API-->
         <!--swagger2-->
         <dependency>
             <groupId>io.springfox</groupId>
@@ -89,12 +110,14 @@
             <version>2.6.1</version>
         </dependency>
 
+
+        <!--redis-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
 
-    <!--生成Token-->
+        <!--生成Token-->
         <dependency>
             <groupId>com.auth0</groupId>
             <artifactId>java-jwt</artifactId>

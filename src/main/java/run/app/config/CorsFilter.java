@@ -4,7 +4,7 @@ package run.app.config;
  * Created with IntelliJ IDEA.
  * User: WHOAMI
  * Time: 2019 2019/7/8 23:43
- * Description: ://TODO ${END}
+ * Description: 跨域过滤器
  */
 
 
@@ -42,7 +42,6 @@ public class CorsFilter extends GenericFilterBean {
         httpServletResponse.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true");
         httpServletResponse.setHeader(HttpHeaders.ACCESS_CONTROL_MAX_AGE, "3600");
 
-//        todo 没看懂 好像是解决跨越问题
         if (!CorsUtils.isPreFlightRequest(httpServletRequest)) {
             chain.doFilter(httpServletRequest, httpServletResponse);
         }

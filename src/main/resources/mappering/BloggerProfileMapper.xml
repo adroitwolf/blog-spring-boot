@@ -2,10 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="run.app.mapper.BloggerProfileMapper">
   <resultMap id="BaseResultMap" type="run.app.entity.model.BloggerProfile">
-    <id column="blogger_id" jdbcType="BIGINT" property="bloggerId" />
-    <result column="about_me" jdbcType="VARCHAR" property="aboutMe" />
-    <result column="nickname" jdbcType="VARCHAR" property="nickname" />
-    <result column="avatar_id" jdbcType="VARCHAR" property="avatarId" />
+    <id column="BLOGGER_ID" jdbcType="BIGINT" property="bloggerId" />
+    <result column="ABOUT_ME" jdbcType="VARCHAR" property="aboutMe" />
+    <result column="NICKNAME" jdbcType="VARCHAR" property="nickname" />
+    <result column="AVATAR_ID" jdbcType="BIGINT" property="avatarId" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -66,7 +66,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    blogger_id, about_me, nickname, avatar_id
+    BLOGGER_ID, ABOUT_ME, NICKNAME, AVATAR_ID
   </sql>
   <select id="selectByExample" parameterType="run.app.entity.model.BloggerProfileExample" resultMap="BaseResultMap">
     select
@@ -86,11 +86,11 @@
     select 
     <include refid="Base_Column_List" />
     from blogger_profile
-    where blogger_id = #{bloggerId,jdbcType=BIGINT}
+    where BLOGGER_ID = #{bloggerId,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from blogger_profile
-    where blogger_id = #{bloggerId,jdbcType=BIGINT}
+    where BLOGGER_ID = #{bloggerId,jdbcType=BIGINT}
   </delete>
   <delete id="deleteByExample" parameterType="run.app.entity.model.BloggerProfileExample">
     delete from blogger_profile
@@ -99,25 +99,25 @@
     </if>
   </delete>
   <insert id="insert" parameterType="run.app.entity.model.BloggerProfile">
-    insert into blogger_profile (blogger_id, about_me, nickname, 
-      avatar_id)
+    insert into blogger_profile (BLOGGER_ID, ABOUT_ME, NICKNAME, 
+      AVATAR_ID)
     values (#{bloggerId,jdbcType=BIGINT}, #{aboutMe,jdbcType=VARCHAR}, #{nickname,jdbcType=VARCHAR}, 
-      #{avatarId,jdbcType=VARCHAR})
+      #{avatarId,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="run.app.entity.model.BloggerProfile">
     insert into blogger_profile
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="bloggerId != null">
-        blogger_id,
+        BLOGGER_ID,
       </if>
       <if test="aboutMe != null">
-        about_me,
+        ABOUT_ME,
       </if>
       <if test="nickname != null">
-        nickname,
+        NICKNAME,
       </if>
       <if test="avatarId != null">
-        avatar_id,
+        AVATAR_ID,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -131,7 +131,7 @@
         #{nickname,jdbcType=VARCHAR},
       </if>
       <if test="avatarId != null">
-        #{avatarId,jdbcType=VARCHAR},
+        #{avatarId,jdbcType=BIGINT},
       </if>
     </trim>
   </insert>
@@ -145,16 +145,16 @@
     update blogger_profile
     <set>
       <if test="record.bloggerId != null">
-        blogger_id = #{record.bloggerId,jdbcType=BIGINT},
+        BLOGGER_ID = #{record.bloggerId,jdbcType=BIGINT},
       </if>
       <if test="record.aboutMe != null">
-        about_me = #{record.aboutMe,jdbcType=VARCHAR},
+        ABOUT_ME = #{record.aboutMe,jdbcType=VARCHAR},
       </if>
       <if test="record.nickname != null">
-        nickname = #{record.nickname,jdbcType=VARCHAR},
+        NICKNAME = #{record.nickname,jdbcType=VARCHAR},
       </if>
       <if test="record.avatarId != null">
-        avatar_id = #{record.avatarId,jdbcType=VARCHAR},
+        AVATAR_ID = #{record.avatarId,jdbcType=BIGINT},
       </if>
     </set>
     <if test="_parameter != null">
@@ -163,10 +163,10 @@
   </update>
   <update id="updateByExample" parameterType="map">
     update blogger_profile
-    set blogger_id = #{record.bloggerId,jdbcType=BIGINT},
-      about_me = #{record.aboutMe,jdbcType=VARCHAR},
-      nickname = #{record.nickname,jdbcType=VARCHAR},
-      avatar_id = #{record.avatarId,jdbcType=VARCHAR}
+    set BLOGGER_ID = #{record.bloggerId,jdbcType=BIGINT},
+      ABOUT_ME = #{record.aboutMe,jdbcType=VARCHAR},
+      NICKNAME = #{record.nickname,jdbcType=VARCHAR},
+      AVATAR_ID = #{record.avatarId,jdbcType=BIGINT}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -175,22 +175,22 @@
     update blogger_profile
     <set>
       <if test="aboutMe != null">
-        about_me = #{aboutMe,jdbcType=VARCHAR},
+        ABOUT_ME = #{aboutMe,jdbcType=VARCHAR},
       </if>
       <if test="nickname != null">
-        nickname = #{nickname,jdbcType=VARCHAR},
+        NICKNAME = #{nickname,jdbcType=VARCHAR},
       </if>
       <if test="avatarId != null">
-        avatar_id = #{avatarId,jdbcType=VARCHAR},
+        AVATAR_ID = #{avatarId,jdbcType=BIGINT},
       </if>
     </set>
-    where blogger_id = #{bloggerId,jdbcType=BIGINT}
+    where BLOGGER_ID = #{bloggerId,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="run.app.entity.model.BloggerProfile">
     update blogger_profile
-    set about_me = #{aboutMe,jdbcType=VARCHAR},
-      nickname = #{nickname,jdbcType=VARCHAR},
-      avatar_id = #{avatarId,jdbcType=VARCHAR}
-    where blogger_id = #{bloggerId,jdbcType=BIGINT}
+    set ABOUT_ME = #{aboutMe,jdbcType=VARCHAR},
+      NICKNAME = #{nickname,jdbcType=VARCHAR},
+      AVATAR_ID = #{avatarId,jdbcType=BIGINT}
+    where BLOGGER_ID = #{bloggerId,jdbcType=BIGINT}
   </update>
 </mapper>

@@ -32,13 +32,14 @@ public class UserController {
     @Autowired
     UserService userService;
 
+    private final static String AUTHENICATION = "Authentication";
 
     @MethodLog
     @ApiOperation("获取用户详细信息")
     @GetMapping("/getUserDetail")
     public BaseResponse getUserDetail(HttpServletRequest request){
 
-        return userService.getUserDetailByToken(request.getHeader("Authentication"));
+        return userService.getUserDetailByToken(request.getHeader(AUTHENICATION));
     }
 
 
@@ -47,7 +48,7 @@ public class UserController {
     @PutMapping("/profile")
     public  BaseResponse updateProfile( @RequestBody UserParams userParams,HttpServletRequest request){
         log.debug(userParams.toString());
-        String token = request.getHeader("Authentication");
+        String token = request.getHeader(AUTHENICATION);
         BaseResponse baseResponse = new BaseResponse();
         baseResponse.setData(userService.updateProfileById(userParams,token));
         baseResponse.setStatus(HttpStatus.OK.value());
@@ -60,19 +61,7 @@ public class UserController {
     @PostMapping("/updateAvatar")
     public BaseResponse updateProfile(@RequestParam(value = "avatar",required = true)MultipartFile avatar,
                                       HttpServletRequest request){
-        BaseResponse baseResponse = new BaseResponse();
-
-        UploadUtil instance = UploadUtil.getInstance();
-
-        ImageFile imageFile = instance.uploadFile(avatar).orElseThrow(()->new BadRequestException("用户更新头像失败"));
-
-        String token = request.getHeader("Authentication");
-
-        //todo:保存到数据库
-        userService.uploadAvatarId(imageFile.getPath(),token);
-        baseResponse.setData(imageFile.getPath());
-        baseResponse.setStatus(HttpStatus.OK.value());
-        return baseResponse;
+      return userService.updateAvatar(avatar,request.getHeader(AUTHENICATION));
     }
 
 

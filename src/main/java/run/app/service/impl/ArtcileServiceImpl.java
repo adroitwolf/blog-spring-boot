@@ -14,6 +14,7 @@ import run.app.entity.DTO.BaseResponse;
 import run.app.entity.DTO.BlogDetail;
 import run.app.entity.DTO.DataGrid;
 import run.app.entity.enums.ArticleStatus;
+import run.app.entity.enums.CiteNumEnum;
 import run.app.entity.model.*;
 import run.app.entity.VO.ArticleParams;
 import run.app.entity.VO.PostQueryParams;
@@ -119,7 +120,7 @@ public class ArtcileServiceImpl implements ArticleService {
         if(!StringUtils.isBlank(articleParams.getPicture())){
             blog.setPictureId(attachmentService.getIdByTitle(articleParams.getPicture()));
 //            相对应的应该让改图片引用人数+1
-
+            attachmentService.changePictureStatus(blog.getPictureId(), CiteNumEnum.ADD);
         }
 
         /*增加代码结束*/
@@ -177,8 +178,16 @@ public class ArtcileServiceImpl implements ArticleService {
         Long picture_id = -1L;
 
         if(null != articleParams.getPicture()){
-
             picture_id = attachmentService.getIdByTitle(articleParams.getPicture());
+            /**
+            * 功能描述: 相应当前所引用的博客图片人数进行更新
+            * @Author: WHOAMI
+            * @Date: 2019/11/10 13:22
+             */
+            if(!StringUtils.isBlank(blog1.getPictureId().toString()) && picture_id != blog1.getPictureId()){
+                attachmentService.changePictureStatus(picture_id, CiteNumEnum.ADD);
+                attachmentService.changePictureStatus(blog1.getPictureId(), CiteNumEnum.REDUCE);
+            }
         }
 
         /*增加代码结束*/

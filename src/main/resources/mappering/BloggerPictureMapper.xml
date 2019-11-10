@@ -350,4 +350,8 @@
       file_key = #{fileKey,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
+
+
+  <!--设置自定义函数-->
+
 </mapper>

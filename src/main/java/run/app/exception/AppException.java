@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
  * Created with IntelliJ IDEA.
  * User: WHOAMI
  * Time: 2019 2019/7/22 11:21
- * Description: ://TODO ${END}
+ * Description: 自定义异常文件
  */
 public abstract class AppException extends RuntimeException {
 

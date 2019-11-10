@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import run.app.entity.DTO.BaseResponse;
@@ -41,7 +42,7 @@ public class AttachmentController {
     @PostMapping("upload")
     @ApiOperation("上传图片")
     public BaseResponse uploadFile(MultipartFile file,HttpServletRequest request){
-        return attachmentService.uploadFile(file,request.getHeader(TOKEN));
+        return attachmentService.uploadAttachment(file,request.getHeader(TOKEN));
     }
 
 
@@ -62,6 +63,14 @@ public class AttachmentController {
     @DeleteMapping("{picId:\\d+}")
     @ApiOperation("删除图片")
     public BaseResponse deleteAttachment(@PathVariable("picId")Long picId,HttpServletRequest request){
-        return attachmentService.deletePic(picId,request.getHeader(TOKEN));
+        return attachmentService.deleteAttachment(picId,request.getHeader(TOKEN));
     }
+
+
+    @GetMapping("/list_media")
+    @ApiOperation("列出所有媒体类型")
+    public BaseResponse findAllMediaType(HttpServletRequest request){
+        return attachmentService.findAllMediaType(request.getHeader(TOKEN));
+    }
+
 }

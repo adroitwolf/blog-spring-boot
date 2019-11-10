@@ -181,8 +181,8 @@ public class PostServiceImpl implements PostService {
             pic = attachmentService.selectPicById(blog.getPictureId());
         }
 
-
-        BlogDetailWithAuthor blogDetailWithAuthor = new BlogDetailWithAuthor(blogId,blog.getTitle(),blog.getSummary(),blog.getReleaseDate(),nowTags,blogContent.getContent(),pic,bloggerProfile.getNickname(),bloggerProfile.getAvatarId());
+        //todo 属性太长 需要重构
+        BlogDetailWithAuthor blogDetailWithAuthor = new BlogDetailWithAuthor(blogId,blog.getTitle(),blog.getSummary(),blog.getReleaseDate(),nowTags,blogContent.getContent(),pic,bloggerProfile.getNickname(),attachmentService.getPathById(bloggerProfile.getAvatarId()));
         return blogDetailWithAuthor;
     }
 

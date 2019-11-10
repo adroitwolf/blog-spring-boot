@@ -24,8 +24,6 @@ public class LogFilter extends OncePerRequestFilter {
         log.debug("");
         log.debug("ip:[{}] url:[{}]",remoteAddr,httpServletRequest.getRequestURL());
         filterChain.doFilter(httpServletRequest,httpServletResponse);
-
-
         log.debug("ip:[{}] url:[{}] using:[{}] ms",remoteAddr,httpServletRequest.getRequestURL(),(System.currentTimeMillis() - startTime));
 
 

@@ -7,7 +7,7 @@ public class BloggerProfile {
 
     private String nickname;
 
-    private String avatarId;
+    private Long avatarId;
 
     public Long getBloggerId() {
         return bloggerId;
@@ -33,11 +33,11 @@ public class BloggerProfile {
         this.nickname = nickname == null ? null : nickname.trim();
     }
 
-    public String getAvatarId() {
+    public Long getAvatarId() {
         return avatarId;
     }
 
-    public void setAvatarId(String avatarId) {
-        this.avatarId = avatarId == null ? null : avatarId.trim();
+    public void setAvatarId(Long avatarId) {
+        this.avatarId = avatarId;
     }
 }

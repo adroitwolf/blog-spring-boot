@@ -3,6 +3,7 @@ package run.app.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import run.app.entity.DTO.*;
 import run.app.entity.VO.AttachmentParams;
+import run.app.entity.enums.CiteNumEnum;
 import run.app.entity.model.BloggerPicture;
 import run.app.entity.model.BloggerPictureExample;
 import run.app.exception.BadRequestException;
@@ -22,17 +24,14 @@ import run.app.service.UserService;
 import run.app.util.AppUtil;
 import run.app.util.UploadUtil;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
  * Created with IntelliJ IDEA.
  * User: WHOAMI
  * Time: 2019 2019/9/3 19:38
- * Description: ://TODO ${END}
+ * Description: 附件服务层实现类
  */
 @Slf4j
 @Service
@@ -53,7 +52,7 @@ public class AttachmentServiceImpl implements AttachmentService {
     @Autowired
     TokenService tokenService;
 
-
+    private final  Integer DEFAULT_NUM = 0;
 
     AppUtil appUtil;
 
@@ -114,37 +113,43 @@ public class AttachmentServiceImpl implements AttachmentService {
 
     @Override
     @Transactional
-    public BaseResponse uploadFile(MultipartFile file, String token) {
+    public BaseResponse uploadAttachment(MultipartFile file, String token) {
+        uploadFile(file,tokenService.getUserIdWithToken(token),null);
+        return new BaseResponse(HttpStatus.OK.value(),null,null);
+    }
+
+    @Override
+    public Long uploadFile(MultipartFile file, Long userId,String title) {
         UploadUtil instance = UploadUtil.getInstance();
         ImageFile imageFile = instance.uploadFile(file).orElseThrow(()->new BadRequestException("用户上传图片失败"));
-
-        Long user_id = tokenService.getUserIdWithToken(token);
-
         BloggerPicture bloggerPicture = new BloggerPicture();
 
         bloggerPicture.setId(appUtil.nextId());
 
-        bloggerPicture.setBloggerId(user_id);
+        bloggerPicture.setBloggerId(userId);
+
 
         bloggerPicture.setUploadDate(new Date());
 
         bloggerPicture.setUpdateDate(new Date());
 
 //        修复上传逻辑错误，开始上传的图片引用人数应该是0
-        bloggerPicture.setCiteNum(0);
+        bloggerPicture.setCiteNum(DEFAULT_NUM);
 
         bloggerPicture.setMediaType(imageFile.getMediaType().getType());
 
         BeanUtils.copyProperties(imageFile,bloggerPicture);
 
+//        判断用户是否自主赋值title
+        if(!StringUtils.isBlank(title)){
+            bloggerPicture.setTitle(title);
+        }
+
         bloggerPictureMapper.insertSelective(bloggerPicture);
-        BaseResponse baseResponse = new BaseResponse();
 
-        baseResponse.setStatus(HttpStatus.OK.value());
-        baseResponse.setData(imageFile.getTitle());
-
-        return baseResponse;
+        return bloggerPicture.getId();
     }
+
 
     @Override
     public Long getIdByTitle(String title) {
@@ -155,6 +160,16 @@ public class AttachmentServiceImpl implements AttachmentService {
         BloggerPicture bloggerPicture = bloggerPictures.stream().filter(Objects::nonNull).findFirst().orElseThrow(() -> new BadRequestException("图片名称有误,或附件已被删除！"));
         return bloggerPicture.getId();
 
+    }
+
+    @Override
+    public String getTitleById(Long id) {
+        return bloggerPictureMapper.selectByPrimaryKey(id).getTitle();
+    }
+
+    @Override
+    public String getPathById(Long id) {
+        return bloggerPictureMapper.selectByPrimaryKey(id).getPath();
     }
 
     @Override
@@ -182,7 +197,6 @@ public class AttachmentServiceImpl implements AttachmentService {
     public BaseResponse getInfo(Long id, String token) {
         BloggerPicture bloggerPicture = bloggerPictureMapper.selectByPrimaryKey(id);
 
-
         //需要处理空字符问题
         tokenService.authentication(bloggerPicture.getBloggerId(),token);
 
@@ -190,38 +204,46 @@ public class AttachmentServiceImpl implements AttachmentService {
 
         BeanUtils.copyProperties(bloggerPicture,pictureInfo);
 
-        BaseResponse baseResponse = new BaseResponse();
-
-        baseResponse.setData(pictureInfo);
-
-        baseResponse.setStatus(HttpStatus.OK.value());
-        return baseResponse;
+        return new BaseResponse(HttpStatus.OK.value(),null,pictureInfo);
     }
 
     @Override
     @Transactional
-    public BaseResponse deletePic(Long id, String token) {
+    public BaseResponse deleteAttachment(Long id, String token) {
         BloggerPicture bloggerPicture = bloggerPictureMapper.selectByPrimaryKey(id);
-
 
         //需要处理空字符问题
         tokenService.authentication(bloggerPicture.getBloggerId(),token);
 
-        bloggerPictureMapper.deleteByPrimaryKey(id);
-
         articleService.deleteQuotePic(id);
 
+        return new BaseResponse(HttpStatus.OK.value(),"图片删除成功",null);
+    }
+
+    @Override
+    public void deletePic(Long id) {
+        BloggerPicture bloggerPicture = bloggerPictureMapper.selectByPrimaryKey(id);
+        bloggerPictureMapper.deleteByPrimaryKey(id);
+//        带着缩略图一起删除
         uploadUtil.delFile(bloggerPicture.getPath());
+
         uploadUtil.delFile(bloggerPicture.getThumbPath());
+    }
 
-        BaseResponse baseResponse = new BaseResponse();
-        baseResponse.setStatus(HttpStatus.OK.value());
-
-        baseResponse.setMessage("图片删除成功");
-
+    @Override
+    public BaseResponse findAllMediaType(String token) {
 
 
-        return baseResponse;
+        return null;
+    }
+
+    @Override
+    public void changePictureStatus(Long id, CiteNumEnum citeNumEnum) {
+        if(citeNumEnum.getValue()){
+            bloggerPictureMapper.updatePictureByAddCiteNum(id);
+        }else{
+            bloggerPictureMapper.updatePictureByReduceCiteNum(id);
+        }
     }
 
 

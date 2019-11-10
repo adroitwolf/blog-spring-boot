@@ -6,7 +6,7 @@ import java.util.List;
  * Created with IntelliJ IDEA.
  * User: WHOAMI
  * Time: 2019 2019/8/23 21:21
- * Description: ://TODO ${END}
+ * Description: 标签服务接口
  */
 public interface TagService {
 

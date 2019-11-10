@@ -12,7 +12,7 @@ import run.app.util.AppUtil;
  * Created with IntelliJ IDEA.
  * User: WHOAMI
  * Time: 2019 2019/7/30 16:30
- * Description: ://TODO ${END}
+ * Description:日志实现类
  */
 @Service
 public class LogServiceImpl implements LogService {

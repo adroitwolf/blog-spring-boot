@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50634
 File Encoding         : 65001
 
-Date: 2019-09-24 23:29:11
+Date: 2019-11-10 16:04:16
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -20,17 +20,18 @@ SET FOREIGN_KEY_CHECKS=0;
 -- ----------------------------
 DROP TABLE IF EXISTS `blog`;
 CREATE TABLE `blog` (
-  `id` bigint(20) unsigned NOT NULL COMMENT '????id',
-  `blogger_id` bigint(20) unsigned NOT NULL COMMENT '????????????id',
-  `status` varchar(10) NOT NULL DEFAULT '' COMMENT '????״̬',
-  `title` varchar(80) NOT NULL COMMENT '???ı??',
-  `picture_id` bigint(20) DEFAULT NULL COMMENT '????Ӧ?õ???Ƭ',
-  `summary` varchar(400) NOT NULL COMMENT '????ժҪ',
-  `release_date` datetime NOT NULL COMMENT '?״η??????',
-  `nearest_modify_date` datetime NOT NULL COMMENT '????һ???޸?ʱ?',
-  `tag_title` varchar(80) DEFAULT NULL COMMENT '???ı?ǩ  ?м???.?ָ',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `blogger_id` (`blogger_id`,`title`)
+  `ID` bigint(20) unsigned NOT NULL COMMENT '博客id',
+  `BLOGGER_ID` bigint(20) unsigned NOT NULL COMMENT '作者id',
+  `STATUS` varchar(10) NOT NULL DEFAULT '' COMMENT '博客状态',
+  `TITLE` varchar(80) NOT NULL COMMENT '博客标题',
+  `PICTURE_ID` bigint(20) DEFAULT NULL COMMENT '图片id',
+  `SUMMARY` varchar(400) NOT NULL COMMENT '博客总结',
+  `RELEASE_DATE` datetime NOT NULL COMMENT '发布日期',
+  `NEAREST_MODIFY_DATE` datetime NOT NULL COMMENT '最近修改时间',
+  `TAG_TITLE` varchar(80) DEFAULT NULL COMMENT '标签',
+  `COLUMN_10` char(10) DEFAULT NULL,
+  PRIMARY KEY (`ID`),
+  UNIQUE KEY `BLOGGER_ID` (`BLOGGER_ID`,`TITLE`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
@@ -38,14 +39,15 @@ CREATE TABLE `blog` (
 -- ----------------------------
 DROP TABLE IF EXISTS `blogger_account`;
 CREATE TABLE `blogger_account` (
-  `id` bigint(20) unsigned NOT NULL COMMENT '用户id',
-  `username` varchar(50) NOT NULL COMMENT '用户账号',
-  `password` varchar(100) NOT NULL COMMENT '用户密码',
-  `register_date` datetime NOT NULL COMMENT '注册日期',
-  `phone` varchar(20) DEFAULT NULL COMMENT '手机号',
-  `email` varchar(50) DEFAULT NULL COMMENT '邮箱',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `username` (`username`)
+  `ID` bigint(20) unsigned NOT NULL COMMENT '用户id',
+  `USERNAME` varchar(50) NOT NULL COMMENT '用户账号',
+  `PASSWORD` varchar(100) NOT NULL COMMENT '用户密码',
+  `REGISTER_DATE` datetime NOT NULL COMMENT '注册日期',
+  `PHONE` varchar(20) DEFAULT NULL COMMENT '手机号',
+  `EMAIL` varchar(50) DEFAULT NULL COMMENT '邮箱',
+  `IS_ENABLED` varchar(5) DEFAULT NULL COMMENT '账号是否可用',
+  PRIMARY KEY (`ID`),
+  UNIQUE KEY `USERNAME` (`USERNAME`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
@@ -53,45 +55,66 @@ CREATE TABLE `blogger_account` (
 -- ----------------------------
 DROP TABLE IF EXISTS `blogger_picture`;
 CREATE TABLE `blogger_picture` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '照片id',
-  `blogger_id` bigint(20) unsigned NOT NULL COMMENT '照片所属博主id',
-  `path` varchar(1024) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL COMMENT '物理硬盘地址',
-  `title` varchar(200) NOT NULL COMMENT '照片标题',
-  `upload_date` datetime NOT NULL COMMENT '照片上传日期',
-  `suffx` varchar(50) NOT NULL COMMENT '照片后缀',
-  `size` bigint(20) DEFAULT NULL COMMENT '照片规格大小',
-  `width` int(11) DEFAULT NULL COMMENT '照片宽度',
-  `height` int(11) DEFAULT NULL COMMENT '照片高度',
-  `update_date` datetime NOT NULL COMMENT '更新日期',
-  `cite_num` int(11) NOT NULL DEFAULT '0' COMMENT '被引用次数',
-  `thumb_path` varchar(2048) DEFAULT NULL COMMENT '文章缩略图',
-  `media_type` varchar(50) NOT NULL COMMENT '媒体类型',
-  `file_key` varchar(200) NOT NULL COMMENT '物理磁盘的名称',
-  PRIMARY KEY (`id`),
-  KEY `blogger_id` (`blogger_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=373248458343055361 DEFAULT CHARSET=utf8;
+  `ID` bigint(20) unsigned NOT NULL COMMENT '照片id',
+  `BLOGGER_ID` bigint(20) DEFAULT NULL COMMENT '照片原作者id',
+  `PATH` varchar(1024) NOT NULL COMMENT '物理硬盘地址',
+  `TITLE` varchar(200) NOT NULL COMMENT '照片标题',
+  `UPLOAD_DATE` datetime NOT NULL COMMENT '照片上传日期',
+  `SUFFX` varchar(50) NOT NULL COMMENT '照片后缀',
+  `SIZE` bigint(20) DEFAULT NULL COMMENT '照片规格大小',
+  `WIDTH` int(11) DEFAULT NULL COMMENT '照片宽度',
+  `HEIGHT` int(11) DEFAULT NULL COMMENT '照片高度',
+  `UPDATE_DATE` datetime NOT NULL COMMENT '更新日期',
+  `CITE_NUM` int(11) NOT NULL DEFAULT '0' COMMENT '被引用次数',
+  `THUMB_PATH` varchar(2048) DEFAULT NULL COMMENT '文章缩略图',
+  `MEDIA_TYPE` varchar(50) NOT NULL COMMENT '媒体类型',
+  `FILE_KEY` varchar(200) NOT NULL COMMENT '物理磁盘的名称',
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for blogger_profile
 -- ----------------------------
 DROP TABLE IF EXISTS `blogger_profile`;
 CREATE TABLE `blogger_profile` (
-  `blogger_id` bigint(20) unsigned NOT NULL COMMENT '用户id',
-  `about_me` varchar(1024) DEFAULT NULL COMMENT '个人介绍',
-  `nickname` varchar(20) NOT NULL COMMENT '用户名',
-  `avatar_id` varchar(255) DEFAULT NULL COMMENT '用户头像',
-  PRIMARY KEY (`blogger_id`)
+  `BLOGGER_ID` bigint(20) unsigned NOT NULL COMMENT '用户id',
+  `ABOUT_ME` varchar(1024) DEFAULT NULL COMMENT '个人介绍',
+  `NICKNAME` varchar(20) NOT NULL COMMENT '用户名',
+  `AVATAR_ID` bigint(20) DEFAULT NULL COMMENT '用户头像',
+  PRIMARY KEY (`BLOGGER_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for blogger_role
+-- ----------------------------
+DROP TABLE IF EXISTS `blogger_role`;
+CREATE TABLE `blogger_role` (
+  `ID` bigint(20) NOT NULL COMMENT '角色id',
+  `ROLE_NAME` varchar(50) DEFAULT NULL COMMENT '角色名称',
+  `ROLE_ZH` varchar(50) DEFAULT NULL COMMENT '角色中文名称',
+  PRIMARY KEY (`ID`),
+  UNIQUE KEY `AK_KEY_2` (`ROLE_NAME`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for blogger_role_map
+-- ----------------------------
+DROP TABLE IF EXISTS `blogger_role_map`;
+CREATE TABLE `blogger_role_map` (
+  `USER_ID` bigint(20) NOT NULL COMMENT '用户id',
+  `ROLE_ID` bigint(20) NOT NULL COMMENT '角色id',
+  PRIMARY KEY (`USER_ID`,`ROLE_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户和角色的关联表';
 
 -- ----------------------------
 -- Table structure for blog_content
 -- ----------------------------
 DROP TABLE IF EXISTS `blog_content`;
 CREATE TABLE `blog_content` (
-  `id` bigint(20) NOT NULL COMMENT '???͵?id',
-  `content` longtext NOT NULL COMMENT '??????Ҫhtml??ʽ???',
-  `content_md` longtext NOT NULL,
-  PRIMARY KEY (`id`)
+  `ID` bigint(20) NOT NULL COMMENT '博客id',
+  `CONTENT` longtext NOT NULL COMMENT '博客内容',
+  `CONTENT_MD` longtext NOT NULL,
+  PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
@@ -99,26 +122,25 @@ CREATE TABLE `blog_content` (
 -- ----------------------------
 DROP TABLE IF EXISTS `blog_label`;
 CREATE TABLE `blog_label` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '??ǩid',
-  `title` varchar(20) NOT NULL COMMENT '??ǩ??',
-  `create_date` datetime NOT NULL COMMENT '??ǩ????ʱ?',
-  `cite_num` int(11) NOT NULL COMMENT '???ô???',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `blogger_id_2` (`title`)
-) ENGINE=InnoDB AUTO_INCREMENT=373248471727079425 DEFAULT CHARSET=utf8;
+  `ID` bigint(20) unsigned NOT NULL COMMENT '标签id',
+  `TITLE` varchar(20) NOT NULL COMMENT '标签名称',
+  `CREATE_DATE` datetime NOT NULL COMMENT '创建日期',
+  `CITE_NUM` int(11) NOT NULL COMMENT '引用人数',
+  PRIMARY KEY (`ID`),
+  UNIQUE KEY `BLOGGER_ID_2` (`TITLE`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for blog_log
 -- ----------------------------
 DROP TABLE IF EXISTS `blog_log`;
 CREATE TABLE `blog_log` (
-  `id` bigint(20) NOT NULL,
-  `romoteIp` varchar(20) NOT NULL COMMENT 'Զ?̷??ʵ?ip',
-  `username` varchar(255) DEFAULT NULL COMMENT '?û???½?˻?',
-  `romoteTime` datetime NOT NULL,
-  `operation` varchar(255) DEFAULT NULL COMMENT '?û?????',
-  PRIMARY KEY (`id`),
-  KEY `userId` (`username`)
+  `ID` bigint(20) NOT NULL COMMENT '博客日志id',
+  `ROMOTEIP` varchar(20) NOT NULL COMMENT '远程登陆ip',
+  `ROMOTETIME` datetime NOT NULL,
+  `OPERATION` varchar(255) DEFAULT NULL COMMENT '远程操作指令',
+  `USERNAME` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
@@ -126,7 +148,79 @@ CREATE TABLE `blog_log` (
 -- ----------------------------
 DROP TABLE IF EXISTS `blog_tag_map`;
 CREATE TABLE `blog_tag_map` (
-  `tag_id` bigint(20) NOT NULL COMMENT '??ǩid',
-  `blog_id` bigint(20) NOT NULL COMMENT '????id',
-  PRIMARY KEY (`tag_id`,`blog_id`)
+  `TAG_ID` bigint(20) NOT NULL COMMENT '标签id',
+  `BLOG_ID` bigint(20) NOT NULL COMMENT '博客id',
+  PRIMARY KEY (`TAG_ID`,`BLOG_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for permission_operation_map
+-- ----------------------------
+DROP TABLE IF EXISTS `permission_operation_map`;
+CREATE TABLE `permission_operation_map` (
+  `OPERATION_ID` bigint(20) NOT NULL COMMENT '操作权限id',
+  `PERMISSION_ID` bigint(20) NOT NULL COMMENT '权限id',
+  PRIMARY KEY (`OPERATION_ID`,`PERMISSION_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='权限和操作权限关联表';
+
+-- ----------------------------
+-- Table structure for photowall
+-- ----------------------------
+DROP TABLE IF EXISTS `photowall`;
+CREATE TABLE `photowall` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `ORIGIN_TAGS` varchar(1024) DEFAULT NULL COMMENT '图片原名tag,并且'',''分割',
+  `TAGS` varchar(1024) DEFAULT NULL COMMENT '图片tag,并且'',''分割',
+  `WIDTH` int(11) DEFAULT NULL COMMENT '图片宽度',
+  `HEIGHT` int(11) DEFAULT NULL COMMENT '图片高度',
+  `TITLE` varchar(100) DEFAULT NULL COMMENT '图片名称',
+  `PATH` varchar(100) DEFAULT NULL COMMENT '物理地址映射',
+  `CREATEDATE` datetime DEFAULT NULL COMMENT '入库时间',
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=3586 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for role_permission_map
+-- ----------------------------
+DROP TABLE IF EXISTS `role_permission_map`;
+CREATE TABLE `role_permission_map` (
+  `ROLE_ID` bigint(20) NOT NULL COMMENT '角色id',
+  `PERMISSION_ID` bigint(20) NOT NULL COMMENT '权限id',
+  PRIMARY KEY (`ROLE_ID`,`PERMISSION_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户角色和权限的关联表';
+
+-- ----------------------------
+-- Table structure for sys_menu
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_menu`;
+CREATE TABLE `sys_menu` (
+  `MENU_ID` bigint(20) NOT NULL COMMENT '菜单id',
+  `P_ID` bigint(20) DEFAULT NULL COMMENT '父级菜单id',
+  `MENU_NAME` varchar(100) DEFAULT NULL COMMENT '菜单名称',
+  `MENU_ICON` varchar(30) DEFAULT NULL COMMENT '菜单图标',
+  `MENU_PATH` varchar(100) DEFAULT NULL COMMENT '菜单路径',
+  PRIMARY KEY (`MENU_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for sys_operation
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_operation`;
+CREATE TABLE `sys_operation` (
+  `ID` bigint(20) NOT NULL COMMENT '操作id',
+  `OPERATION_NAME` varchar(50) DEFAULT NULL COMMENT '操作名称',
+  `OPERATION_DES` varchar(100) DEFAULT NULL COMMENT '操作描述',
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for sys_permission
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_permission`;
+CREATE TABLE `sys_permission` (
+  `ID` bigint(20) NOT NULL COMMENT '权限id',
+  `PERMISSION_NAME` varchar(50) DEFAULT NULL COMMENT '权限名称',
+  `PERMISSION_DES` varchar(100) DEFAULT NULL COMMENT '权限描述',
+  `MENU_ID` bigint(20) DEFAULT NULL COMMENT '菜单id 保证它和菜单的关联',
+  PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

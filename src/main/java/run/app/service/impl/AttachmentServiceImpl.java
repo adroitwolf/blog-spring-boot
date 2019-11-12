@@ -232,9 +232,9 @@ public class AttachmentServiceImpl implements AttachmentService {
 
     @Override
     public BaseResponse findAllMediaType(String token) {
+        Long id = tokenService.getUserIdWithToken(token);
 
-
-        return null;
+        return new BaseResponse(HttpStatus.OK.value(),null,bloggerPictureMapper.findAllMediaType(id));
     }
 
     @Override

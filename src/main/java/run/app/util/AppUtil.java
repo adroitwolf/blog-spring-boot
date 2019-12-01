@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 
+import javax.servlet.http.HttpServletRequest;
 import javax.xml.crypto.Data;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -19,33 +20,57 @@ public class AppUtil {
 
     private final static  SnowFlake snowFlake = new SnowFlake(0,0);
 
+//    private static enum SingleEnum{
+//        INSTANCE;
+//        private AppUtil appUtil;
+//
+//        private SingleEnum(){
+//            appUtil = new AppUtil();
+//        }
+//
+//        public AppUtil getInstance(){
+//            return appUtil;
+//        }
+//
+//    }
 
-    private static enum SingleEnum{
-        INSTANCE;
-        private AppUtil appUtil;
 
-        private SingleEnum(){
-            appUtil = new AppUtil();
+    /**
+    * 功能描述: 获取远程ip
+    * @Author: WHOAMI
+    * @Date: 2019/11/29 16:14
+     */
+    public static String  getRemoteIp(HttpServletRequest request){
+        String ip = request.getHeader("x-forwarded-for");
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("Proxy-Client-IP");
         }
-
-        public AppUtil getInstance(){
-            return appUtil;
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("WL-Proxy-Client-IP");
         }
-
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("HTTP_CLIENT_IP");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("HTTP_X_FORWARDED_FOR");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getRemoteAddr();
+        }
+        return ip;
     }
 
-//    获取自增id
-    public long nextId(){
+    /**
+    * 功能描述: 流水生成自增id
+    * @Author: WHOAMI
+    * @Date: 2019/11/29 16:18
+     */
+    public static long nextId(){
         return snowFlake.nextId();
     }
 
-
-    public List<?> removeDuplicateListItem(List<?> items){
+    public static List<?> removeDuplicateListItem(List<?> items){
         return  new ArrayList<>(new HashSet<>(items));
-    }
-
-    public static AppUtil getInstance(){
-        return SingleEnum.INSTANCE.getInstance();
     }
 
     public static String RandomUUIDWithoutDash(){

@@ -15,6 +15,7 @@
 
     <properties>
         <java.version>1.8</java.version>
+        <skipTests>true</skipTests><!--添加 -->
     </properties>
 
     <dependencies>
@@ -111,13 +112,26 @@
         </dependency>
 
 
-        <!--redis-->
+        <!--redis 框架接管高并发-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
 
-        <!--生成Token-->
+        <!--<dependency>-->
+            <!--<groupId>org.redisson</groupId>-->
+            <!--<artifactId>redisson-spring-boot-starter</artifactId>-->
+            <!--<version>3.10.4</version>-->
+        <!--</dependency>-->
+
+
+        <!--定时任务-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-quartz</artifactId>
+        </dependency>
+
+        <!--jwt生成token-->
         <dependency>
             <groupId>com.auth0</groupId>
             <artifactId>java-jwt</artifactId>

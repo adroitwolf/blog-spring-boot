@@ -11,15 +11,19 @@ import org.springframework.stereotype.Service;
 import run.app.entity.DTO.BaseResponse;
 import run.app.entity.DTO.BlogDetailWithAuthor;
 import run.app.entity.DTO.DataGrid;
+import run.app.entity.DTO.PopularBlog;
 import run.app.entity.enums.ArticleStatus;
 import run.app.entity.model.*;
 import run.app.entity.VO.PostQueryParams;
 import run.app.mapper.*;
 import run.app.service.AttachmentService;
+import run.app.service.BlogStatusService;
 import run.app.service.PostService;
+import run.app.service.RedisService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -43,6 +47,12 @@ public class PostServiceImpl implements PostService {
     TagServiceImpl tagService;
     /*代码修改结束*/
 
+
+    @Autowired
+    RedisService redisService;
+
+    @Autowired
+    BlogStatusService blogStatusService;
 
     /*
     * 功能描述: 新增博客图片功能
@@ -80,29 +90,7 @@ public class PostServiceImpl implements PostService {
 
         PageInfo<Blog> list = new PageInfo<>(blogs);
 
-        List<Blog> result = list.getList();
-
-        List<run.app.entity.DTO.Blog> resultX= result.stream().map(item->{
-
-            List<String> tagsTitle = new ArrayList<>();
-            if(!StringUtils.isBlank(item.getTagTitle())){
-
-                tagsTitle = tagService.selectTagTitleByIdString(item.getTagTitle());
-            }
-
-            String pic = "";
-
-            if(null != item.getPictureId()){
-                pic = attachmentService.selectPicById(item.getPictureId());
-            }
-
-            run.app.entity.DTO.Blog blog = new run.app.entity.DTO.Blog();
-
-            BeanUtils.copyProperties(item,blog);
-            blog.setTagsTitle(tagsTitle);
-            blog.setPicture(pic);
-            return blog;
-        }).collect(Collectors.toList());
+        List<run.app.entity.DTO.Blog> resultX= transDtoFrmModel(list);
         DataGrid dataGrid = new DataGrid();
 
         dataGrid.setRows(resultX);
@@ -128,26 +116,7 @@ public class PostServiceImpl implements PostService {
 
         DataGrid dataGrid = new DataGrid();
 
-        List<run.app.entity.DTO.Blog> blogs = list.getList().stream().map(item->{
-            List<String> tagsTitle = new ArrayList<>();
-            if(!StringUtils.isBlank(item.getTagTitle())){
-
-                tagsTitle = tagService.selectTagTitleByIdString(item.getTagTitle());
-            }
-
-            String pic = "";
-
-            if(null != item.getPictureId()){
-                pic = attachmentService.selectPicById(item.getPictureId());
-            }
-
-            run.app.entity.DTO.Blog blog = new run.app.entity.DTO.Blog();
-
-            BeanUtils.copyProperties(item,blog);
-            blog.setTagsTitle(tagsTitle);
-            blog.setPicture(pic);
-            return blog;
-        }).collect(Collectors.toList());
+        List<run.app.entity.DTO.Blog> blogs = transDtoFrmModel(list);
 
 
         dataGrid.setRows(blogs);
@@ -230,5 +199,40 @@ public class PostServiceImpl implements PostService {
         dataGrid.setTotal(0);
 
         return new BaseResponse(HttpStatus.OK.value(),"",dataGrid);
+    }
+
+    @Override
+    public BaseResponse getTopPosts() {
+        Set<PopularBlog> popularBlogs = redisService.listTop5FrmRedis();
+        if (null == popularBlogs || popularBlogs.size()<5){ //说明redis不准确,需要查询数据库
+            popularBlogs = (Set<PopularBlog>) blogStatusService.listTop5Posts();
+        }
+
+        return new BaseResponse(HttpStatus.OK.value(),null,popularBlogs);
+    }
+
+
+
+    private List<run.app.entity.DTO.Blog> transDtoFrmModel(PageInfo<Blog> list){
+        return list.getList().stream().map(item->{
+            List<String> tagsTitle = new ArrayList<>();
+            if(!StringUtils.isBlank(item.getTagTitle())){
+
+                tagsTitle = tagService.selectTagTitleByIdString(item.getTagTitle());
+            }
+
+            String pic = "";
+
+            if(null != item.getPictureId()){
+                pic = attachmentService.selectPicById(item.getPictureId());
+            }
+
+            run.app.entity.DTO.Blog blog = new run.app.entity.DTO.Blog();
+
+            BeanUtils.copyProperties(item,blog);
+            blog.setTagsTitle(tagsTitle);
+            blog.setPicture(pic);
+            return blog;
+        }).collect(Collectors.toList());
     }
 }

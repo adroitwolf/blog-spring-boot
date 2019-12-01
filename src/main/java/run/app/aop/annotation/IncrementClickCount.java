@@ -1,17 +1,16 @@
-package run.app.security.token;
+package run.app.aop.annotation;
 
 import java.lang.annotation.*;
 
 /**
  * Created with IntelliJ IDEA.
  * User: WHOAMI
- * Time: 2019 2019/7/22 16:26
- * Description: 认证接口
+ * Time: 2019 2019/11/29 16:23
+ * Description: 增加点击量注解
  */
 @Target(ElementType.METHOD)
 @Documented
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
-public @interface AuthTokenInterface {
-    boolean isAuthToken() default true;
+public @interface IncrementClickCount {
 }

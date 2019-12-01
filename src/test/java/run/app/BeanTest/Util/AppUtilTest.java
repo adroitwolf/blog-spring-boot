@@ -13,7 +13,7 @@ public class AppUtilTest {
 
     @Test
     public void IdTest(){
-        AppUtil instance = AppUtil.getInstance();
-        System.out.println(instance.nextId());
+
+        System.out.println(AppUtil.nextId());
     }
 }

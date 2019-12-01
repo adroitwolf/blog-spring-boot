@@ -19,9 +19,8 @@ import run.app.entity.model.*;
 import run.app.entity.VO.ArticleParams;
 import run.app.entity.VO.PostQueryParams;
 import run.app.exception.BadRequestException;
-import run.app.exception.UnAuthenticationException;
 import run.app.mapper.*;
-import run.app.security.token.TokenService;
+import run.app.service.TokenService;
 import run.app.service.ArticleService;
 import run.app.service.AttachmentService;
 import run.app.service.TagService;
@@ -40,11 +39,7 @@ import java.util.stream.Collectors;
 @Service
 public class ArtcileServiceImpl implements ArticleService {
 
-    public ArtcileServiceImpl() {
-        this.appUtil = AppUtil.getInstance();
-    }
 
-    AppUtil appUtil;
 
 
     /**
@@ -106,7 +101,7 @@ public class ArtcileServiceImpl implements ArticleService {
         BeanUtils.copyProperties(articleParams,blog);
 
         /*生成文章id 10-9 - 19 WHOAMI*/
-        Long blog_id = appUtil.nextId();
+        Long blog_id = AppUtil.nextId();
         blog.setId(blog_id);
 
         /*增加代码结束*/
@@ -303,6 +298,12 @@ public class ArtcileServiceImpl implements ArticleService {
 
 
         return baseResponse;
+    }
+
+    @Override
+    public String getArticleNameByBlogId(Long blogId) {
+
+        return blogMapper.selectBlogNameByPrimaryKey(blogId);
     }
 
 

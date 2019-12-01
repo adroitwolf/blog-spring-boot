@@ -2,7 +2,6 @@ package run.app.service.impl;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,11 +14,10 @@ import run.app.entity.model.*;
 import run.app.entity.VO.UserParams;
 import run.app.mapper.BloggerAccountMapper;
 import run.app.mapper.BloggerProfileMapper;
-import run.app.security.token.TokenService;
+import run.app.service.TokenService;
 import run.app.service.AttachmentService;
 import run.app.service.RoleService;
 import run.app.service.UserService;
-import run.app.util.UploadUtil;
 
 import java.util.stream.Collectors;
 
@@ -128,7 +126,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean logout(String token) {
-        return tokenService.logout(token);
+        return true;
     }
 
 

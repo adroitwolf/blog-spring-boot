@@ -30,7 +30,6 @@ public class RoleServiceTest {
     @Autowired
     RoleService roleService;
 
-    AppUtil appUtil = AppUtil.getInstance();
 
     /**
     * 功能描述: 初始化数据库

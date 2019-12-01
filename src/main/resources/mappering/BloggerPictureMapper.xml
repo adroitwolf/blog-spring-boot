@@ -93,6 +93,26 @@
       order by ${orderByClause}
     </if>
   </select>
+
+
+  <select id="selectPictureByExample" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from blogger_picture
+    <where>
+      <if test="query.keywords != null and query.keywords != ''">
+        <bind name="pattern" value="'%'+query.keywords + '%'"></bind>
+        and title like #{pattern}
+      </if>
+      <if test="query.mediaType != null and query.mediaType != ''">
+        and MEDIA_TYPE = #{query.mediaType}
+      </if>
+      <if test="userId != null and userId != ''">
+        and BLOGGER_ID = #{userId,jdbcType=BIGINT}
+      </if>
+    </where>
+    order by upload_date desc
+  </select>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />

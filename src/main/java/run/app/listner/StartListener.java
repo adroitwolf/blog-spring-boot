@@ -1,17 +1,15 @@
-package run.app.startLinster;
+package run.app.listner;
 
-import jdk.nashorn.internal.parser.Token;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import run.app.config.properties.JWTProperties;
-import run.app.security.token.TokenService;
+import run.app.service.TokenService;
 
 import java.io.File;
 

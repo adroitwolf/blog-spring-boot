@@ -19,4 +19,5 @@ public interface PostService {
 
     BaseResponse getListByTag(int pageNum,int pageSize,String tag);
 
+    BaseResponse getTopPosts();
 }

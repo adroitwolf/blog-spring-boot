@@ -1,11 +1,10 @@
-package run.app.security.log.impl;
+package run.app.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import run.app.entity.model.BlogLog;
-import run.app.entity.model.BlogLogExample;
 import run.app.mapper.BlogLogMapper;
-import run.app.security.log.LogService;
+import run.app.service.LogService;
 import run.app.util.AppUtil;
 
 /**
@@ -17,20 +16,12 @@ import run.app.util.AppUtil;
 @Service
 public class LogServiceImpl implements LogService {
 
-
-    public LogServiceImpl() {
-        this.appUtil = AppUtil.getInstance();
-    }
-
     @Autowired
     BlogLogMapper blogLogMapper;
 
-
-    AppUtil appUtil;
-
     @Override
     public void storageLog(BlogLog blogLog) {
-        blogLog.setId(appUtil.nextId());
+        blogLog.setId(AppUtil.nextId());
         blogLogMapper.insertSelective(blogLog);
     }
 }

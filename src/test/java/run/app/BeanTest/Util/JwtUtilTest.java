@@ -9,11 +9,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 import run.app.config.properties.JWTProperties;
 import run.app.entity.DTO.User;
 import run.app.entity.enums.Role;
-import run.app.security.token.TokenService;
+import run.app.service.TokenService;
 import run.app.util.JwtUtil;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**

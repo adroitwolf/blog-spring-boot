@@ -4,9 +4,11 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import run.app.aop.annotation.IncrementClickCount;
 import run.app.entity.DTO.BaseResponse;
-import run.app.entity.DTO.DataGrid;
 import run.app.service.PostService;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Created with IntelliJ IDEA.
@@ -15,7 +17,7 @@ import run.app.service.PostService;
  * Description: :博客前台控制器
  */
 @RestController
-@RequestMapping("/post")
+@RequestMapping("/api/post")
 public class ReceptionController {
 
     @Autowired
@@ -46,6 +48,7 @@ public class ReceptionController {
 
     @ApiOperation("获取博客详细内容")
     @GetMapping("/detail/{BlogId:\\d+}")
+    @IncrementClickCount
     public BaseResponse getBlogDetail(@PathVariable("BlogId")Long blogId){
 
         BaseResponse baseResponse = new BaseResponse();
@@ -53,5 +56,12 @@ public class ReceptionController {
         baseResponse.setStatus(HttpStatus.OK.value());
         baseResponse.setData(postService.getDetail(blogId));
         return baseResponse;
+    }
+
+
+    @ApiOperation("获取点击量前五的文章")
+    @GetMapping("/top")
+    public BaseResponse getTopPosts(){
+        return postService.getTopPosts();
     }
 }

@@ -28,6 +28,7 @@ public interface ArticleService {
 
     BaseResponse getArticleListByExample(@NonNull int pageNum, @NonNull int pageSize, PostQueryParams postQueryParams, @NonNull String token);
 
+    String getArticleNameByBlogId(Long blogId);
 
     void deleteBlog(@NonNull Long blogId,String token);
 

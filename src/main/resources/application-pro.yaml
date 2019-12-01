@@ -9,13 +9,13 @@ spring:
     restart:
       enabled: true
   datasource:
-    url: jdbc:mysql://localhost:3306/eblog?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://docker_mysql:3306/eblog?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
     username: root
     password: 123
     driver-class-name: com.mysql.cj.jdbc.Driver
   redis:
     database: 0
-    host: 127.0.0.1
+    host: docker_redis
     port: 6379
     password: 123
   resources:

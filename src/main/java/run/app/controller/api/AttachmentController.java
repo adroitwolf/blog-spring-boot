@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import run.app.entity.DTO.BaseResponse;
 import run.app.entity.DTO.DataGrid;
 import run.app.entity.VO.AttachmentParams;
+import run.app.entity.VO.AttachmentQueryParams;
 import run.app.service.AttachmentService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,9 +34,11 @@ public class AttachmentController {
 
     @GetMapping("list")
     @ApiOperation("获取所有附件")
-    public BaseResponse getAttachmentList(@RequestParam("pageSize")int pageSize, @RequestParam("pageNum")int pageNum,
+    public BaseResponse getAttachmentList(@RequestParam("pageSize")int pageSize,
+                                          @RequestParam("pageNum")int pageNum,
+                                      AttachmentQueryParams attachmentQueryParams,
                                       HttpServletRequest request){
-        return attachmentService.getAttachmentList(pageSize,pageNum,request.getHeader(TOKEN));
+        return attachmentService.getAttachmentList(pageSize,pageNum,attachmentQueryParams,request.getHeader(TOKEN));
     }
 
 

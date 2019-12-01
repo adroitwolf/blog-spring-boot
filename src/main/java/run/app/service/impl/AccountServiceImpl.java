@@ -16,13 +16,12 @@ import run.app.entity.model.BloggerAccountExample;
 import run.app.entity.VO.LoginParams;
 import run.app.entity.VO.RegisterParams;
 import run.app.entity.model.BloggerProfile;
-import run.app.entity.model.BloggerRole;
 import run.app.exception.BadRequestException;
 import run.app.exception.NotFoundException;
 import run.app.exception.ServiceException;
 import run.app.mapper.BloggerAccountMapper;
 import run.app.mapper.BloggerProfileMapper;
-import run.app.security.token.TokenService;
+import run.app.service.TokenService;
 import run.app.service.AccountService;
 import run.app.service.RoleService;
 import run.app.util.AppUtil;
@@ -41,11 +40,7 @@ import java.util.stream.Collectors;
 @Transactional
 public class AccountServiceImpl implements AccountService{
 
-    public AccountServiceImpl() {
-        this.appUtil = AppUtil.getInstance();
 
-    }
-    AppUtil appUtil;
 
     @Autowired
     BloggerAccountMapper bloggerAccountMapper;
@@ -176,7 +171,7 @@ public class AccountServiceImpl implements AccountService{
 
         BeanUtils.copyProperties(registerParams,bloggerAccount);
 
-        bloggerAccount.setId(appUtil.nextId());
+        bloggerAccount.setId(AppUtil.nextId());
         bloggerAccount.setUsername(registerParams.getAccount());
         //todo 设置发送邮件
         bloggerAccount.setRegisterDate(new Date());

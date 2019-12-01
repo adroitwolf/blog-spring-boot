@@ -1,24 +1,19 @@
-package run.app.security.log;
+package run.app.aop;
 
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import run.app.entity.model.BlogLog;
-import run.app.security.token.TokenService;
 import run.app.service.AccountService;
-import run.app.service.UserService;
+import run.app.service.LogService;
+import run.app.util.AppUtil;
 
 import javax.servlet.http.HttpServletRequest;
-import java.lang.reflect.Method;
 import java.util.Date;
 
 /**
@@ -30,10 +25,8 @@ import java.util.Date;
 @Aspect
 @Slf4j
 @Component
-public class LogManager {
+public class LogManagerAspect {
 
-//    @Autowired
-//    TokenService tokenService;
 
     @Autowired
     AccountService accountService;
@@ -41,13 +34,13 @@ public class LogManager {
     @Autowired
     LogService logService;
 
-    @Around("@annotation(run.app.security.annotation.MethodLog)")
+    @Around("@annotation(run.app.aop.annotation.MethodLog)")
     public Object storage(ProceedingJoinPoint joinPoint) throws Throwable {
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = requestAttributes.getRequest();
         String targetName = joinPoint.getTarget().getClass().getName();
         String methodName = joinPoint.getSignature().getName();
-        String ip = getIp(request);
+        String ip = AppUtil.getRemoteIp(request);
         BlogLog blogLog = new BlogLog();
 
         String token = request.getHeader("Authentication");
@@ -59,25 +52,5 @@ public class LogManager {
         logService.storageLog(blogLog);
 
         return joinPoint.proceed();
-    }
-
-    public  String getIp(HttpServletRequest request) {
-        String ip = request.getHeader("x-forwarded-for");
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("Proxy-Client-IP");
-        }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("WL-Proxy-Client-IP");
-        }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("HTTP_CLIENT_IP");
-        }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("HTTP_X_FORWARDED_FOR");
-        }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getRemoteAddr();
-        }
-        return ip;
     }
 }

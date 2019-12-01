@@ -1,4 +1,4 @@
-package run.app.security.token;
+package run.app.service;
 
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.interfaces.Claim;
@@ -34,25 +34,6 @@ public interface TokenService {
 
     Long getUserIdWithToken(String token);
 
-    void storage(String token,String username);
-
-    String generateToken(String username);
-
-    AuthToken creatAuthToken(String token);
-
-
-    Boolean islogined(String username);
-
-
-//    Boolean isToken(String token);
-
-    UserDetail findUserDetailsByToken(String token);
-
-
-    String getUsernameByToken(String token);
-
-
-    boolean logout(String token);
 
 
 

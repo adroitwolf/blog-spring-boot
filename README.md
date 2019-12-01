@@ -18,3 +18,5 @@
 具体配置请查看[这里](https://whoami1231.github.io/2019/11/05/springboot-2-x-采用监控模块/)
 
 - 增加缓存功能，在程序运行前请确认redis的正常运行
+
+- 新增生产模块配置文件，项目部署详情请看[这里](https://whoami1231.github.io/2019/11/21/docker-compose实现前后端分离的自动化部署/)

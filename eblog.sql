@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50634
 File Encoding         : 65001
 
-Date: 2019-11-10 16:04:16
+Date: 2019-12-01 13:11:58
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -28,7 +28,7 @@ CREATE TABLE `blog` (
   `SUMMARY` varchar(400) NOT NULL COMMENT '博客总结',
   `RELEASE_DATE` datetime NOT NULL COMMENT '发布日期',
   `NEAREST_MODIFY_DATE` datetime NOT NULL COMMENT '最近修改时间',
-  `TAG_TITLE` varchar(80) DEFAULT NULL COMMENT '标签',
+  `TAG_TITLE` varchar(1024) DEFAULT NULL COMMENT '标签',
   `COLUMN_10` char(10) DEFAULT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `BLOGGER_ID` (`BLOGGER_ID`,`TITLE`)
@@ -144,6 +144,16 @@ CREATE TABLE `blog_log` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
+-- Table structure for blog_status
+-- ----------------------------
+DROP TABLE IF EXISTS `blog_status`;
+CREATE TABLE `blog_status` (
+  `ID` bigint(20) NOT NULL COMMENT '博客id',
+  `CLICKCOUNT` int(11) DEFAULT NULL COMMENT '点击数',
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='博客状态表 记录点赞数等';
+
+-- ----------------------------
 -- Table structure for blog_tag_map
 -- ----------------------------
 DROP TABLE IF EXISTS `blog_tag_map`;
@@ -177,7 +187,7 @@ CREATE TABLE `photowall` (
   `PATH` varchar(100) DEFAULT NULL COMMENT '物理地址映射',
   `CREATEDATE` datetime DEFAULT NULL COMMENT '入库时间',
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=3586 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3978 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for role_permission_map

@@ -154,9 +154,13 @@ public class PostServiceImpl implements PostService {
         if(null != blog.getPictureId()){
             pic = attachmentService.selectPicById(blog.getPictureId());
         }
+        StringBuilder avatarPath = new StringBuilder();
+        if(null != bloggerProfile.getAvatarId()){ //判断用户是否有自定义头像
+            avatarPath.append(attachmentService.getPathById(bloggerProfile.getAvatarId()));
+        }
 
         //todo 属性太长 需要重构
-        BlogDetailWithAuthor blogDetailWithAuthor = new BlogDetailWithAuthor(blogId,blog.getTitle(),blog.getSummary(),blog.getReleaseDate(),nowTags,blogContent.getContent(),pic,bloggerProfile.getNickname(),attachmentService.getPathById(bloggerProfile.getAvatarId()));
+        BlogDetailWithAuthor blogDetailWithAuthor = new BlogDetailWithAuthor(blogId,blog.getTitle(),blog.getSummary(),blog.getReleaseDate(),nowTags,blogContent.getContent(),pic,bloggerProfile.getNickname(),avatarPath.toString());
 
         baseResponse.setStatus(HttpStatus.OK.value());
         baseResponse.setData(blogDetailWithAuthor);

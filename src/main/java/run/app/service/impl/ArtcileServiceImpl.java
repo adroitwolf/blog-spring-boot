@@ -344,15 +344,19 @@ public class ArtcileServiceImpl implements ArticleService {
     }
 
     @Override
-    public long getArticleCount(@NonNull String token) {
+    public BaseResponse getArticleCount(@NonNull String token) {
 //        Integer bloggerId = userService.getUserIdByToken(token);
+        BaseResponse baseResponse = new BaseResponse();
 
         Long bloggerId = tokenService.getUserIdWithToken(token);
         BlogExample blogExample = new BlogExample();
 
         BlogExample.Criteria criteria = blogExample.createCriteria();
         criteria.andBloggerIdEqualTo(bloggerId);
-       return blogMapper.countByExample(blogExample);
+        long count = blogMapper.countByExample(blogExample);
+        baseResponse.setStatus(HttpStatus.OK.value());
+        baseResponse.setData(count);
+       return baseResponse;
 
     }
 

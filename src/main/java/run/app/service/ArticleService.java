@@ -32,7 +32,7 @@ public interface ArticleService {
 
     void deleteBlog(@NonNull Long blogId,String token);
 
-    long getArticleCount(@NonNull String token);
+    BaseResponse getArticleCount(@NonNull String token);
 
 
 

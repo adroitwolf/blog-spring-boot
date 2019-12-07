@@ -107,14 +107,7 @@ public class BlogController {
     @ApiOperation("获取博客数量")
     @GetMapping("count")
     public BaseResponse countList(HttpServletRequest request){
-
-        long articleCount = articleService.getArticleCount( request.getHeader(AUTHENICATION));
-
-        BaseResponse baseResponse = new BaseResponse();
-        baseResponse.setStatus(HttpStatus.OK.value());
-
-        baseResponse.setData(articleCount);
-        return baseResponse;
+        return articleService.getArticleCount( request.getHeader(AUTHENICATION));
     }
 
 

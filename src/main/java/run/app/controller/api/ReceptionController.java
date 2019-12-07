@@ -50,8 +50,6 @@ public class ReceptionController {
     @GetMapping("/detail/{BlogId:\\d+}")
     @IncrementClickCount
     public BaseResponse getBlogDetail(@PathVariable("BlogId")Long blogId){
-
-
         return postService.getDetail(blogId);
     }
 

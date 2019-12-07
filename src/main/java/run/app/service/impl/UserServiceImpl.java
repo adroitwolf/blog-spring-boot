@@ -72,8 +72,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public @NonNull UserDetail updateProfileById(@NonNull UserParams userParams, @NonNull String token) {
+    public @NonNull BaseResponse updateProfileById(@NonNull UserParams userParams, @NonNull String token) {
 
+        BaseResponse baseResponse = new BaseResponse();
 
         Long userId = tokenService.getUserIdWithToken(token);
         BloggerProfile bloggerProfile = new BloggerProfile();
@@ -91,7 +92,10 @@ public class UserServiceImpl implements UserService {
         userDetail.setAboutMe(bloggerProfile.getAboutMe());
         userDetail.setUsername(bloggerProfile.getNickname());
 
-        return userDetail;
+        baseResponse.setData(userDetail);
+        baseResponse.setStatus(HttpStatus.OK.value());
+
+        return baseResponse;
     }
 
     @Override

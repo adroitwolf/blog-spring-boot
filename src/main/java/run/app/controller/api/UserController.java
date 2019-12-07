@@ -45,11 +45,7 @@ public class UserController {
     public  BaseResponse updateProfile( @RequestBody UserParams userParams,HttpServletRequest request){
         log.debug(userParams.toString());
         String token = request.getHeader(AUTHENICATION);
-        BaseResponse baseResponse = new BaseResponse();
-        baseResponse.setData(userService.updateProfileById(userParams,token));
-        baseResponse.setStatus(HttpStatus.OK.value());
-
-        return baseResponse;
+        return userService.updateProfileById(userParams,token);
     }
 
 

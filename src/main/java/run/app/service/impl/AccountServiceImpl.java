@@ -136,7 +136,12 @@ public class AccountServiceImpl implements AccountService{
 
 
         BloggerAccount bloggerAccount = bloggerAccountMapper.selectByPrimaryKey(id);
-
+        // todo bug情况
+        /**
+        * 问题描述: 开发环境与生产环境的jwt生成算法必须不一致
+       * @Author: WHOAMI
+        * @Date: 2019/12/2 23:11
+         */
         return bloggerAccount.getUsername();
     }
 

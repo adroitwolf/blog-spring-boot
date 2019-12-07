@@ -45,8 +45,8 @@ web:
 jwt:
   # 发行者
   name: WHOAMI
-  # 密钥, 经过Base64加密, 可自行替换 默认WHOAMI
-  base64Secret: V0hPQU1J
+  # 密钥, 经过Base64加密,去等 可自行替换 默认development
+  base64Secret: ZGV2ZWxvcG1lbnQ
   #jwt中过期时间设置(ms)
   jwtExpires: 7200000
 

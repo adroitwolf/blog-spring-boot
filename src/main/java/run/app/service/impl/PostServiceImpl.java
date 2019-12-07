@@ -22,6 +22,7 @@ import run.app.service.PostService;
 import run.app.service.RedisService;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -203,12 +204,12 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public BaseResponse getTopPosts() {
-        Set<PopularBlog> popularBlogs = redisService.listTop5FrmRedis();
-        if (null == popularBlogs || popularBlogs.size()<5){ //说明redis不准确,需要查询数据库
-            popularBlogs = (Set<PopularBlog>) blogStatusService.listTop5Posts();
+        Set<PopularBlog> popularPosts = redisService.listTop5FrmRedis();
+        if (null == popularPosts || popularPosts.size()<5){ //说明redis不准确,需要查询数据库
+            popularPosts = new HashSet<>(blogStatusService.listTop5Posts());
         }
-
-        return new BaseResponse(HttpStatus.OK.value(),null,popularBlogs);
+        log.info(popularPosts.toString());
+        return new BaseResponse(HttpStatus.OK.value(),null,popularPosts);
     }
 
 

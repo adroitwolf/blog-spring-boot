@@ -22,6 +22,6 @@ public interface BlogMapper extends BaseMapper<Blog,Long>{
 
     void deletePicByPicId(Long picId);
 
-    @Select("SELECT id,title FROM blog WHERE ID = #{blogId}")
+    @Select("SELECT title FROM blog WHERE ID = #{blogId}")
     String selectBlogNameByPrimaryKey(Long blogId);
 }

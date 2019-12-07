@@ -42,11 +42,16 @@ public class RedisTest {
 
     }
 
+
+    @Test
+    public void listTest(){
+        List<BlogStatus> statuses = redisService.listBlogClickedCounts();
+    }
+
     @Test
     public void testListTop5(){
         Set<PopularBlog> statuses = redisService.listTop5FrmRedis();
-        System.out.println(statuses.size());
-        statuses.stream().forEach(x-> System.out.println(x));
+        System.out.println(statuses);
     }
 
     @Test

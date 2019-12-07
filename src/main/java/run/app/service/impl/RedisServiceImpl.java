@@ -1,6 +1,5 @@
 package run.app.service.impl;
 
-import io.micrometer.core.instrument.internal.DefaultGauge;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.*;
@@ -69,7 +68,8 @@ public class RedisServiceImpl implements RedisService {
 
         while (cursor.hasNext()){
             Map.Entry<Object,Object> entry =  cursor.next();
-            Long  blogId = (Long)entry.getKey();
+            String key = (String) entry.getKey();
+            Long  blogId = Long.valueOf(key);
             Integer count = (Integer) entry.getValue();
 
             BlogStatus status = new BlogStatus(blogId, count);
@@ -104,7 +104,9 @@ public class RedisServiceImpl implements RedisService {
 
     @Override
     public Set<PopularBlog> listTop5FrmRedis() {
-        Set<PopularBlog> set = redisTemplate.opsForZSet().reverseRange(LIST_TOP5_POSTS, 0, 5);
+        Set set = redisTemplate.opsForZSet().reverseRange(LIST_TOP5_POSTS, 0, 5);
+
+
         return set;
     }
 

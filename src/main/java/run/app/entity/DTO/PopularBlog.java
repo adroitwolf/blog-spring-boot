@@ -1,9 +1,10 @@
 package run.app.entity.DTO;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import lombok.*;
+
+import java.io.Serializable;
 
 /**
  * Created with IntelliJ IDEA.
@@ -15,10 +16,14 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public final class PopularBlog {
-    String blogName;
+@Builder
+public final class PopularBlog implements Serializable {
+    private String blogName;
 
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
     private Integer clickcount;
+
+
 }

@@ -39,6 +39,4 @@ public class RegisterParams {
     @Size(max=10,message = "邀请码格式不正确")
     private String Code;
 
-
-
 }

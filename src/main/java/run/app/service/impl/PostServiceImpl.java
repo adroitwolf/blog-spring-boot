@@ -15,6 +15,7 @@ import run.app.entity.DTO.PopularBlog;
 import run.app.entity.enums.ArticleStatus;
 import run.app.entity.model.*;
 import run.app.entity.VO.PostQueryParams;
+import run.app.exception.NotFoundException;
 import run.app.mapper.*;
 import run.app.service.AttachmentService;
 import run.app.service.BlogStatusService;
@@ -97,9 +98,6 @@ public class PostServiceImpl implements PostService {
         dataGrid.setRows(resultX);
         dataGrid.setTotal(list.getTotal());
 
-
-
-
         return  new BaseResponse(HttpStatus.OK.value(),"",dataGrid);
     }
 
@@ -128,10 +126,16 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public BlogDetailWithAuthor getDetail(Long blogId) {
+    public BaseResponse getDetail(Long blogId) {
+
+        BaseResponse baseResponse = new BaseResponse();
+
+
 
         Blog blog = blogMapper.selectByPrimaryKey(blogId);
-
+        if(null == blog) { //当用户博客id非法的时候
+            throw new NotFoundException("没有相关博客信息");
+        }
 
         BlogContent blogContent = blogContentMapper.selectByPrimaryKey(blogId);
 
@@ -153,7 +157,11 @@ public class PostServiceImpl implements PostService {
 
         //todo 属性太长 需要重构
         BlogDetailWithAuthor blogDetailWithAuthor = new BlogDetailWithAuthor(blogId,blog.getTitle(),blog.getSummary(),blog.getReleaseDate(),nowTags,blogContent.getContent(),pic,bloggerProfile.getNickname(),attachmentService.getPathById(bloggerProfile.getAvatarId()));
-        return blogDetailWithAuthor;
+
+        baseResponse.setStatus(HttpStatus.OK.value());
+        baseResponse.setData(blogDetailWithAuthor);
+
+        return baseResponse;
     }
 
     @Override

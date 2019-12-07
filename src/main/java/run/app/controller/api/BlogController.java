@@ -65,12 +65,7 @@ public class BlogController {
     @ApiOperation("查看博客详细内容")
     @GetMapping("detail/{BlogId:\\d+}")
     public BaseResponse getBlogDetail(@PathVariable("BlogId")Long blogId,HttpServletRequest request){
-
-        BlogDetail articleDetail = articleService.getArticleDetail(blogId,request.getHeader(AUTHENICATION));
-        BaseResponse baseResponse = new BaseResponse();
-        baseResponse.setStatus(HttpStatus.OK.value());
-        baseResponse.setData(articleDetail);
-        return  baseResponse;
+        return  articleService.getArticleDetail(blogId,request.getHeader(AUTHENICATION));
     }
 
     @MethodLog

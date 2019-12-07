@@ -51,11 +51,8 @@ public class ReceptionController {
     @IncrementClickCount
     public BaseResponse getBlogDetail(@PathVariable("BlogId")Long blogId){
 
-        BaseResponse baseResponse = new BaseResponse();
 
-        baseResponse.setStatus(HttpStatus.OK.value());
-        baseResponse.setData(postService.getDetail(blogId));
-        return baseResponse;
+        return postService.getDetail(blogId);
     }
 
 

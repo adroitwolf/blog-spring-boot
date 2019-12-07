@@ -185,7 +185,7 @@ public class AccountServiceImpl implements AccountService{
 
 
 
-        if(bloggerAccountMapper.insertSelective(bloggerAccount) == 0){
+        if( bloggerAccountMapper.insertSelective(bloggerAccount) == 0){
             baseResponse.setStatus(HttpStatus.BAD_REQUEST.value());
             baseResponse.setData("服务异常，请稍后重试");
             return baseResponse;

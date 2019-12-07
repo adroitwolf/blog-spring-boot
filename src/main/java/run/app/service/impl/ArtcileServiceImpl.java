@@ -19,6 +19,7 @@ import run.app.entity.model.*;
 import run.app.entity.VO.ArticleParams;
 import run.app.entity.VO.PostQueryParams;
 import run.app.exception.BadRequestException;
+import run.app.exception.NotFoundException;
 import run.app.mapper.*;
 import run.app.service.TokenService;
 import run.app.service.ArticleService;
@@ -226,11 +227,15 @@ public class ArtcileServiceImpl implements ArticleService {
     }
 
     @Override
-    public BlogDetail getArticleDetail(@NonNull Long blogId,String token) {
+    public BaseResponse getArticleDetail(@NonNull Long blogId,String token) {
 
+        BaseResponse baseResponse = new BaseResponse();
+        baseResponse.setStatus(HttpStatus.OK.value());
 
         Blog blog = blogMapper.selectByPrimaryKey(blogId);
-
+        if(null == blog){ //查询没有相关博客
+            throw new NotFoundException("没有相关博客信息");
+        }
         tokenService.authentication(blog.getBloggerId(),token);
 
         BlogContent blogContent = blogContentMapper.selectByPrimaryKey(blogId);
@@ -250,7 +255,12 @@ public class ArtcileServiceImpl implements ArticleService {
         if(null != blog.getPictureId()){
             blogDetail.setPicture(attachmentService.selectPicById(blog.getPictureId()));
         }
-        return blogDetail;
+
+        baseResponse.setData(blogDetail);
+        baseResponse.setStatus(HttpStatus.OK.value());
+        return baseResponse;
+
+
     }
 
 

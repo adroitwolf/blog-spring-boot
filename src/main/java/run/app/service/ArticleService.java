@@ -23,7 +23,7 @@ public interface ArticleService {
     boolean updateArticleStatus(@NonNull Long blogId,@NonNull String status,String token);
 
 
-    BlogDetail getArticleDetail(@NonNull Long blogId,String token);
+    BaseResponse getArticleDetail(@NonNull Long blogId,String token);
 
 
     BaseResponse getArticleListByExample(@NonNull int pageNum, @NonNull int pageSize, PostQueryParams postQueryParams, @NonNull String token);

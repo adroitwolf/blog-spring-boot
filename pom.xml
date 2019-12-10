@@ -64,6 +64,12 @@
 
 
         <!--数据库方面-->
+        <!--自动建表-->
+        <!--<dependency>-->
+            <!--<groupId>com.gitee.sunchenbin.mybatis.actable</groupId>-->
+            <!--<artifactId>mybatis-enhance-actable</artifactId>-->
+            <!--<version>1.0.6.RELEASE</version>-->
+        <!--</dependency>-->
 
         <!--分页-->
         <dependency>
@@ -91,6 +97,9 @@
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
+
+
+        <!--单元测试-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>

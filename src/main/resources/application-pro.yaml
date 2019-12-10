@@ -11,13 +11,13 @@ spring:
   datasource:
     url: jdbc:mysql://docker_mysql:3306/eblog?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
     username: root
-    password: 123
+    password: 72ad976ad5d491ad
     driver-class-name: com.mysql.cj.jdbc.Driver
   redis:
     database: 0
     host: docker_redis
     port: 6379
-    password: 123
+    password: 1b0679be72ad976ad5d491ad57a5eec0
   resources:
     static-locations: file:/${web.upload-path},classpath:/META-INF/resources/,classpath:/resources/, classpath:/static/, classpath:/public/
   servlet:
@@ -45,8 +45,8 @@ web:
 jwt:
   # 发行者
   name: WHOAMI
-  # 密钥, 经过Base64加密, 可自行替换 默认WHOAMI
-  base64Secret: V0hPQU1J
+  # 密钥, 经过Base64加密, 去等可自行替换 默认production
+  base64Secret: cHJvZHVjdGlvbiUwQQ
   #jwt中过期时间设置(ms)
   jwtExpires: 7200000
 

@@ -364,7 +364,6 @@ public class ArtcileServiceImpl implements ArticleService {
     @Transactional
     public void deleteQuotePic(Long picId) {
         blogMapper.deletePicByPicId(picId);
-
     }
 
 

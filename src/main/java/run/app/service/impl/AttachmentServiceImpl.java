@@ -17,6 +17,7 @@ import run.app.entity.enums.CiteNumEnum;
 import run.app.entity.model.BloggerPicture;
 import run.app.entity.model.BloggerPictureExample;
 import run.app.exception.BadRequestException;
+import run.app.exception.UnAccessException;
 import run.app.mapper.BloggerPictureMapper;
 import run.app.service.TokenService;
 import run.app.service.ArticleService;
@@ -111,7 +112,7 @@ public class AttachmentServiceImpl implements AttachmentService {
     @Transactional
     public BaseResponse uploadAttachment(MultipartFile file, String token) {
         uploadFile(file,tokenService.getUserIdWithToken(token),null);
-        return new BaseResponse(HttpStatus.OK.value(),null,null);
+        return new BaseResponse(HttpStatus.OK.value(),null,"上传附件成功");
     }
 
     @Override
@@ -212,6 +213,9 @@ public class AttachmentServiceImpl implements AttachmentService {
         tokenService.authentication(bloggerPicture.getBloggerId(),token);
 
         articleService.deleteQuotePic(id);
+
+//          todo 这里多做了一次查询
+        deletePic(bloggerPicture.getId());
 
         return new BaseResponse(HttpStatus.OK.value(),"图片删除成功",null);
     }

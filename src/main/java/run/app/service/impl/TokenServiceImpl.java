@@ -46,7 +46,8 @@ public class TokenServiceImpl implements TokenService {
 
     @Override
     public void authentication(Long id, String token) {
-        if(!id.equals(getUserIdWithToken(token))){
+        if(null == id || !id.equals(getUserIdWithToken(token))){
+
             throw new UnAccessException("您没有权限进行该操作");
         }
     }

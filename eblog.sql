@@ -234,3 +234,9 @@ CREATE TABLE `sys_permission` (
   `MENU_ID` bigint(20) DEFAULT NULL COMMENT '菜单id 保证它和菜单的关联',
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- 初始化权限表
+-- ----------------------------
+INSERT INTO blogger_role VALUES(387055195109982208,'ADMIN','管理员');
+INSERT INTO blogger_role VALUES(387055486085627904,'USER','用户');

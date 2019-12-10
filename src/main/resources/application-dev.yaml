@@ -37,6 +37,9 @@ logging:
 mybatis:
   mapper-locations: classpath:/mappering/*.xml
 
+
+
+
 # 图片上传下载
 web:
   upload-path: ${user.dir}/img

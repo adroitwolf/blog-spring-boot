@@ -4,6 +4,7 @@ import org.springframework.web.multipart.MultipartFile;
 import run.app.entity.DTO.BaseResponse;
 import run.app.entity.DTO.DataGrid;
 import run.app.entity.VO.AttachmentParams;
+import run.app.entity.VO.AttachmentQueryParams;
 import run.app.entity.enums.CiteNumEnum;
 
 /**
@@ -16,7 +17,7 @@ public interface AttachmentService {
 
     String selectPicById(Long id);
 
-    BaseResponse getAttachmentList(int pageSize,int pageNum,String token);
+    BaseResponse getAttachmentList(int pageSize, int pageNum, AttachmentQueryParams attachmentQueryParams, String token);
 
     BaseResponse uploadAttachment(MultipartFile file,String token);
 

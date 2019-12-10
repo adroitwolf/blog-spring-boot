@@ -15,8 +15,9 @@ public interface PostService {
 
     BaseResponse getListByExample(int pageNum, int pageSize, String keyword);
 
-    BlogDetailWithAuthor getDetail(Long blogId);
+    BaseResponse getDetail(Long blogId);
 
     BaseResponse getListByTag(int pageNum,int pageSize,String tag);
 
+    BaseResponse getTopPosts();
 }

@@ -7,10 +7,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import run.app.entity.DTO.BaseResponse;
 import run.app.entity.DTO.BlogDetail;
-import run.app.entity.DTO.DataGrid;
 import run.app.entity.VO.ArticleParams;
 import run.app.entity.VO.PostQueryParams;
-import run.app.security.annotation.MethodLog;
+import run.app.aop.annotation.MethodLog;
 import run.app.service.ArticleService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -66,12 +65,7 @@ public class BlogController {
     @ApiOperation("查看博客详细内容")
     @GetMapping("detail/{BlogId:\\d+}")
     public BaseResponse getBlogDetail(@PathVariable("BlogId")Long blogId,HttpServletRequest request){
-
-        BlogDetail articleDetail = articleService.getArticleDetail(blogId,request.getHeader(AUTHENICATION));
-        BaseResponse baseResponse = new BaseResponse();
-        baseResponse.setStatus(HttpStatus.OK.value());
-        baseResponse.setData(articleDetail);
-        return  baseResponse;
+        return  articleService.getArticleDetail(blogId,request.getHeader(AUTHENICATION));
     }
 
     @MethodLog
@@ -113,14 +107,7 @@ public class BlogController {
     @ApiOperation("获取博客数量")
     @GetMapping("count")
     public BaseResponse countList(HttpServletRequest request){
-
-        long articleCount = articleService.getArticleCount( request.getHeader(AUTHENICATION));
-
-        BaseResponse baseResponse = new BaseResponse();
-        baseResponse.setStatus(HttpStatus.OK.value());
-
-        baseResponse.setData(articleCount);
-        return baseResponse;
+        return articleService.getArticleCount( request.getHeader(AUTHENICATION));
     }
 
 

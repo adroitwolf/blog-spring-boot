@@ -19,9 +19,9 @@ import run.app.entity.model.*;
 import run.app.entity.VO.ArticleParams;
 import run.app.entity.VO.PostQueryParams;
 import run.app.exception.BadRequestException;
-import run.app.exception.UnAuthenticationException;
+import run.app.exception.NotFoundException;
 import run.app.mapper.*;
-import run.app.security.token.TokenService;
+import run.app.service.TokenService;
 import run.app.service.ArticleService;
 import run.app.service.AttachmentService;
 import run.app.service.TagService;
@@ -40,11 +40,7 @@ import java.util.stream.Collectors;
 @Service
 public class ArtcileServiceImpl implements ArticleService {
 
-    public ArtcileServiceImpl() {
-        this.appUtil = AppUtil.getInstance();
-    }
 
-    AppUtil appUtil;
 
 
     /**
@@ -106,7 +102,7 @@ public class ArtcileServiceImpl implements ArticleService {
         BeanUtils.copyProperties(articleParams,blog);
 
         /*生成文章id 10-9 - 19 WHOAMI*/
-        Long blog_id = appUtil.nextId();
+        Long blog_id = AppUtil.nextId();
         blog.setId(blog_id);
 
         /*增加代码结束*/
@@ -231,11 +227,15 @@ public class ArtcileServiceImpl implements ArticleService {
     }
 
     @Override
-    public BlogDetail getArticleDetail(@NonNull Long blogId,String token) {
+    public BaseResponse getArticleDetail(@NonNull Long blogId,String token) {
 
+        BaseResponse baseResponse = new BaseResponse();
+        baseResponse.setStatus(HttpStatus.OK.value());
 
         Blog blog = blogMapper.selectByPrimaryKey(blogId);
-
+        if(null == blog){ //查询没有相关博客
+            throw new NotFoundException("没有相关博客信息");
+        }
         tokenService.authentication(blog.getBloggerId(),token);
 
         BlogContent blogContent = blogContentMapper.selectByPrimaryKey(blogId);
@@ -255,7 +255,12 @@ public class ArtcileServiceImpl implements ArticleService {
         if(null != blog.getPictureId()){
             blogDetail.setPicture(attachmentService.selectPicById(blog.getPictureId()));
         }
-        return blogDetail;
+
+        baseResponse.setData(blogDetail);
+        baseResponse.setStatus(HttpStatus.OK.value());
+        return baseResponse;
+
+
     }
 
 
@@ -305,6 +310,12 @@ public class ArtcileServiceImpl implements ArticleService {
         return baseResponse;
     }
 
+    @Override
+    public String getArticleNameByBlogId(Long blogId) {
+
+        return blogMapper.selectBlogNameByPrimaryKey(blogId);
+    }
+
 
     @Override
     @Transactional
@@ -333,15 +344,19 @@ public class ArtcileServiceImpl implements ArticleService {
     }
 
     @Override
-    public long getArticleCount(@NonNull String token) {
+    public BaseResponse getArticleCount(@NonNull String token) {
 //        Integer bloggerId = userService.getUserIdByToken(token);
+        BaseResponse baseResponse = new BaseResponse();
 
         Long bloggerId = tokenService.getUserIdWithToken(token);
         BlogExample blogExample = new BlogExample();
 
         BlogExample.Criteria criteria = blogExample.createCriteria();
         criteria.andBloggerIdEqualTo(bloggerId);
-       return blogMapper.countByExample(blogExample);
+        long count = blogMapper.countByExample(blogExample);
+        baseResponse.setStatus(HttpStatus.OK.value());
+        baseResponse.setData(count);
+       return baseResponse;
 
     }
 
@@ -349,7 +364,6 @@ public class ArtcileServiceImpl implements ArticleService {
     @Transactional
     public void deleteQuotePic(Long picId) {
         blogMapper.deletePicByPicId(picId);
-
     }
 
 

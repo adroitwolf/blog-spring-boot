@@ -2,18 +2,16 @@ package run.app.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import run.app.config.properties.AppProperties;
-import run.app.config.properties.JWTProperties;
 import run.app.entity.enums.Role;
 import run.app.filter.LogFilter;
 import run.app.security.filter.AuthenticationFilter;
-import run.app.security.token.TokenService;
+import run.app.service.TokenService;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -63,8 +61,8 @@ public class FilterConfiguration {
         FilterRegistrationBean<AuthenticationFilter> authenticationFilterFilter = new FilterRegistrationBean<>();
         AuthenticationFilter authenticationFilter = new AuthenticationFilter(tokenService);
 
-//        添加拦截路径
-        authenticationFilter.addExcludePatterns("/api/admin/login","/api/admin/register");
+//        添加不拦截路径
+        authenticationFilter.addExcludePatterns("/api/admin/login","/api/admin/register","/api/post/**");
 
 
 //        添加拦截角色路径

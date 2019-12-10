@@ -7,13 +7,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import run.app.entity.DTO.BaseResponse;
-import run.app.entity.DTO.ImageFile;
-import run.app.entity.DTO.UserDetail;
 import run.app.entity.VO.UserParams;
-import run.app.exception.BadRequestException;
-import run.app.security.annotation.MethodLog;
+import run.app.aop.annotation.MethodLog;
 import run.app.service.UserService;
-import run.app.util.UploadUtil;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -49,11 +45,7 @@ public class UserController {
     public  BaseResponse updateProfile( @RequestBody UserParams userParams,HttpServletRequest request){
         log.debug(userParams.toString());
         String token = request.getHeader(AUTHENICATION);
-        BaseResponse baseResponse = new BaseResponse();
-        baseResponse.setData(userService.updateProfileById(userParams,token));
-        baseResponse.setStatus(HttpStatus.OK.value());
-
-        return baseResponse;
+        return userService.updateProfileById(userParams,token);
     }
 
 

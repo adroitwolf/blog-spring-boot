@@ -1,17 +1,15 @@
 package run.app.security.token;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.server.ServletServerHttpRequest;
-import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import run.app.service.TokenService;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -37,12 +35,6 @@ public class TokenInterceptor {
         HttpServletRequest servletRequest = attributes.getRequest();
 
         String authentication = servletRequest.getHeader("Authentication");
-
-//        if(!StringUtils.isEmpty(authentication)){
-//            if(tokenService.isToken(authentication)){
-//
-//            }
-//        }
 
         Signature signature = joinPoint.getSignature();
 

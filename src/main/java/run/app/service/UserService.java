@@ -18,13 +18,11 @@ import run.app.entity.VO.UserParams;
 public interface UserService {
 
 
-
      @NonNull
      UserDetail findUserDetailByBloggerId(@NonNull Long bloggerId);
 
 
-
-     @NonNull UserDetail updateProfileById(@NonNull UserParams userParams,@NonNull String token);
+     @NonNull BaseResponse updateProfileById(@NonNull UserParams userParams,@NonNull String token);
 
      BaseResponse getUserDetailByToken(@NonNull String token);
 

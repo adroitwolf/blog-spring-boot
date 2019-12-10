@@ -9,7 +9,7 @@ spring:
     restart:
       enabled: true
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/eblog?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://localhost:3306/eblog?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
     username: root
     password: 123
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -19,12 +19,14 @@ spring:
     port: 6379
     password: 123
   resources:
-    static-locations: classpath:/META-INF/resources/,classpath:/resources/, classpath:/static/, classpath:/public/,file:${web.upload-path}
+    static-locations: file:/${web.upload-path},classpath:/META-INF/resources/,classpath:/resources/, classpath:/static/, classpath:/public/
   servlet:
     multipart:
       max-file-size: 10MB
 
-# pagehepler
+# redis
+
+
 
 # log
 logging:
@@ -35,6 +37,9 @@ logging:
 mybatis:
   mapper-locations: classpath:/mappering/*.xml
 
+
+
+
 # 图片上传下载
 web:
   upload-path: ${user.dir}/img
@@ -43,8 +48,8 @@ web:
 jwt:
   # 发行者
   name: WHOAMI
-  # 密钥, 经过Base64加密, 可自行替换 默认WHOAMI
-  base64Secret: V0hPQU1J
+  # 密钥, 经过Base64加密,去等 可自行替换 默认development
+  base64Secret: ZGV2ZWxvcG1lbnQ
   #jwt中过期时间设置(ms)
   jwtExpires: 7200000
 

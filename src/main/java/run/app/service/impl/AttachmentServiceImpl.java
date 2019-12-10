@@ -12,12 +12,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import run.app.entity.DTO.*;
 import run.app.entity.VO.AttachmentParams;
+import run.app.entity.VO.AttachmentQueryParams;
 import run.app.entity.enums.CiteNumEnum;
 import run.app.entity.model.BloggerPicture;
 import run.app.entity.model.BloggerPictureExample;
 import run.app.exception.BadRequestException;
+import run.app.exception.UnAccessException;
 import run.app.mapper.BloggerPictureMapper;
-import run.app.security.token.TokenService;
+import run.app.service.TokenService;
 import run.app.service.ArticleService;
 import run.app.service.AttachmentService;
 import run.app.service.UserService;
@@ -54,12 +56,10 @@ public class AttachmentServiceImpl implements AttachmentService {
 
     private final  Integer DEFAULT_NUM = 0;
 
-    AppUtil appUtil;
 
     UploadUtil uploadUtil;
 
     public AttachmentServiceImpl() {
-        this.appUtil =  AppUtil.getInstance();
         this.uploadUtil = UploadUtil.getInstance();
     }
 
@@ -71,26 +71,23 @@ public class AttachmentServiceImpl implements AttachmentService {
 
 
     @Override
-    public BaseResponse getAttachmentList(int pageSize, int pageNum, String token) {
+    public BaseResponse getAttachmentList(int pageSize, int pageNum, AttachmentQueryParams attachmentQueryParams, String token) {
 
         Long id = tokenService.getUserIdWithToken(token);
 
-        BloggerPictureExample bloggerPictureExample = new BloggerPictureExample();
-
-        bloggerPictureExample.setOrderByClause("upload_date desc");
-
-        BloggerPictureExample.Criteria criteria = bloggerPictureExample.createCriteria();
-
-        criteria.andBloggerIdEqualTo(id);
 
         PageHelper.startPage(pageNum,pageSize);
 
-        List<BloggerPicture> bloggerPictures = bloggerPictureMapper.selectByExample(bloggerPictureExample);
+        /**
+        * 功能描述: 修改成模糊查询
+        * @Author: WHOAMI
+        * @Date: 2019/11/13 14:00
+         */
+        List<BloggerPicture> bloggerPictures = bloggerPictureMapper.selectPictureByExample(attachmentQueryParams,id);
 
         PageInfo<BloggerPicture> bloggerPicturePageInfo = new PageInfo<>(bloggerPictures);
 
-
-        //todo:
+        //todo:代码优化
         List<Picture> pictures = bloggerPictures.stream().filter(Objects::nonNull).map(item ->{
             return new Picture(item.getId(),item.getPath(),item.getTitle());
 
@@ -115,7 +112,7 @@ public class AttachmentServiceImpl implements AttachmentService {
     @Transactional
     public BaseResponse uploadAttachment(MultipartFile file, String token) {
         uploadFile(file,tokenService.getUserIdWithToken(token),null);
-        return new BaseResponse(HttpStatus.OK.value(),null,null);
+        return new BaseResponse(HttpStatus.OK.value(),null,"上传附件成功");
     }
 
     @Override
@@ -124,7 +121,7 @@ public class AttachmentServiceImpl implements AttachmentService {
         ImageFile imageFile = instance.uploadFile(file).orElseThrow(()->new BadRequestException("用户上传图片失败"));
         BloggerPicture bloggerPicture = new BloggerPicture();
 
-        bloggerPicture.setId(appUtil.nextId());
+        bloggerPicture.setId(AppUtil.nextId());
 
         bloggerPicture.setBloggerId(userId);
 
@@ -216,6 +213,9 @@ public class AttachmentServiceImpl implements AttachmentService {
         tokenService.authentication(bloggerPicture.getBloggerId(),token);
 
         articleService.deleteQuotePic(id);
+
+//          todo 这里多做了一次查询
+        deletePic(bloggerPicture.getId());
 
         return new BaseResponse(HttpStatus.OK.value(),"图片删除成功",null);
     }

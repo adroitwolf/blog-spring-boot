@@ -1,7 +1,12 @@
 package run.app.BeanTest.enums;
 
+import org.assertj.core.util.Lists;
 import org.junit.Test;
 import run.app.entity.enums.Role;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Created with IntelliJ IDEA.
@@ -17,6 +22,13 @@ public class RoleTest {
         System.out.println(Role.ADMIN.getAuthority());
     }
 
+    @Test
+    public void lamTest(){
+        List<Integer> list = Lists.newArrayList();
+        list.add(1);
+        list.add(2);
 
+        list.stream().filter(Objects::isNull).forEach(x-> System.out.println(x));
+    }
 
 }

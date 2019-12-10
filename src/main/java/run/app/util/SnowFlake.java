@@ -4,7 +4,7 @@ package run.app.util;
  * Created with IntelliJ IDEA.
  * User: WHOAMI
  * Time: 2019 2019/9/10 17:43
- * Description: ://TODO ${END}
+ * Description: 雪花算法
  */
 public class SnowFlake {
     // 起始的时间戳

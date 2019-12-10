@@ -33,14 +33,13 @@ public class TagServiceImpl implements TagService {
     @Autowired
     BlogLabelMapper blogLabelMapper;
 
-    private  AppUtil instance = AppUtil.getInstance();
 
 
     @Override
     public String submitArticleWithTagString(List<String> tags,Long blogId) {
 
 //        首先要去重
-       tags = (List<String>) instance.removeDuplicateListItem(tags);
+       tags = (List<String>) AppUtil.removeDuplicateListItem(tags);
 
         BlogLabelExample blogLabelExample = new BlogLabelExample();
 
@@ -58,7 +57,7 @@ public class TagServiceImpl implements TagService {
                 blogLabel.setCiteNum(1);
                 blogLabel.setCreateDate(new Date());
                 blogLabel.setTitle(item);
-                blogLabel.setId(instance.nextId());
+                blogLabel.setId(AppUtil.nextId());
                 blogLabelMapper.insertSelective(blogLabel);
 
                 blogTagMapMapper.insert(new BlogTagMapKey(blogLabel.getId(),blogId));
@@ -130,7 +129,7 @@ public class TagServiceImpl implements TagService {
                         blogLabel.setCiteNum(1);
                         blogLabel.setCreateDate(new Date());
                         blogLabel.setTitle(value);
-                        blogLabel.setId(instance.nextId());
+                        blogLabel.setId(AppUtil.nextId());
                         blogLabelMapper.insertSelective(blogLabel);
 
 

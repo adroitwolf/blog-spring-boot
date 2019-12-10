@@ -11,15 +11,21 @@ import org.springframework.stereotype.Service;
 import run.app.entity.DTO.BaseResponse;
 import run.app.entity.DTO.BlogDetailWithAuthor;
 import run.app.entity.DTO.DataGrid;
+import run.app.entity.DTO.PopularBlog;
 import run.app.entity.enums.ArticleStatus;
 import run.app.entity.model.*;
 import run.app.entity.VO.PostQueryParams;
+import run.app.exception.NotFoundException;
 import run.app.mapper.*;
 import run.app.service.AttachmentService;
+import run.app.service.BlogStatusService;
 import run.app.service.PostService;
+import run.app.service.RedisService;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -43,6 +49,12 @@ public class PostServiceImpl implements PostService {
     TagServiceImpl tagService;
     /*代码修改结束*/
 
+
+    @Autowired
+    RedisService redisService;
+
+    @Autowired
+    BlogStatusService blogStatusService;
 
     /*
     * 功能描述: 新增博客图片功能
@@ -80,36 +92,11 @@ public class PostServiceImpl implements PostService {
 
         PageInfo<Blog> list = new PageInfo<>(blogs);
 
-        List<Blog> result = list.getList();
-
-        List<run.app.entity.DTO.Blog> resultX= result.stream().map(item->{
-
-            List<String> tagsTitle = new ArrayList<>();
-            if(!StringUtils.isBlank(item.getTagTitle())){
-
-                tagsTitle = tagService.selectTagTitleByIdString(item.getTagTitle());
-            }
-
-            String pic = "";
-
-            if(null != item.getPictureId()){
-                pic = attachmentService.selectPicById(item.getPictureId());
-            }
-
-            run.app.entity.DTO.Blog blog = new run.app.entity.DTO.Blog();
-
-            BeanUtils.copyProperties(item,blog);
-            blog.setTagsTitle(tagsTitle);
-            blog.setPicture(pic);
-            return blog;
-        }).collect(Collectors.toList());
+        List<run.app.entity.DTO.Blog> resultX= transDtoFrmModel(list);
         DataGrid dataGrid = new DataGrid();
 
         dataGrid.setRows(resultX);
         dataGrid.setTotal(list.getTotal());
-
-
-
 
         return  new BaseResponse(HttpStatus.OK.value(),"",dataGrid);
     }
@@ -128,26 +115,7 @@ public class PostServiceImpl implements PostService {
 
         DataGrid dataGrid = new DataGrid();
 
-        List<run.app.entity.DTO.Blog> blogs = list.getList().stream().map(item->{
-            List<String> tagsTitle = new ArrayList<>();
-            if(!StringUtils.isBlank(item.getTagTitle())){
-
-                tagsTitle = tagService.selectTagTitleByIdString(item.getTagTitle());
-            }
-
-            String pic = "";
-
-            if(null != item.getPictureId()){
-                pic = attachmentService.selectPicById(item.getPictureId());
-            }
-
-            run.app.entity.DTO.Blog blog = new run.app.entity.DTO.Blog();
-
-            BeanUtils.copyProperties(item,blog);
-            blog.setTagsTitle(tagsTitle);
-            blog.setPicture(pic);
-            return blog;
-        }).collect(Collectors.toList());
+        List<run.app.entity.DTO.Blog> blogs = transDtoFrmModel(list);
 
 
         dataGrid.setRows(blogs);
@@ -158,10 +126,16 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public BlogDetailWithAuthor getDetail(Long blogId) {
+    public BaseResponse getDetail(Long blogId) {
+
+        BaseResponse baseResponse = new BaseResponse();
+
+
 
         Blog blog = blogMapper.selectByPrimaryKey(blogId);
-
+        if(null == blog) { //当用户博客id非法的时候
+            throw new NotFoundException("没有相关博客信息");
+        }
 
         BlogContent blogContent = blogContentMapper.selectByPrimaryKey(blogId);
 
@@ -180,10 +154,18 @@ public class PostServiceImpl implements PostService {
         if(null != blog.getPictureId()){
             pic = attachmentService.selectPicById(blog.getPictureId());
         }
+        StringBuilder avatarPath = new StringBuilder();
+        if(null != bloggerProfile.getAvatarId()){ //判断用户是否有自定义头像
+            avatarPath.append(attachmentService.getPathById(bloggerProfile.getAvatarId()));
+        }
 
         //todo 属性太长 需要重构
-        BlogDetailWithAuthor blogDetailWithAuthor = new BlogDetailWithAuthor(blogId,blog.getTitle(),blog.getSummary(),blog.getReleaseDate(),nowTags,blogContent.getContent(),pic,bloggerProfile.getNickname(),attachmentService.getPathById(bloggerProfile.getAvatarId()));
-        return blogDetailWithAuthor;
+        BlogDetailWithAuthor blogDetailWithAuthor = new BlogDetailWithAuthor(blogId,blog.getTitle(),blog.getSummary(),blog.getReleaseDate(),nowTags,blogContent.getContent(),pic,bloggerProfile.getNickname(),avatarPath.toString());
+
+        baseResponse.setStatus(HttpStatus.OK.value());
+        baseResponse.setData(blogDetailWithAuthor);
+
+        return baseResponse;
     }
 
     @Override
@@ -230,5 +212,40 @@ public class PostServiceImpl implements PostService {
         dataGrid.setTotal(0);
 
         return new BaseResponse(HttpStatus.OK.value(),"",dataGrid);
+    }
+
+    @Override
+    public BaseResponse getTopPosts() {
+        Set<PopularBlog> popularPosts = redisService.listTop5FrmRedis();
+        if (null == popularPosts || popularPosts.size()<5){ //说明redis不准确,需要查询数据库
+            popularPosts = new HashSet<>(blogStatusService.listTop5Posts());
+        }
+        log.info(popularPosts.toString());
+        return new BaseResponse(HttpStatus.OK.value(),null,popularPosts);
+    }
+
+
+
+    private List<run.app.entity.DTO.Blog> transDtoFrmModel(PageInfo<Blog> list){
+        return list.getList().stream().map(item->{
+            List<String> tagsTitle = new ArrayList<>();
+            if(!StringUtils.isBlank(item.getTagTitle())){
+
+                tagsTitle = tagService.selectTagTitleByIdString(item.getTagTitle());
+            }
+
+            String pic = "";
+
+            if(null != item.getPictureId()){
+                pic = attachmentService.selectPicById(item.getPictureId());
+            }
+
+            run.app.entity.DTO.Blog blog = new run.app.entity.DTO.Blog();
+
+            BeanUtils.copyProperties(item,blog);
+            blog.setTagsTitle(tagsTitle);
+            blog.setPicture(pic);
+            return blog;
+        }).collect(Collectors.toList());
     }
 }

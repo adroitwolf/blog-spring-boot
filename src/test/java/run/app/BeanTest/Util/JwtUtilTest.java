@@ -8,7 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import run.app.config.properties.JWTProperties;
 import run.app.entity.DTO.User;
-import run.app.entity.enums.Role;
+import run.app.entity.enums.RoleEnum;
 import run.app.service.TokenService;
 import run.app.util.JwtUtil;
 
@@ -38,7 +38,7 @@ public class JwtUtilTest {
 
         List<String> roles = new ArrayList<String>(){
             {
-                add(Role.ADMIN.name());
+                add(RoleEnum.ADMIN.name());
             }
         };
 

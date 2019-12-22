@@ -1,7 +1,7 @@
 package run.app.BeanTest.enums;
 
 import org.junit.Test;
-import run.app.entity.enums.ArticleStatus;
+import run.app.entity.enums.ArticleStatusEnum;
 
 /**
  * Created with IntelliJ IDEA.
@@ -14,8 +14,8 @@ public class ArticleStatusTest {
     @Test
     public void enmuTest(){
 
-        ArticleStatus articleStatus;
-        articleStatus = ArticleStatus.PUBLISHED;
+        ArticleStatusEnum articleStatus;
+        articleStatus = ArticleStatusEnum.PUBLISHED;
         System.out.println(articleStatus.getName());
     }
 }

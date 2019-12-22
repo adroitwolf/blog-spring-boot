@@ -1,6 +1,6 @@
 package run.app.service;
 
-import run.app.entity.enums.Role;
+import run.app.entity.enums.RoleEnum;
 import run.app.entity.model.BloggerRole;
 
 import java.util.List;
@@ -13,7 +13,7 @@ import java.util.List;
  */
 public interface RoleService {
 
-    void setRoleWithUserId(Role role,Long userId);
+    void setRoleWithUserId(RoleEnum role, Long userId);
 
 
     /**
@@ -23,12 +23,12 @@ public interface RoleService {
     void addRole(BloggerRole bloggerRole);
 
 
-    Long getRoleIdByType(Role role);
+    Long getRoleIdByType(RoleEnum role);
 
 
 
-    List<Role> getRolesByUserId(Long userId);
+    List<RoleEnum> getRolesByUserId(Long userId);
 
 
-    Role getRoleById(Long id);
+    RoleEnum getRoleById(Long id);
 }

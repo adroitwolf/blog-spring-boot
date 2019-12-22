@@ -1,14 +1,20 @@
 package run.app.util;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Component;
 import run.app.entity.DTO.ClickStatus;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created with IntelliJ IDEA.
  * User: WHOAMI
  * Time: 2019 2019/11/28 22:30
- * Description: redis生成key
+ * Description: redis相关工具类
  */
-public class RedisKeyUtil {
+@Component
+public class RedisUtil {
 
 
 
@@ -25,4 +31,6 @@ public class RedisKeyUtil {
 
         return builder.toString();
     }
+
+
 }

@@ -7,6 +7,7 @@ import run.app.entity.model.BlogStatus;
 
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created with IntelliJ IDEA.
@@ -15,6 +16,11 @@ import java.util.Set;
  * Description: redis服务层
  */
 public interface RedisService {
+
+    Boolean getLock(String key, String value, int timeout, TimeUnit timeUnit);
+
+    void deleteLock(String key);
+
     void incrementBlogClickedCount(ClickStatus clickStatus);
 
     Integer getBlogClickedCount(Long blogId);
@@ -24,5 +30,6 @@ public interface RedisService {
     void transTop5Posts2Redis(List<PopularBlog> list);
 
     Set<PopularBlog> listTop5FrmRedis();
+
 
 }

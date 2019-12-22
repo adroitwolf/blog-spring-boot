@@ -2,9 +2,8 @@ package run.app.BeanTest.enums;
 
 import org.assertj.core.util.Lists;
 import org.junit.Test;
-import run.app.entity.enums.Role;
+import run.app.entity.enums.RoleEnum;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -19,7 +18,7 @@ public class RoleTest {
 
     @Test
     public void getName(){
-        System.out.println(Role.ADMIN.getAuthority());
+        System.out.println(RoleEnum.ADMIN.getAuthority());
     }
 
     @Test

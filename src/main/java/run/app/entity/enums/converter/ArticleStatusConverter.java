@@ -1,7 +1,7 @@
 package run.app.entity.enums.converter;
 
 import org.springframework.stereotype.Component;
-import run.app.entity.enums.ArticleStatus;
+import run.app.entity.enums.ArticleStatusEnum;
 
 /**
  * Created with IntelliJ IDEA.
@@ -10,9 +10,9 @@ import run.app.entity.enums.ArticleStatus;
  * Description: 博客状态转换器
  */
 @Component
-public class ArticleStatusConverter extends BaseConverter<ArticleStatus,String>{
+public class ArticleStatusConverter extends BaseConverter<ArticleStatusEnum,String>{
     public ArticleStatusConverter() {
-        super(ArticleStatus.class);
+        super(ArticleStatusEnum.class);
     }
 
 

@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.*;
 import run.app.entity.DTO.BaseResponse;
 import run.app.entity.DTO.BlogDetail;
 import run.app.entity.VO.ArticleParams;
-import run.app.entity.VO.PostQueryParams;
 import run.app.aop.annotation.MethodLog;
+import run.app.entity.VO.QueryParams;
 import run.app.service.ArticleService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -52,13 +52,7 @@ public class BlogController {
     @PutMapping("/{BlogId:\\d+}/status/{status}")
     public BaseResponse updateArticleStatus(@PathVariable("BlogId")Long blogId ,
                               @PathVariable("status")String status,HttpServletRequest request){
-        articleService.updateArticleStatus(blogId,status,request.getHeader(AUTHENICATION));
-        BaseResponse baseResponse = new BaseResponse();
-        baseResponse.setStatus(HttpStatus.OK.value());
-        Map<String,String> updateStatus = new HashMap<>();
-        updateStatus.put("status",status);
-        baseResponse.setData(updateStatus);
-        return baseResponse;
+        return articleService.updateArticleStatus(blogId,status,request.getHeader(AUTHENICATION));
     }
 
 
@@ -89,7 +83,7 @@ public class BlogController {
     @GetMapping("query")
     public BaseResponse getListByExample(@RequestParam int pageNum,
                                      @RequestParam int pageSize,
-                                     PostQueryParams postQueryParams,
+                                     QueryParams postQueryParams,
                                      HttpServletRequest request){
 
         log.info(postQueryParams.toString());

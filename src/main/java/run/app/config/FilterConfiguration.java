@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import run.app.config.properties.AppProperties;
-import run.app.entity.enums.Role;
+import run.app.entity.enums.RoleEnum;
 import run.app.filter.LogFilter;
 import run.app.security.filter.AuthenticationFilter;
 import run.app.service.TokenService;
@@ -66,10 +66,10 @@ public class FilterConfiguration {
 
 
 //        添加拦截角色路径
-        Map< Role,List<String>> pattern = new HashMap<Role,List<String>>(){
+        Map<RoleEnum,List<String>> pattern = new HashMap<RoleEnum,List<String>>(){
             {
-                put(Role.USER,Arrays.asList("/api/**/*"));
-                put(Role.ADMIN,Arrays.asList("/manage/**/*"));
+                put(RoleEnum.USER,Arrays.asList("/api/**/*"));
+                put(RoleEnum.ADMIN,Arrays.asList("/manage/**/*"));
             }
         };
 

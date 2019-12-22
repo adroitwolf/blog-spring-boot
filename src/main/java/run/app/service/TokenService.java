@@ -1,13 +1,8 @@
 package run.app.service;
 
 import com.auth0.jwt.JWTVerifier;
-import com.auth0.jwt.interfaces.Claim;
-import org.springframework.stereotype.Service;
 import run.app.entity.DTO.User;
-import run.app.entity.DTO.UserDetail;
-import run.app.entity.enums.Role;
-import run.app.entity.model.BloggerAccount;
-import run.app.entity.model.BloggerProfile;
+import run.app.entity.enums.RoleEnum;
 
 import java.util.List;
 
@@ -27,7 +22,7 @@ public interface TokenService {
 
     boolean isExpire(String token);
 
-    List<Role> getRoles(String token);
+    List<RoleEnum> getRoles(String token);
 
     JWTVerifier getVerifierWithToken(String token);
 

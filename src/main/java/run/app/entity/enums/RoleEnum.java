@@ -6,7 +6,7 @@ package run.app.entity.enums;
  * Time: 2019 2019/10/23 17:39
  * Description: 用户角色模型
  */
-public enum Role implements BaseEnum<String>{
+public enum RoleEnum implements BaseEnum<String>{
     ADMIN,
     USER;
 

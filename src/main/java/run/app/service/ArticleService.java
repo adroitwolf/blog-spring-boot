@@ -5,7 +5,7 @@ import run.app.entity.DTO.BaseResponse;
 import run.app.entity.DTO.BlogDetail;
 import run.app.entity.DTO.DataGrid;
 import run.app.entity.VO.ArticleParams;
-import run.app.entity.VO.PostQueryParams;
+import run.app.entity.VO.QueryParams;
 
 /**
  * Created with IntelliJ IDEA.
@@ -20,13 +20,13 @@ public interface ArticleService {
 
     boolean updateArticle(@NonNull ArticleParams articleParams,@NonNull Long blogId,@NonNull String token);
 
-    boolean updateArticleStatus(@NonNull Long blogId,@NonNull String status,String token);
+    BaseResponse updateArticleStatus(@NonNull Long blogId,@NonNull String status,String token);
 
 
     BaseResponse getArticleDetail(@NonNull Long blogId,String token);
 
 
-    BaseResponse getArticleListByExample(@NonNull int pageNum, @NonNull int pageSize, PostQueryParams postQueryParams, @NonNull String token);
+    BaseResponse getArticleListByExample(@NonNull int pageNum, @NonNull int pageSize, QueryParams postQueryParams, @NonNull String token);
 
     String getArticleNameByBlogId(Long blogId);
 

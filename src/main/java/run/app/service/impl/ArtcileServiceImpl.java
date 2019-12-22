@@ -13,7 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 import run.app.entity.DTO.BaseResponse;
 import run.app.entity.DTO.BlogDetail;
 import run.app.entity.DTO.DataGrid;
-import run.app.entity.enums.ArticleStatus;
+import run.app.entity.VO.QueryParams;
+import run.app.entity.enums.ArticleStatusEnum;
 import run.app.entity.enums.CiteNumEnum;
 import run.app.entity.model.*;
 import run.app.entity.VO.ArticleParams;
@@ -123,7 +124,7 @@ public class ArtcileServiceImpl implements ArticleService {
 
 //        blog.setTagTitle(articleParams.getTag());
 
-        blog.setStatus(ArticleStatus.PUBLISHED.getName());
+        blog.setStatus(ArticleStatusEnum.PUBLISHED.getName());
 
 
         /**
@@ -213,17 +214,22 @@ public class ArtcileServiceImpl implements ArticleService {
     }
 
     @Override
-    public boolean updateArticleStatus(@NonNull Long blogId, @NonNull String status,String token) {
+    public BaseResponse updateArticleStatus(@NonNull Long blogId, @NonNull String status,String token) {
 
         Blog blog1 = blogMapper.selectByPrimaryKey(blogId);
 
         tokenService.authentication(blog1.getBloggerId(),token);
 
         Blog blog = new Blog();
-        blog.setStatus(status);
+        blog.setStatus(ArticleStatusEnum.valueOf(status).toString());//检测是否有非法字符注入
         blog.setId(blogId);
         blogMapper.updateByPrimaryKeySelective(blog);
-        return true;
+        BaseResponse baseResponse = new BaseResponse();
+        baseResponse.setStatus(HttpStatus.OK.value());
+        Map<String,String> updateStatus = new HashMap<>();
+        updateStatus.put("status",status);
+        baseResponse.setData(updateStatus);
+        return baseResponse;
     }
 
     @Override
@@ -266,8 +272,9 @@ public class ArtcileServiceImpl implements ArticleService {
 
 
     @Override
-    public BaseResponse getArticleListByExample(@NonNull int pageNum, @NonNull int pageSize, PostQueryParams postQueryParams, @NonNull String token) {
+    public BaseResponse getArticleListByExample(@NonNull int pageNum, @NonNull int pageSize, QueryParams postQueryParams, @NonNull String token) {
 
+        ArticleStatusEnum.valueOf(postQueryParams.getStatus());
         log.info("查询目标" + postQueryParams.toString());
 
         PageHelper.startPage(pageNum,pageSize);

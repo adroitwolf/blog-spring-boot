@@ -6,7 +6,7 @@ package run.app.entity.enums;
  * Time: 2019 2019/10/18 18:56
  * Description: 博客状态
  */
-public enum ArticleStatus implements BaseEnum<String> {
+public enum ArticleStatusEnum implements BaseEnum<String> {
 
     PUBLISHED,
     RECYCLE;

@@ -26,7 +26,7 @@ public class ClickBlogTask extends QuartzJobBean {
 
     @Override
     protected void executeInternal(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        log.info("ClickTask收录-------- {}", sdf.format(new Date()));
         blogStatusService.transClickedCountFromRedis2DB();
+        log.info("ClickTask收录-------- {}", sdf.format(new Date()));
     }
 }

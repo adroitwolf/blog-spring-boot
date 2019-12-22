@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import run.app.config.properties.JWTProperties;
 import run.app.entity.DTO.User;
-import run.app.entity.enums.Role;
+import run.app.entity.enums.RoleEnum;
 import run.app.exception.UnAccessException;
 import run.app.service.TokenService;
 import run.app.service.AccountService;
@@ -86,7 +86,7 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public List<Role> getRoles(String token) {
+    public List<RoleEnum> getRoles(String token) {
         return JwtUtil.generateRole(token);
     }
 

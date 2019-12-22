@@ -1,16 +1,23 @@
 package run.app.service.impl;
 
 import cn.hutool.core.lang.Validator;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import run.app.entity.DTO.BaseResponse;
+import run.app.entity.DTO.DataGrid;
 import run.app.entity.DTO.User;
-import run.app.entity.enums.Role;
+import run.app.entity.DTO.UserInfo;
+import run.app.entity.VO.QueryParams;
+import run.app.entity.enums.RoleEnum;
+import run.app.entity.enums.UserStatusEnum;
 import run.app.entity.model.BloggerAccount;
 import run.app.entity.model.BloggerAccountExample;
 import run.app.entity.VO.LoginParams;
@@ -21,12 +28,14 @@ import run.app.exception.NotFoundException;
 import run.app.exception.ServiceException;
 import run.app.mapper.BloggerAccountMapper;
 import run.app.mapper.BloggerProfileMapper;
+import run.app.service.AttachmentService;
 import run.app.service.TokenService;
 import run.app.service.AccountService;
 import run.app.service.RoleService;
 import run.app.util.AppUtil;
 
 import java.util.*;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 /**
@@ -41,7 +50,6 @@ import java.util.stream.Collectors;
 public class AccountServiceImpl implements AccountService{
 
 
-
     @Autowired
     BloggerAccountMapper bloggerAccountMapper;
 
@@ -50,18 +58,22 @@ public class AccountServiceImpl implements AccountService{
 
 
     @Autowired
+    AttachmentService attachmentService;
+
+    @Autowired
     RoleService roleService;
 
     @Autowired
     TokenService tokenService;
 
 
-
-
-
-    private final static  String NOTFOUND = "用户名或密码不正确";
+    private final static  String PASSERROR = "用户名或密码不正确";
 
     private final static  String LOGINSUCCESS ="用户登陆成功";
+
+    private final static String BLOCKED = "账号被封禁";
+
+    private final static String NOTFOUND= "账号未找到";
 
     @Override
     public @NonNull BaseResponse loginService(@NonNull LoginParams loginParams) {
@@ -77,22 +89,22 @@ public class AccountServiceImpl implements AccountService{
         try {
             user = Validator.isEmail(loginParams.getP()) ? loginWithEmail(loginParams.getP()) : loginWithUsername(loginParams.getP());
         }catch (NotFoundException e){
-                throw new BadRequestException(NOTFOUND);
+                throw new BadRequestException(PASSERROR);
         }
 
         if(user.getPassword().equals(loginParams.getPassword())){
-//                  token = Optional.ofNullable(Optional.ofNullable(tokenService.generateToken(loginParams.getUsername())).orElseThrow(() -> new ServiceException("系统服务错误")));
-//                 tokenService.storage(token.get(),loginParams.getUsername());
 
+//            这里应该判断账户是否被封禁
+            if(!StringUtils.isEmpty(user.getisEnabled())){ //说明被封禁
+                throw new BadRequestException(BLOCKED);
+            }
             BeanUtils.copyProperties(user,userRs);
             userRs.setRoles(roleService.getRolesByUserId(userRs.getId())
                     .stream().map(n->n.getAuthority()).collect(Collectors.toList()));
                 token  = Optional.ofNullable(Optional.ofNullable( tokenService.getToken(userRs))).orElseThrow(() -> new ServiceException("服务异常"));
         }else{
-                throw new BadRequestException(NOTFOUND);
+                throw new BadRequestException(PASSERROR);
         }
-
-//        return tokenService.creatAuthToken(token.get());
         BaseResponse baseResponse = new BaseResponse();
         HashMap<String, Object> map = new HashMap<>();
         map.put("token",token.get());
@@ -134,9 +146,7 @@ public class AccountServiceImpl implements AccountService{
 
         Long id = tokenService.getUserIdWithToken(token);
 
-
         BloggerAccount bloggerAccount = bloggerAccountMapper.selectByPrimaryKey(id);
-        // todo bug情况
         /**
         * 问题描述: 开发环境与生产环境的jwt生成算法必须不一致
        * @Author: WHOAMI
@@ -181,6 +191,8 @@ public class AccountServiceImpl implements AccountService{
         //todo 设置发送邮件
         bloggerAccount.setRegisterDate(new Date());
 
+        bloggerAccount.setisEnabled(UserStatusEnum.YES.getName());
+
         log.debug(bloggerAccount.toString());
 
 
@@ -204,8 +216,7 @@ public class AccountServiceImpl implements AccountService{
         //设置用户角色
         //默认都是User用户
 
-        roleService.setRoleWithUserId(Role.USER,bloggerAccount.getId());
-
+        roleService.setRoleWithUserId(RoleEnum.USER,bloggerAccount.getId());
 
         return baseResponse;
     }
@@ -238,6 +249,69 @@ public class AccountServiceImpl implements AccountService{
         return user.orElseThrow(() -> new NotFoundException("用户账号不存在"));
     }
 
+    /**
+    * 功能描述: 封禁账户
+    * @Param: [bloggerId, token]
+    * @Return: run.app.entity.DTO.BaseResponse
+    * @Author: WHOAMI
+    * @Date: 2019/12/15 14:04
+     */
+    @Override
+    public BaseResponse updateUserStatus(Long bloggerId,String status){
+
+//        应该考虑用户不存在的情况
+        BloggerAccount bloggerAccount = new BloggerAccount();
+        bloggerAccount.setId(bloggerId);
+        bloggerAccount.setisEnabled(UserStatusEnum.valueOf(status).getName()); //这里防止了非法字符注入
+        if(bloggerAccountMapper.updateByPrimaryKeySelective(bloggerAccount) ==0){
+            throw new BadRequestException(NOTFOUND);
+        }
+        return new BaseResponse(HttpStatus.OK.value(),"账号状态更改成功",null);
+    }
+
+    @Override
+    public BaseResponse deleteUser(Long bloggerId) {
+        if(bloggerAccountMapper.deleteByPrimaryKey(bloggerId) ==0){ //说明没有此账号
+            throw new BadRequestException(NOTFOUND);
+        }
+        bloggerProfileMapper.deleteByPrimaryKey(bloggerId);
+
+        return new BaseResponse(HttpStatus.OK.value(),"账删除成功",null);
+    }
+
+    @Override
+    public BaseResponse selectUserByExample(int pageNum, int pageSize, QueryParams queryParams) {
+        UserStatusEnum.valueOf(queryParams.getStatus());
+
+        PageHelper.startPage(pageNum,pageSize);
+        List<UserInfo> accounts = bloggerAccountMapper.selectByQueryParams(queryParams);
+
+        PageInfo<UserInfo> pageInfo = new PageInfo<UserInfo>();
+
+        DataGrid dataGrid = new DataGrid();
+
+        List<UserInfo> lists = pageInfo.getList().stream().map(item->{
+
+            UserInfo userInfo = new UserInfo();
+
+            BeanUtils.copyProperties(item,userInfo);
+
+            if(null != item.getAvatarId()){ //查询是否头像为空
+                userInfo.setAvatar(attachmentService.getPathById(item.getAvatarId()));
+            }
+
+            return userInfo;
+        }).collect(Collectors.toList());
+
+
+        dataGrid.setRows(lists);
+
+        dataGrid.setTotal(pageInfo.getTotal());
+
+
+
+        return new BaseResponse(HttpStatus.OK.value(),null,dataGrid);
+    }
 
 
 }

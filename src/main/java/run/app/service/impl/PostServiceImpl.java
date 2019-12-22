@@ -12,7 +12,6 @@ import run.app.entity.DTO.BaseResponse;
 import run.app.entity.DTO.BlogDetailWithAuthor;
 import run.app.entity.DTO.DataGrid;
 import run.app.entity.DTO.PopularBlog;
-import run.app.entity.enums.ArticleStatus;
 import run.app.entity.model.*;
 import run.app.entity.VO.PostQueryParams;
 import run.app.exception.NotFoundException;
@@ -218,7 +217,9 @@ public class PostServiceImpl implements PostService {
     public BaseResponse getTopPosts() {
         Set<PopularBlog> popularPosts = redisService.listTop5FrmRedis();
         if (null == popularPosts || popularPosts.size()<5){ //说明redis不准确,需要查询数据库
+//            todo  这里有可能会出现线程击穿
             popularPosts = new HashSet<>(blogStatusService.listTop5Posts());
+
         }
         log.info(popularPosts.toString());
         return new BaseResponse(HttpStatus.OK.value(),null,popularPosts);

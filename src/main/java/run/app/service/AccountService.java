@@ -3,9 +3,12 @@ package run.app.service;
 import lombok.NonNull;
 import run.app.entity.DTO.BaseResponse;
 import run.app.entity.VO.LoginParams;
+import run.app.entity.VO.QueryParams;
 import run.app.entity.VO.RegisterParams;
 import run.app.entity.model.BloggerAccount;
+import run.app.entity.model.BloggerProfile;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -37,5 +40,12 @@ public interface AccountService {
 
 
     BloggerAccount loginWithUsername(String username);
+
+    BaseResponse updateUserStatus(Long bloggerId,String status);
+
+    BaseResponse deleteUser(Long bloggerId);
+
+    BaseResponse selectUserByExample(int pageNum,int pageSize,QueryParams queryParams);
+
 
 }

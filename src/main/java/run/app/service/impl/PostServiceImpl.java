@@ -12,8 +12,8 @@ import run.app.entity.DTO.BaseResponse;
 import run.app.entity.DTO.BlogDetailWithAuthor;
 import run.app.entity.DTO.DataGrid;
 import run.app.entity.DTO.PopularBlog;
+import run.app.entity.VO.QueryParams;
 import run.app.entity.model.*;
-import run.app.entity.VO.PostQueryParams;
 import run.app.exception.NotFoundException;
 import run.app.mapper.*;
 import run.app.service.AttachmentService;
@@ -103,7 +103,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public BaseResponse getListByExample(int pageNum, int pageSize, String keyword) {
 
-        PostQueryParams postQueryParams = new PostQueryParams();
+        QueryParams postQueryParams = new QueryParams();
 
         postQueryParams.setKeyword(keyword);
         postQueryParams.setStatus("PUBLISHED");

@@ -44,8 +44,7 @@ public class UserController {
     public BaseResponse queryUserByExample(
             @RequestParam int pageNum,
             @RequestParam int pageSize,
-            QueryParams QueryParams,
-            HttpServletRequest request){
-
+            QueryParams queryParams){
+        return accountService.selectUserByExample(pageNum,pageSize,queryParams);
     }
 }

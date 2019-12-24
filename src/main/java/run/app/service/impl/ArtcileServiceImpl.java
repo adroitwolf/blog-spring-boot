@@ -273,7 +273,10 @@ public class ArtcileServiceImpl implements ArticleService {
     @Override
     public BaseResponse getArticleListByExample(@NonNull int pageNum, @NonNull int pageSize, QueryParams postQueryParams, @NonNull String token) {
 
-        ArticleStatusEnum.valueOf(postQueryParams.getStatus());
+        if(!StringUtils.isEmpty(postQueryParams.getStatus())){
+
+            ArticleStatusEnum.valueOf(postQueryParams.getStatus());
+        }
         log.info("查询目标" + postQueryParams.toString());
 
         PageHelper.startPage(pageNum,pageSize);

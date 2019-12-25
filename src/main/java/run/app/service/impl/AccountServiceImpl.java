@@ -281,12 +281,14 @@ public class AccountServiceImpl implements AccountService{
 
     @Override
     public BaseResponse selectUserByExample(int pageNum, int pageSize, QueryParams queryParams) {
-        UserStatusEnum.valueOf(queryParams.getStatus());
+        if(!StringUtils.isEmpty(queryParams.getStatus())){
+            UserStatusEnum.valueOf(queryParams.getStatus());
+        }
 
         PageHelper.startPage(pageNum,pageSize);
         List<UserInfo> accounts = bloggerAccountMapper.selectByQueryParams(queryParams);
 
-        PageInfo<UserInfo> pageInfo = new PageInfo<UserInfo>();
+        PageInfo<UserInfo> pageInfo = new PageInfo<>(accounts);
 
         DataGrid dataGrid = new DataGrid();
 

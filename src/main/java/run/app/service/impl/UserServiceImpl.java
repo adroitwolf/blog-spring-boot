@@ -72,12 +72,25 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public @NonNull BaseResponse updateProfileById(@NonNull UserParams userParams, @NonNull String token) {
 
         BaseResponse baseResponse = new BaseResponse();
 
         Long userId = tokenService.getUserIdWithToken(token);
         BloggerProfile bloggerProfile = new BloggerProfile();
+
+//        设置phone 和email
+
+        BloggerAccount bloggerAccount = new BloggerAccount();
+
+        bloggerAccount.setId(userId);
+        BeanUtils.copyProperties(userParams,bloggerAccount);
+
+        log.info(bloggerAccount.toString());
+
+        bloggerAccountMapper.updateByPrimaryKeySelective(bloggerAccount);
+
 
 //    这个才是昵称
         bloggerProfile.setBloggerId(userId);
@@ -91,7 +104,8 @@ public class UserServiceImpl implements UserService {
 
         userDetail.setAboutMe(bloggerProfile.getAboutMe());
         userDetail.setUsername(bloggerProfile.getNickname());
-
+        userDetail.setPhone(bloggerAccount.getPhone());
+        userDetail.setEmail(bloggerAccount.getEmail());
         baseResponse.setData(userDetail);
         baseResponse.setStatus(HttpStatus.OK.value());
 

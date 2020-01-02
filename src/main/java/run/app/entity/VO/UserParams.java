@@ -3,6 +3,7 @@ package run.app.entity.VO;
 import lombok.Data;
 import lombok.ToString;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
@@ -19,7 +20,13 @@ public class UserParams {
     @Size(max = 20,message = "用户名不能超过{max}")
     private String username;
 
-    @NotBlank(message = "自我介绍不能为空！")
     @Size(max = 50,message = "自我介绍不能超过{max}")
     private String aboutMe;
+
+    @Email(message = "电子邮件格式不正确")
+    private String email;
+
+
+    private String phone;
+
 }

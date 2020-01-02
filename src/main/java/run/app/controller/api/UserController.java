@@ -12,6 +12,7 @@ import run.app.aop.annotation.MethodLog;
 import run.app.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 /**
  * Created with IntelliJ IDEA.
@@ -42,10 +43,9 @@ public class UserController {
     @MethodLog
     @ApiOperation("更新用户资料")
     @PutMapping("/profile")
-    public  BaseResponse updateProfile( @RequestBody UserParams userParams,HttpServletRequest request){
+    public  BaseResponse updateProfile(@Valid @RequestBody UserParams userParams, HttpServletRequest request){
         log.debug(userParams.toString());
-        String token = request.getHeader(AUTHENICATION);
-        return userService.updateProfileById(userParams,token);
+        return userService.updateProfileById(userParams,request.getHeader(AUTHENICATION));
     }
 
 

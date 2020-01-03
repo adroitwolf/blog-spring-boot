@@ -2,6 +2,7 @@ package run.app.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -57,6 +58,11 @@ public class BlogStatusServiceImpl implements BlogStatusService {
             List<BlogStatus> statusList = redisService.listBlogClickedCounts();
 
             statusList.stream().filter(Objects::nonNull).forEach(entity -> {
+
+                if(StringUtils.isEmpty(articleService.getArticleNameByBlogId(entity.getId()))){ //说明这个博客id无效
+                    return;
+                }
+
                 BlogStatus status = blogStatusMapper.selectByPrimaryKey(entity.getId());
 
                 if (null != status) {

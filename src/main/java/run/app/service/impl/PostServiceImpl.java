@@ -132,7 +132,7 @@ public class PostServiceImpl implements PostService {
 
 
         Blog blog = blogMapper.selectByPrimaryKey(blogId);
-        if(null == blog) { //当用户博客id非法的时候
+        if(null == blog) { //当博客id不存在时
             throw new NotFoundException("没有相关博客信息");
         }
 

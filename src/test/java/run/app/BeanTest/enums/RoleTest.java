@@ -3,6 +3,7 @@ package run.app.BeanTest.enums;
 import org.assertj.core.util.Lists;
 import org.junit.Test;
 import run.app.entity.enums.RoleEnum;
+import run.app.entity.enums.UserStatusEnum;
 
 import java.util.List;
 import java.util.Objects;
@@ -28,6 +29,14 @@ public class RoleTest {
         list.add(2);
 
         list.stream().filter(Objects::isNull).forEach(x-> System.out.println(x));
+    }
+
+
+
+    @Test
+    public void equalTest(){
+        String ENABLED = "YES";
+        System.out.println(UserStatusEnum.YES.getName().equals(ENABLED));
     }
 
 }

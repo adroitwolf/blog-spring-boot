@@ -95,7 +95,8 @@ public class AccountServiceImpl implements AccountService{
         if(user.getPassword().equals(loginParams.getPassword())){
 
 //            这里应该判断账户是否被封禁
-            if(UserStatusEnum.YES.equals(user.getisEnabled())){ //说明被封禁
+            log.info(user.toString());
+            if(UserStatusEnum.YES.getName().equals(user.getisEnabled())){ //说明被封禁
                 throw new BadRequestException(BLOCKED);
             }
             BeanUtils.copyProperties(user,userRs);

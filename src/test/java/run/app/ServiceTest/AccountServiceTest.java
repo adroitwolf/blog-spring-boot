@@ -8,6 +8,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import run.app.entity.VO.LoginParams;
 import run.app.exception.BadRequestException;
 import run.app.service.AccountService;
 
@@ -46,6 +47,16 @@ public class AccountServiceTest {
 
     @Test
     public void queryUser(){
+
+    }
+
+    @Test
+    public void testUser(){
+        LoginParams loginParams = new LoginParams();
+
+        loginParams.setP("123");
+        loginParams.setPassword("202cb962ac59075b964b07152d234b70");
+        System.out.println(accountService.loginService(loginParams));
 
     }
 

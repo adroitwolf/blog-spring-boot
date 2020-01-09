@@ -100,19 +100,19 @@
 
   <select id="selectByQueryParams" parameterType="run.app.entity.VO.QueryParams" resultMap="SelfResultMap">
     select
-    b.id,a.ABOUT_ME, a.NICKNAME, a.AVATAR_ID,b.IS_ENABLED, b.USERNAME,b.REGISTER_DATE, b.PHONE, b.EMAIL,
+    b.id,a.ABOUT_ME, a.NICKNAME, a.AVATAR_ID,b.IS_ENABLED, b.USERNAME,b.REGISTER_DATE, b.PHONE, b.EMAIL
     from blogger_profile as a,blogger_account as b
     <where>
       <if test="query.keyword != '' and query.keyword != null">
         <bind name="pattern" value="'%' + query.keyword + '%'"></bind>
-        and concat(a.ABOUT_ME,a.NICKNAME,a.USERNAME) like #{pattern}
+        and a.NICKNAME like #{pattern}
       </if>
       <if test="query.status != '' and query.status != null">
         and b.IS_ENABLED = #{query.status}
       </if>
       and a.BLOGGER_ID = b.ID
     </where>
-    order by a.REGISTER_DATE desc
+    order by b.REGISTER_DATE desc
   </select>
 
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">

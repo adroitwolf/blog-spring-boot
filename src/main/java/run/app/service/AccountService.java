@@ -41,9 +41,9 @@ public interface AccountService {
 
     BloggerAccount loginWithUsername(String username);
 
-    BaseResponse updateUserStatus(Long bloggerId,String status);
+    BaseResponse updateUserStatus(Long bloggerId,String status,String token);
 
-    BaseResponse deleteUser(Long bloggerId);
+    BaseResponse deleteUser(Long bloggerId,String token);
 
     BaseResponse selectUserByExample(int pageNum,int pageSize,QueryParams queryParams);
 

@@ -26,6 +26,7 @@ import run.app.entity.model.BloggerProfile;
 import run.app.exception.BadRequestException;
 import run.app.exception.NotFoundException;
 import run.app.exception.ServiceException;
+import run.app.exception.UnAccessException;
 import run.app.mapper.BloggerAccountMapper;
 import run.app.mapper.BloggerProfileMapper;
 import run.app.service.AttachmentService;
@@ -258,7 +259,11 @@ public class AccountServiceImpl implements AccountService{
     * @Date: 2019/12/15 14:04
      */
     @Override
-    public BaseResponse updateUserStatus(Long bloggerId,String status){
+    public BaseResponse updateUserStatus(Long bloggerId,String status,String token){
+//      不允许封禁自己的账户
+        if (bloggerId.equals(tokenService.getUserIdWithToken(token))){
+            throw new UnAccessException("不允许对自身账号进行任何操作");
+        }
 
 //        应该考虑用户不存在的情况
         BloggerAccount bloggerAccount = new BloggerAccount();
@@ -271,12 +276,30 @@ public class AccountServiceImpl implements AccountService{
     }
 
     @Override
-    public BaseResponse deleteUser(Long bloggerId) {
-        if(bloggerAccountMapper.deleteByPrimaryKey(bloggerId) ==0){ //说明没有此账号
-            throw new BadRequestException(NOTFOUND);
-        }
-        bloggerProfileMapper.deleteByPrimaryKey(bloggerId);
+    public BaseResponse deleteUser(Long bloggerId,String token) { //删除用户需要权限
+//       1.不能删除自己 2.同水平之间不能删除
+        log.info(String.valueOf(bloggerId));
 
+        log.info("经过token解释过的id:"+tokenService.getUserIdWithToken(token));
+
+        if (bloggerId.equals(tokenService.getUserIdWithToken(token))){
+
+            throw new UnAccessException("不允许删除自己");
+        }
+//
+//        if(bloggerAccountMapper.deleteByPrimaryKey(bloggerId) ==0){ //说明没有此账号
+//            throw new BadRequestException(NOTFOUND);
+//        }
+//        bloggerProfileMapper.deleteByPrimaryKey(bloggerId); //删除个人配置文件
+//
+//
+//        roleService.deleteUserById(bloggerId);
+
+
+        //todo:一些繁琐文件应该放到另一个不浪费时间的时候运行
+
+
+        //这里并没有删除该用户发布的所有文章
         return new BaseResponse(HttpStatus.OK.value(),"账删除成功",null);
     }
 
@@ -302,6 +325,9 @@ public class AccountServiceImpl implements AccountService{
             if(null != item.getAvatarId()){ //查询是否头像为空
                 userInfo.setAvatar(attachmentService.getPathById(item.getAvatarId()));
             }
+
+            //查询当前用户角色
+            userInfo.setRoles(roleService.getRolesByUserId(userInfo.getId()).stream().map(n->n.getAuthority()).collect(Collectors.toList()));
 
             return userInfo;
         }).collect(Collectors.toList());

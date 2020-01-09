@@ -71,4 +71,12 @@ public class RoleServiceImpl implements RoleService {
     public RoleEnum getRoleById(Long id) {
         return RoleEnum.valueOf(bloggerRoleMapper.selectByPrimaryKey(id).getRoleName());
     }
+
+    @Override
+    public void deleteUserById(Long id) {
+        BloggerRoleMapExample example = new BloggerRoleMapExample();
+        BloggerRoleMapExample.Criteria criteria = example.createCriteria();
+        criteria.andUserIdEqualTo(id);
+        bloggerRoleMapMapper.deleteByExample(example);
+    }
 }

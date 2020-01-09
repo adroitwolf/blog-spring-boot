@@ -34,7 +34,7 @@ public interface ArticleService {
 
     BaseResponse getArticleCount(@NonNull String token);
 
-
+    void deletePostsByUserId(Long userId);
 
     void deleteQuotePic(Long picId);
 }

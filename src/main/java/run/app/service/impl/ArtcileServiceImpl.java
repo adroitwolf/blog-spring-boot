@@ -371,6 +371,13 @@ public class ArtcileServiceImpl implements ArticleService {
 
     @Override
     @Transactional
+    public void deletePostsByUserId(Long userId) { //逻辑太多 需要放到一个单独的服务里面运行
+
+
+    }
+
+    @Override
+    @Transactional
     public void deleteQuotePic(Long picId) {
         blogMapper.deletePicByPicId(picId);
     }

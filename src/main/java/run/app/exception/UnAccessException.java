@@ -21,6 +21,6 @@ public class UnAccessException extends  AppException {
 
     @Override
     public HttpStatus getStatus() {
-        return HttpStatus.FORBIDDEN;
+        return HttpStatus.SERVICE_UNAVAILABLE;
     }
 }

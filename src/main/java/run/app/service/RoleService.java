@@ -26,9 +26,11 @@ public interface RoleService {
     Long getRoleIdByType(RoleEnum role);
 
 
-
     List<RoleEnum> getRolesByUserId(Long userId);
 
 
     RoleEnum getRoleById(Long id);
+
+
+    void deleteUserById(Long id);
 }

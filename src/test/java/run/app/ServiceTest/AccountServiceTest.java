@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import run.app.entity.VO.LoginParams;
+import run.app.entity.VO.QueryParams;
 import run.app.exception.BadRequestException;
 import run.app.service.AccountService;
 
@@ -33,8 +34,8 @@ public class AccountServiceTest {
     public void BlockTest(){
         expectedEx.expect(BadRequestException.class);
         expectedEx.expectMessage("账号未找到");
-        accountService.updateUserStatus(123L,"YES");
-        log.debug(accountService.updateUserStatus(400710202904543232L,"NO").toString());
+//        accountService.updateUserStatus(123L,"YES");
+//        log.debug(accountService.updateUserStatus(400710202904543232L,"NO").toString());
     }
 
 
@@ -42,12 +43,12 @@ public class AccountServiceTest {
     public void deleteUser(){
         expectedEx.expect(BadRequestException.class);
         expectedEx.expectMessage("账号未找到");
-        accountService.deleteUser(123L);
+//        accountService.deleteUser(123L);
     }
 
     @Test
     public void queryUser(){
-
+        System.out.println(accountService.selectUserByExample(1,5,new QueryParams()).toString());
     }
 
     @Test

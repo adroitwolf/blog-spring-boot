@@ -28,14 +28,14 @@ public class UserController {
     @PutMapping("/userUpdate/{bloggerId:\\d+}/{status}")
     @ApiOperation("管理帐户状态")
     public BaseResponse updateUserStatus(@PathVariable("bloggerId") Long bloggerId,
-                                  @PathVariable("status")String status){
-        return accountService.updateUserStatus(bloggerId,status);
+                                  @PathVariable("status")String status,HttpServletRequest request){
+        return accountService.updateUserStatus(bloggerId,status,request.getHeader(TOKEN));
     }
 
-    @DeleteMapping("/{bloggerId:\\d+}")
+    @DeleteMapping("/delete/{bloggerId:\\d+}")
     @ApiOperation("删除用户")
-    public BaseResponse deleteUser(@PathVariable("bloggerId") Long bloggerId){
-        return accountService.deleteUser(bloggerId);
+    public BaseResponse deleteUser(@PathVariable("bloggerId") Long bloggerId,HttpServletRequest request){
+        return accountService.deleteUser(bloggerId,request.getHeader(TOKEN));
     }
 
 
@@ -47,4 +47,7 @@ public class UserController {
             QueryParams queryParams){
         return accountService.selectUserByExample(pageNum,pageSize,queryParams);
     }
+
+
+
 }

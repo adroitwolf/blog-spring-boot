@@ -8,8 +8,10 @@ package run.app.entity.enums;
  */
 public enum ArticleStatusEnum implements BaseEnum<String> {
 
-    PUBLISHED,
-    RECYCLE;
+    PUBLISHED, //审核成功
+    CHECK, //审核中
+    NO, //审核失败
+    RECYCLE; //回收站
 
     public String getName() {
         return name();

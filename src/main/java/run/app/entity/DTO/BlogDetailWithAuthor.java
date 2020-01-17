@@ -1,5 +1,7 @@
 package run.app.entity.DTO;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 import lombok.ToString;
 
@@ -19,6 +21,9 @@ public class BlogDetailWithAuthor extends BlogDetail {
     private String username;
 
     private String avatarId;
+
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long bloggerId;
 
 
     public BlogDetailWithAuthor() {

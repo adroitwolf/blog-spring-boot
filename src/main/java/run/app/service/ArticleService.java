@@ -16,18 +16,22 @@ import run.app.entity.VO.QueryParams;
 public interface ArticleService {
 
     @NonNull
-    boolean submitArticle(@NonNull ArticleParams articleParams,@NonNull String token);
+    BaseResponse submitArticle(@NonNull ArticleParams articleParams,@NonNull String token);
 
-    boolean updateArticle(@NonNull ArticleParams articleParams,@NonNull Long blogId,@NonNull String token);
+    BaseResponse updateArticle(@NonNull ArticleParams articleParams,@NonNull Long blogId,@NonNull String token);
 
     BaseResponse updateArticleStatus(@NonNull Long blogId,@NonNull String status,String token);
 
+    BaseResponse updateArticleStatusByAdmin(@NonNull Long blogId,@NonNull String status,String token);
 
     BaseResponse getArticleDetail(@NonNull Long blogId,String token);
 
-
+    //用户
     BaseResponse getArticleListByExample(@NonNull int pageNum, @NonNull int pageSize, QueryParams postQueryParams, @NonNull String token);
 
+
+    //管理员
+    BaseResponse getArticleListToAdminByExample(@NonNull int pageNum, @NonNull int pageSize, QueryParams postQueryParams, @NonNull String token);
     String getArticleNameByBlogId(Long blogId);
 
     void deleteBlog(@NonNull Long blogId,String token);

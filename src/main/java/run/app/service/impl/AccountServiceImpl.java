@@ -148,11 +148,16 @@ public class AccountServiceImpl implements AccountService{
 
         Long id = tokenService.getUserIdWithToken(token);
 
-        BloggerAccount bloggerAccount = bloggerAccountMapper.selectByPrimaryKey(id);
+        return getUsernameById(id);
+    }
+
+    @Override
+    public String getUsernameById(Long userId) {
+        BloggerAccount bloggerAccount = bloggerAccountMapper.selectByPrimaryKey(userId);
         /**
-        * 问题描述: 开发环境与生产环境的jwt生成算法必须不一致
-       * @Author: WHOAMI
-        * @Date: 2019/12/2 23:11
+         * 问题描述: 开发环境与生产环境的jwt生成算法必须不一致
+         * @Author: WHOAMI
+         * @Date: 2019/12/2 23:11
          */
         return bloggerAccount.getUsername();
     }

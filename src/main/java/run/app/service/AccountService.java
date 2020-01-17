@@ -29,6 +29,8 @@ public interface AccountService {
 
     String getUsernameByToken(@NonNull String token);
 
+    String getUsernameById(Long userId);
+
     @NonNull
     Long findBloggerIdByUsername(@NonNull String username);
 

@@ -16,6 +16,8 @@ public interface BlogMapper extends BaseMapper<Blog,Long>{
 
     List<Blog> selectByUserExample(@Param("query") QueryParams postQueryParams, @Param("blogger_id") Long blogger_id);
 
+
+
     int updateByExampleSelective(@Param("record") Blog record, @Param("example") BlogExample example);
 
     int updateByExample(@Param("record") Blog record, @Param("example") BlogExample example);

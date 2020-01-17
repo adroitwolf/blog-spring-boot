@@ -33,3 +33,4 @@ build/
 *.log
 *.gz
 logs/spring.log
+*.jpg

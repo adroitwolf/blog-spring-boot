@@ -12,6 +12,7 @@ import run.app.config.properties.JWTProperties;
 import run.app.entity.DTO.User;
 import run.app.entity.enums.RoleEnum;
 import run.app.exception.UnAccessException;
+import run.app.service.RoleService;
 import run.app.service.TokenService;
 import run.app.service.AccountService;
 import run.app.service.UserService;
@@ -35,6 +36,8 @@ public class TokenServiceImpl implements TokenService {
     @Autowired
     UserService userService;
 
+    @Autowired
+    RoleService roleService;
 
     @Autowired
     AccountService accountService;
@@ -46,7 +49,9 @@ public class TokenServiceImpl implements TokenService {
 
     @Override
     public void authentication(Long id, String token) {
-        if(null == id || !id.equals(getUserIdWithToken(token))){
+        if(roleService.getRolesByUserId(getUserIdWithToken(token)).contains(RoleEnum.ADMIN)){
+            return ;
+        }else if(null == id || !id.equals(getUserIdWithToken(token))){
 
             throw new UnAccessException("您没有权限进行该操作");
         }

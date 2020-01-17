@@ -38,13 +38,7 @@ public class BlogController {
     @PostMapping("/submit")
     public BaseResponse submitArticle(@Valid @RequestBody ArticleParams articleParams, HttpServletRequest request){
         log.info(articleParams.toString());
-        String token = request.getHeader(AUTHENICATION);
-
-        articleService.submitArticle(articleParams,token);
-        BaseResponse baseResponse = new BaseResponse();
-        baseResponse.setStatus(HttpStatus.OK.value());
-        baseResponse.setMessage("上传成功");
-        return baseResponse;
+        return articleService.submitArticle(articleParams, request.getHeader(AUTHENICATION));
     }
 
     @MethodLog
@@ -70,11 +64,7 @@ public class BlogController {
 
         log.debug(articleParams.toString());
 
-        articleService.updateArticle(articleParams,blogId,request.getHeader(AUTHENICATION));
-
-        BaseResponse baseResponse = new BaseResponse();
-        baseResponse.setStatus(HttpStatus.OK.value());
-        return baseResponse;
+        return articleService.updateArticle(articleParams,blogId,request.getHeader(AUTHENICATION));
     }
 
 

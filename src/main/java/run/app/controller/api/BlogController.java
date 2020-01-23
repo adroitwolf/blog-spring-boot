@@ -42,7 +42,7 @@ public class BlogController {
     }
 
     @MethodLog
-    @ApiOperation("博客-回收站之间的操作")
+    @ApiOperation("更新博客状态的操作")
     @PutMapping("/{BlogId:\\d+}/status/{status}")
     public BaseResponse updateArticleStatus(@PathVariable("BlogId")Long blogId ,
                               @PathVariable("status")String status,HttpServletRequest request){

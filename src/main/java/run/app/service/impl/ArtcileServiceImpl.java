@@ -21,6 +21,7 @@ import run.app.entity.model.*;
 import run.app.entity.VO.ArticleParams;
 import run.app.exception.BadRequestException;
 import run.app.exception.NotFoundException;
+import run.app.exception.UnAccessException;
 import run.app.mapper.*;
 import run.app.service.*;
 import run.app.util.AppUtil;
@@ -227,20 +228,31 @@ public class ArtcileServiceImpl implements ArticleService {
     @Override
     public BaseResponse updateArticleStatus(@NonNull Long blogId, @NonNull String status,String token) {
 
-        Blog blog1 = blogMapper.selectByPrimaryKey(blogId);
+
+        Blog blog1 = blogMapper.selectByPrimaryKey(blogId); //这里应该会有空指针异常 应该制止
+
+        if (ArticleStatusEnum.NO.getName().equals(blog1.getStatus())){ //审核失败的文章只允许删除操作
+            throw new UnAccessException("请不要尝试非法操作");
+        }
+
         tokenService.authentication(blog1.getBloggerId(),token);
         Blog blog = new Blog();
         //检测是否有非法字符注入
-        String articleStatus =ArticleStatusEnum.valueOf(status).equals(ArticleStatusEnum.PUBLISHED) ?
-                (tokenService.getRoles(token).contains(RoleEnum.ADMIN)?ArticleStatusEnum.PUBLISHED.getName():ArticleStatusEnum.CHECK.getName()):ArticleStatusEnum.RECYCLE.getName();
-        blog.setStatus(articleStatus);
+//        String articleStatus =ArticleStatusEnum.valueOf(status).equals(ArticleStatusEnum.PUBLISHED) ?
+//                (tokenService.getRoles(token).contains(RoleEnum.ADMIN)?ArticleStatusEnum.PUBLISHED.getName():ArticleStatusEnum.CHECK.getName()):ArticleStatusEnum.RECYCLE.getName();
+        StringBuilder articleStatus = new StringBuilder();
+        if(tokenService.getRoles(token).contains(RoleEnum.ADMIN)){
+           articleStatus.append(ArticleStatusEnum.valueOf(status));
+       }
+
+        blog.setStatus(articleStatus.toString());
         blog.setId(blogId);
 
         blogMapper.updateByPrimaryKeySelective(blog);
         BaseResponse baseResponse = new BaseResponse();
         baseResponse.setStatus(HttpStatus.OK.value());
         Map<String,String> updateStatus = new HashMap<>();
-        updateStatus.put("status",articleStatus);
+        updateStatus.put("status",articleStatus.toString());
         baseResponse.setData(updateStatus);
         return baseResponse;
     }

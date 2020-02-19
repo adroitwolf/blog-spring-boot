@@ -35,9 +35,12 @@ public class RoleServiceImpl implements RoleService {
 
 
     @Override
-    public void setRoleWithUserId(RoleEnum role, Long userId) {
-        Long roleId = getRoleIdByType(role);
-        bloggerRoleMapMapper.insert(new BloggerRoleMapKey(userId,roleId));
+    public void setRolesWithUserId(List<RoleEnum> roles, Long userId) {
+        roles.stream().forEach(roleEnum -> {
+            Long roleId = getRoleIdByType(roleEnum);
+            bloggerRoleMapMapper.insert(new BloggerRoleMapKey(userId,roleId));
+        });
+
     }
 
 

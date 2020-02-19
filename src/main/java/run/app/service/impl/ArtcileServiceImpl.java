@@ -10,15 +10,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import run.app.entity.DTO.BaseResponse;
-import run.app.entity.DTO.BlogDetail;
-import run.app.entity.DTO.DataGrid;
+import run.app.entity.DTO.*;
 import run.app.entity.VO.QueryParams;
 import run.app.entity.enums.ArticleStatusEnum;
 import run.app.entity.enums.CiteNumEnum;
 import run.app.entity.enums.RoleEnum;
 import run.app.entity.model.*;
 import run.app.entity.VO.ArticleParams;
+import run.app.entity.model.Blog;
 import run.app.exception.BadRequestException;
 import run.app.exception.NotFoundException;
 import run.app.exception.UnAccessException;
@@ -85,6 +84,8 @@ public class ArtcileServiceImpl implements ArticleService {
     AccountService accountService;
 
 
+    @Autowired
+    UserService userService;
 
     @Autowired
     BloggerPictureMapper bloggerPictureMapper;
@@ -265,6 +266,7 @@ public class ArtcileServiceImpl implements ArticleService {
 //
 //        }
         //这里有一个问题就是审核失败的文章怎么办？ 删还是不删
+        // 2020-1-30补充
         return updateArticleStatus(blogId,status,token);
     }
 
@@ -295,7 +297,7 @@ public class ArtcileServiceImpl implements ArticleService {
 
 //        博客缩略图问题
         if(null != blog.getPictureId()){
-            blogDetail.setPicture(attachmentService.selectPicById(blog.getPictureId()));
+            blogDetail.setPicture(attachmentService.getPathById(blog.getPictureId()));
         }
 
         baseResponse.setData(blogDetail);
@@ -308,7 +310,7 @@ public class ArtcileServiceImpl implements ArticleService {
 
 
     @Override
-    public BaseResponse getArticleListByExample(@NonNull int pageNum, @NonNull int pageSize, QueryParams postQueryParams, @NonNull String token) {
+    public BaseResponse getArticleListByExample(run.app.entity.VO.PageInfo pageInfo, QueryParams postQueryParams, @NonNull String token) {
 
         if(!StringUtils.isEmpty(postQueryParams.getStatus())){
 
@@ -316,7 +318,7 @@ public class ArtcileServiceImpl implements ArticleService {
         }
         log.info("查询目标" + postQueryParams.toString());
 
-        PageHelper.startPage(pageNum,pageSize);
+        PageHelper.startPage(pageInfo.getPageNum(),pageInfo.getPageSize());
         List<Blog> blogList = blogMapper.selectByUserExample(postQueryParams, tokenService.getUserIdWithToken(token));
 
         PageInfo<Blog> list = new PageInfo<>(blogList);
@@ -332,9 +334,9 @@ public class ArtcileServiceImpl implements ArticleService {
                 tagsTitle = tagService.selectTagTitleByIdString(item.getTagTitle());
             }
             String pic = "";
-//            获取博客图片名称
+//            获取博客图片逻辑路径
             if(null != item.getPictureId()){
-                pic = attachmentService.selectPicById(item.getPictureId());
+                pic = attachmentService.getPathById(item.getPictureId());
             }
             run.app.entity.DTO.Blog blog = new run.app.entity.DTO.Blog();
             BeanUtils.copyProperties(item,blog);
@@ -365,7 +367,7 @@ public class ArtcileServiceImpl implements ArticleService {
     * @Author: WHOAMI
     * @Date: 2020/1/11 10:58
      */
-    public BaseResponse getArticleListToAdminByExample(@NonNull int pageNum, @NonNull int pageSize, QueryParams postQueryParams, @NonNull String token) {
+    public BaseResponse getArticleListToAdminByExample(run.app.entity.VO.PageInfo pageInfo, QueryParams postQueryParams, @NonNull String token) {
         if(!StringUtils.isEmpty(postQueryParams.getStatus())){
 
             ArticleStatusEnum.valueOf(postQueryParams.getStatus());
@@ -374,7 +376,7 @@ public class ArtcileServiceImpl implements ArticleService {
             postQueryParams.setStatus(ArticleStatusEnum.CHECK.getName());
         }
 
-        PageHelper.startPage(pageNum,pageSize);
+        PageHelper.startPage(pageInfo.getPageNum(),pageInfo.getPageSize());
 
         List<Blog> blogList = blogMapper.selectByUserExample(postQueryParams, null);
 
@@ -386,24 +388,31 @@ public class ArtcileServiceImpl implements ArticleService {
 
 
             List<String> tagsTitle = new ArrayList<>();
+
             if(!StringUtils.isBlank(item.getTagTitle())){
 
                 tagsTitle = tagService.selectTagTitleByIdString(item.getTagTitle());
             }
+
             String pic = "";
-//            获取博客图片名称
+//            获取博客图片逻辑路径
             if(null != item.getPictureId()){
-                pic = attachmentService.selectPicById(item.getPictureId());
+                pic = attachmentService.getPathById(item.getPictureId());
             }
+
             run.app.entity.DTO.BlogDetailWithAuthor blog = new run.app.entity.DTO.BlogDetailWithAuthor();
+
             BeanUtils.copyProperties(item,blog);
+
             blog.setPicture(pic);
+
             blog.setTagsTitle(tagsTitle);
 
-//            获取博客账号
+//            获取博客作者相关信息
+            UserDTO author = userService.getUserDTOById(item.getBloggerId());
 
-            blog.setBloggerId(item.getBloggerId());
-            blog.setUsername(accountService.getUsernameById(item.getBloggerId()));
+            blog.setAuthor(author);
+
             return  blog;
         }).collect(Collectors.toList());
 
@@ -429,7 +438,7 @@ public class ArtcileServiceImpl implements ArticleService {
 
     @Override
     @Transactional
-    public void deleteBlog(@NonNull Long blogId,String token) {
+    public BaseResponse deleteBlog(@NonNull Long blogId,String token) {
 
         Blog blog1 = blogMapper.selectByPrimaryKey(blogId);
 
@@ -451,6 +460,7 @@ public class ArtcileServiceImpl implements ArticleService {
         blogMapper.deleteByPrimaryKey(blogId);
         blogContentMapper.deleteByPrimaryKey(blogId);
 
+        return new BaseResponse(HttpStatus.OK.value(),"删除成功",null);
     }
 
     @Override
@@ -472,8 +482,9 @@ public class ArtcileServiceImpl implements ArticleService {
 
     @Override
     @Transactional
-    public void deletePostsByUserId(Long userId) { //逻辑太多 需要放到一个单独的服务里面运行
+    public BaseResponse deletePostsByUserId(Long userId) { //逻辑太多 需要放到一个单独的服务里面运行
 
+        return new BaseResponse();
 
     }
 
@@ -481,6 +492,26 @@ public class ArtcileServiceImpl implements ArticleService {
     @Transactional
     public void deleteQuotePic(Long picId) {
         blogMapper.deletePicByPicId(picId);
+}
+
+    @Override
+    public Blog getBlogByBlogId(Long id) {
+        return blogMapper.selectByPrimaryKey(id);
+    }
+
+    @Override
+    public BaseBlog getBaseBlogById(Long id) {
+        Blog blog = blogMapper.selectByPrimaryKey(id);
+        BaseBlog baseBlog = new BaseBlog();
+
+        BeanUtils.copyProperties(blog,baseBlog);
+
+        if(null != blog.getPictureId()){
+
+            baseBlog.setPicture(attachmentService.getPathById(blog.getPictureId()));
+        }
+
+        return baseBlog;
     }
 
 

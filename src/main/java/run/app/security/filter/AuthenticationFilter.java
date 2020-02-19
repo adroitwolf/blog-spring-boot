@@ -45,6 +45,12 @@ public class AuthenticationFilter extends OncePerRequestFilter {
     }
 
 
+    /**
+    * 功能描述: 取代spring security的认证功能 单体应用下的认证
+    * @Return: void
+    * @Author: WHOAMI
+    * @Date: 2020/2/15 12:47
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
         String authentication = httpServletRequest.getHeader("Authentication");
@@ -95,7 +101,13 @@ public class AuthenticationFilter extends OncePerRequestFilter {
     }
 
 
-//    判断过滤  false表示有权限
+        /**
+        * 功能描述: 判断过滤  false表示有权限
+        * @Param: [roles, request]
+        * @Return: boolean
+        * @Author: WHOAMI
+        * @Date: 2020/2/15 12:47
+         */
     private boolean verifyAuthority(List<RoleEnum> roles, HttpServletRequest request){
             return roles.stream()
                     .filter(p->
@@ -103,9 +115,10 @@ public class AuthenticationFilter extends OncePerRequestFilter {
                                 .stream().anyMatch(x-> antPathMatcher
                                 .match(x,request.getServletPath()))).count()>0?false:true;
     }
+
     /**
     * 功能描述: 添加权限控制
-     * 这里由于功能简单，只有管理员和用户，所以权限应该
+     * 这里由于功能简单，只有管理员和用户，所以权限应该分别对待
      */
     public void addAuthorityPatterns(Map<RoleEnum,List<String>>url){
         this.authorityPatterns = url;

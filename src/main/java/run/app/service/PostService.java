@@ -1,8 +1,7 @@
 package run.app.service;
 
 import run.app.entity.DTO.BaseResponse;
-import run.app.entity.DTO.BlogDetailWithAuthor;
-import run.app.entity.DTO.DataGrid;
+import run.app.entity.VO.PageInfo;
 
 /**
  * Created with IntelliJ IDEA.
@@ -11,13 +10,44 @@ import run.app.entity.DTO.DataGrid;
  * Description: ://针对前台博客的服务
  */
 public interface PostService {
-    BaseResponse getList(int pageNum,int pageSize);
 
-    BaseResponse getListByExample(int pageNum, int pageSize, String keyword);
+    /**
+    * 功能描述: 获取文章列表
+    * @Return: run.app.entity.DTO.BaseResponse
+    * @Author: WHOAMI
+    * @Date: 2020/1/30 17:48
+     */
+    BaseResponse getArticleList(PageInfo pageInfo);
 
-    BaseResponse getDetail(Long blogId);
+    /**
+    * 功能描述: 根据条件搜索文章
+    * @Return: run.app.entity.DTO.BaseResponse
+    * @Author: WHOAMI
+    * @Date: 2020/1/30 17:48
+     */
+    BaseResponse getArticleListByExample(PageInfo pageInfo, String keyword);
 
-    BaseResponse getListByTag(int pageNum,int pageSize,String tag);
+    /**
+    * 功能描述: 获取文章详细内容
+    * @Return: run.app.entity.DTO.BaseResponse
+    * @Author: WHOAMI
+    * @Date: 2020/1/30 17:48
+     */
+    BaseResponse getArticleDetail(Long blogId);
 
+    /**
+    * 功能描述: 根据tag标签获取到文章列表
+    * @Return: run.app.entity.DTO.BaseResponse
+    * @Author: WHOAMI
+    * @Date: 2020/1/30 17:49
+     */
+    BaseResponse getArticleListByTag(PageInfo pageInfo,String tag);
+
+    /**
+    * 功能描述: 获取到每日精选文章
+    * @Return: run.app.entity.DTO.BaseResponse
+    * @Author: WHOAMI
+    * @Date: 2020/1/30 17:51
+     */
     BaseResponse getTopPosts();
 }

@@ -59,7 +59,7 @@ public class TokenServiceImpl implements TokenService {
 
     //    利用Jwt生成token
     @Override
-    public String getToken(User user) {
+    public String generateToken(User user) {
         return JwtUtil.generateToken(user);
     }
 

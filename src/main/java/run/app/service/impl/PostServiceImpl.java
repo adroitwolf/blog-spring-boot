@@ -8,18 +8,13 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import run.app.entity.DTO.BaseResponse;
-import run.app.entity.DTO.BlogDetailWithAuthor;
-import run.app.entity.DTO.DataGrid;
-import run.app.entity.DTO.PopularBlog;
+import run.app.entity.DTO.*;
 import run.app.entity.VO.QueryParams;
 import run.app.entity.model.*;
+import run.app.entity.model.Blog;
 import run.app.exception.NotFoundException;
 import run.app.mapper.*;
-import run.app.service.AttachmentService;
-import run.app.service.BlogStatusService;
-import run.app.service.PostService;
-import run.app.service.RedisService;
+import run.app.service.*;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -75,9 +70,11 @@ public class PostServiceImpl implements PostService {
     @Autowired
     BloggerProfileMapper bloggerProfileMapper;
 
-    @Override
-    public BaseResponse getList(int pageNum, int pageSize) {
+    @Autowired
+    UserService userService;
 
+    @Override
+    public BaseResponse getArticleList(run.app.entity.VO.PageInfo pageInfo) {
 
         BlogExample blogExample = new BlogExample();
 
@@ -86,7 +83,7 @@ public class PostServiceImpl implements PostService {
         criteria.andStatusEqualTo("PUBLISHED");
 
 
-        PageHelper.startPage(pageNum,pageSize);
+        PageHelper.startPage(pageInfo.getPageNum(),pageInfo.getPageSize());
         List<Blog> blogs = blogMapper.selectByExample(blogExample);
 
         PageInfo<Blog> list = new PageInfo<>(blogs);
@@ -101,13 +98,14 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public BaseResponse getListByExample(int pageNum, int pageSize, String keyword) {
+    public BaseResponse getArticleListByExample(run.app.entity.VO.PageInfo pageInfo, String keyword) {
 
         QueryParams postQueryParams = new QueryParams();
 
         postQueryParams.setKeyword(keyword);
         postQueryParams.setStatus("PUBLISHED");
-        PageHelper.startPage(pageNum,pageSize);
+        PageHelper.startPage(pageInfo.getPageNum(),pageInfo.getPageSize());
+
         List<Blog> blogList = blogMapper.selectByUserExample(postQueryParams, null);
 
         PageInfo<Blog> list = new PageInfo<>(blogList);
@@ -125,41 +123,45 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public BaseResponse getDetail(Long blogId) {
+    public BaseResponse getArticleDetail(Long blogId) {
 
         BaseResponse baseResponse = new BaseResponse();
 
 
 
         Blog blog = blogMapper.selectByPrimaryKey(blogId);
+
         if(null == blog) { //当博客id不存在时
             throw new NotFoundException("没有相关博客信息");
         }
 
+        BlogDetailWithAuthor blogDetailWithAuthor = new BlogDetailWithAuthor();
+
         BlogContent blogContent = blogContentMapper.selectByPrimaryKey(blogId);
 
-        BloggerProfile bloggerProfile = bloggerProfileMapper.selectByPrimaryKey(blog.getBloggerId());
+        BeanUtils.copyProperties(blog,blogDetailWithAuthor);
 
+        BeanUtils.copyProperties(blogContent,blogDetailWithAuthor);
 
         //todo: tags
         List<String> nowTags = new ArrayList<>();
         if(!StringUtils.isBlank(blog.getTagTitle())){
 
-          nowTags = tagService.selectTagTitleByIdString(blog.getTagTitle());
+            nowTags = tagService.selectTagTitleByIdString(blog.getTagTitle());
         }
 
-        String pic = "";
+        blogDetailWithAuthor.setTagsTitle(nowTags);
 
-        if(null != blog.getPictureId()){
-            pic = attachmentService.selectPicById(blog.getPictureId());
-        }
-        StringBuilder avatarPath = new StringBuilder();
-        if(null != bloggerProfile.getAvatarId()){ //判断用户是否有自定义头像
-            avatarPath.append(attachmentService.getPathById(bloggerProfile.getAvatarId()));
-        }
+        String pic = null != blog.getPictureId() ? attachmentService.getPathById(blog.getPictureId()) : null;
 
-        //todo 属性太长 需要重构
-        BlogDetailWithAuthor blogDetailWithAuthor = new BlogDetailWithAuthor(blogId,blog.getTitle(),blog.getSummary(),blog.getReleaseDate(),nowTags,blogContent.getContent(),pic,bloggerProfile.getNickname(),avatarPath.toString());
+        blogDetailWithAuthor.setPicture(pic);
+
+        UserDTO author = userService.getUserDTOById(blog.getBloggerId());
+
+        blogDetailWithAuthor.setAuthor(author);
+
+
+//        BlogDetailWithAuthor blogDetailWithAuthor = new BlogDetailWithAuthor(blogId,blog.getTitle(),blog.getSummary(),blog.getReleaseDate(),nowTags,blogContent.getContent(),pic,bloggerProfile.getNickname(),avatarPath.toString());
 
         baseResponse.setStatus(HttpStatus.OK.value());
         baseResponse.setData(blogDetailWithAuthor);
@@ -168,7 +170,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public BaseResponse getListByTag(int pageNum, int pageSize, String tag) {
+    public BaseResponse getArticleListByTag(run.app.entity.VO.PageInfo pageInfo, String tag) {
 
         Long id = tagService.selectIdWithName(tag);
 
@@ -177,12 +179,12 @@ public class PostServiceImpl implements PostService {
 
 
         if(null != id) {
-            List<Long> list = tagService.selectBlogIdByTagId(pageSize,pageNum,id);
+            List<Long> list = tagService.selectBlogIdByTagId(pageInfo,id);
             log.debug("tag集合"+list.size());
             PageInfo<Long> longPageInfo = new PageInfo<>(list);
 //          采取分页的方式 10-9 -19
 //            List<Long> list1 = list.subList((pageNum - 1) * pageSize, list.size()>pageNum * pageSize?pageNum*pageSize:list.size());
-
+// 此方法逻辑上有错误
             List<run.app.entity.DTO.Blog> blogs = new ArrayList<>();
 
             list.stream().forEach(x -> {

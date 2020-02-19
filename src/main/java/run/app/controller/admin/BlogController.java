@@ -5,11 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import run.app.entity.DTO.BaseResponse;
+import run.app.entity.VO.PageInfo;
 import run.app.entity.VO.QueryParams;
 import run.app.service.ArticleService;
 import run.app.service.PostService;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 /**
  * Created with IntelliJ IDEA.
@@ -31,19 +33,18 @@ public class BlogController {
 
     @GetMapping("/query")
     @ApiOperation("管理员审核文章列表")
-    public BaseResponse getListByExample(@RequestParam int pageNum,
-                                         @RequestParam int pageSize,
+    public BaseResponse getListByExample(@Valid PageInfo pageInfo,
                                          QueryParams postQueryParams,
                                          HttpServletRequest request){
 
         log.info(postQueryParams.toString());
-        return articleService.getArticleListToAdminByExample(pageNum,pageSize,postQueryParams,request.getHeader(AUTHENICATION));
+        return articleService.getArticleListToAdminByExample(pageInfo,postQueryParams,request.getHeader(AUTHENICATION));
     }
 
     @GetMapping("/detail/{blogId:\\d+}")
     @ApiOperation("博客详细信息")
     public BaseResponse getDetail(@PathVariable("blogId")Long blogId){
-        return postService.getDetail(blogId);
+        return postService.getArticleDetail(blogId);
     }
 
 

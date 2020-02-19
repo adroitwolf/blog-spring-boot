@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import run.app.entity.DTO.BaseResponse;
+import run.app.entity.VO.PageInfo;
 import run.app.entity.VO.AttachmentQueryParams;
 import run.app.service.AttachmentService;
 
@@ -27,7 +28,10 @@ public class AttachmentServiceTest {
 
     @Test
     public void listTest(){
-        BaseResponse attachmentList = attachmentService.getAttachmentList(5, 0, new AttachmentQueryParams("用户头像",null), "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOlsiMzg3MTkzNzE3MDg3MjcyOTYwIiwidGVzdCJdLCJyb2xlcyI6WyJVU0VSIl0sImlzcyI6IldIT0FNSSIsImV4cCI6MTU3MzYzMjI1OCwidXNlcklkIjozODcxOTM3MTcwODcyNzI5NjB9.NpNj9MDGQPCJN6L5btoExJM0DrDGbN9KjaDXS_DsUGA");
+        PageInfo pageInfo = new PageInfo();
+        pageInfo.setPageNum(1);
+        pageInfo.setPageSize(5);
+        BaseResponse attachmentList = attachmentService.getAttachmentList(pageInfo, new AttachmentQueryParams("用户头像",null), "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOlsiMzg3MTkzNzE3MDg3MjcyOTYwIiwidGVzdCJdLCJyb2xlcyI6WyJVU0VSIl0sImlzcyI6IldIT0FNSSIsImV4cCI6MTU3MzYzMjI1OCwidXNlcklkIjozODcxOTM3MTcwODcyNzI5NjB9.NpNj9MDGQPCJN6L5btoExJM0DrDGbN9KjaDXS_DsUGA");
 
         log.debug(attachmentList.getData().toString());
     }

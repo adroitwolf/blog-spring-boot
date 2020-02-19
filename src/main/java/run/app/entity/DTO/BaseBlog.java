@@ -7,27 +7,23 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import java.util.List;
-
 /**
  * Created with IntelliJ IDEA.
  * User: WHOAMI
- * Time: 2019 2019/10/30 16:28
- * Description: 用户账号
+ * Time: 2020 2020/2/19 16:32
+ * Description: 博客的基础信息
  */
 @Data
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class User {
+public class BaseBlog {
+
+    private String title;
 
     @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
-    //这里指的是用户账号
-    private String username;
-
-    private List<String> roles;
-
+    private String picture;
 
 }

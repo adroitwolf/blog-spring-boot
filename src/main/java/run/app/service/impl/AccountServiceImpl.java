@@ -36,7 +36,6 @@ import run.app.service.RoleService;
 import run.app.util.AppUtil;
 
 import java.util.*;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 /**
@@ -85,6 +84,7 @@ public class AccountServiceImpl implements AccountService{
         //判断用户是用邮箱还是账号登陆的
         final BloggerAccount user;
         User userRs = new User();
+
         Optional<String> token = Optional.ofNullable(null);
 
         try {
@@ -103,7 +103,7 @@ public class AccountServiceImpl implements AccountService{
             BeanUtils.copyProperties(user,userRs);
             userRs.setRoles(roleService.getRolesByUserId(userRs.getId())
                     .stream().map(n->n.getAuthority()).collect(Collectors.toList()));
-                token  = Optional.ofNullable(Optional.ofNullable( tokenService.getToken(userRs))).orElseThrow(() -> new ServiceException("服务异常"));
+                token  = Optional.ofNullable(Optional.ofNullable( tokenService.generateToken(userRs))).orElseThrow(() -> new ServiceException("服务异常"));
         }else{
                 throw new BadRequestException(PASSERROR);
         }
@@ -119,11 +119,15 @@ public class AccountServiceImpl implements AccountService{
 
 
     @Override
-    public boolean updatePassword(@NonNull String oldPassword, @NonNull String newPassword, String token) {
+    public BaseResponse updatePassword(@NonNull String oldPassword, @NonNull String newPassword, String token) {
         BloggerAccountExample bloggerAccountExample = new BloggerAccountExample();
 
         BloggerAccountExample.Criteria criteria = bloggerAccountExample.createCriteria();
+
+        BaseResponse baseResponse = new BaseResponse();
+
         criteria.andIdEqualTo(tokenService.getUserIdWithToken(token));
+
         criteria.andPasswordEqualTo(oldPassword);
 
         List<BloggerAccount> bloggerAccounts = bloggerAccountMapper.selectByExample(bloggerAccountExample);
@@ -136,10 +140,12 @@ public class AccountServiceImpl implements AccountService{
         for (BloggerAccount bloggerAccount:bloggerAccounts) {
             bloggerAccount.setPassword(newPassword);
             bloggerAccountMapper.updateByPrimaryKey(bloggerAccount);
-            return true;
+            baseResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+            return baseResponse;
         }
 
-        return false;
+        baseResponse.setStatus(HttpStatus.OK.value());
+        return baseResponse;
     }
 
 
@@ -223,12 +229,14 @@ public class AccountServiceImpl implements AccountService{
         //设置用户角色
         //默认都是User用户
 
-        roleService.setRoleWithUserId(RoleEnum.USER,bloggerAccount.getId());
+        List<RoleEnum> roles = new ArrayList<>();
+        roles.add(RoleEnum.USER);
+
+        roleService.setRolesWithUserId(roles,bloggerAccount.getId());
 
         return baseResponse;
     }
 
-    @Override
     public BloggerAccount loginWithEmail(String email) {
 
         BloggerAccountExample bloggerAccountExample = new BloggerAccountExample();
@@ -242,7 +250,6 @@ public class AccountServiceImpl implements AccountService{
         return user.orElseThrow(() -> new NotFoundException("用户邮箱不存在"));
     }
 
-    @Override
     public BloggerAccount loginWithUsername(String username) {
 
         BloggerAccountExample bloggerAccountExample = new BloggerAccountExample();
@@ -256,13 +263,7 @@ public class AccountServiceImpl implements AccountService{
         return user.orElseThrow(() -> new NotFoundException("用户账号不存在"));
     }
 
-    /**
-    * 功能描述: 封禁账户
-    * @Param: [bloggerId, token]
-    * @Return: run.app.entity.DTO.BaseResponse
-    * @Author: WHOAMI
-    * @Date: 2019/12/15 14:04
-     */
+
     @Override
     public BaseResponse updateUserStatus(Long bloggerId,String status,String token){
 //      不允许封禁自己的账户
@@ -282,7 +283,9 @@ public class AccountServiceImpl implements AccountService{
 
     @Override
     public BaseResponse deleteUser(Long bloggerId,String token) { //删除用户需要权限
+        //todo 需要在用户验证 验证码之后的操作
 //       1.不能删除自己 2.同水平之间不能删除
+
         log.info(String.valueOf(bloggerId));
 
         log.info("经过token解释过的id:"+tokenService.getUserIdWithToken(token));
@@ -309,25 +312,26 @@ public class AccountServiceImpl implements AccountService{
     }
 
     @Override
-    public BaseResponse selectUserByExample(int pageNum, int pageSize, QueryParams queryParams) {
+    public BaseResponse selectUserByExample(run.app.entity.VO.PageInfo pageInfo, QueryParams queryParams) {
         if(!StringUtils.isEmpty(queryParams.getStatus())){
             UserStatusEnum.valueOf(queryParams.getStatus());
         }
 
-        PageHelper.startPage(pageNum,pageSize);
+        PageHelper.startPage(pageInfo.getPageNum(),pageInfo.getPageSize());
         List<UserInfo> accounts = bloggerAccountMapper.selectByQueryParams(queryParams);
 
-        PageInfo<UserInfo> pageInfo = new PageInfo<>(accounts);
+        PageInfo<UserInfo> pageInfoObject = new PageInfo<>(accounts);
 
         DataGrid dataGrid = new DataGrid();
 
-        List<UserInfo> lists = pageInfo.getList().stream().map(item->{
+        List<UserInfo> lists = pageInfoObject.getList().stream().map(item->{
 
             UserInfo userInfo = new UserInfo();
 
             BeanUtils.copyProperties(item,userInfo);
 
             if(null != item.getAvatarId()){ //查询是否头像为空
+
                 userInfo.setAvatar(attachmentService.getPathById(item.getAvatarId()));
             }
 
@@ -340,12 +344,16 @@ public class AccountServiceImpl implements AccountService{
 
         dataGrid.setRows(lists);
 
-        dataGrid.setTotal(pageInfo.getTotal());
+        dataGrid.setTotal(pageInfoObject.getTotal());
 
 
 
         return new BaseResponse(HttpStatus.OK.value(),null,dataGrid);
     }
 
+    @Override
+    public BaseResponse logout(String token) {
+        return new BaseResponse();
+    }
 
 }

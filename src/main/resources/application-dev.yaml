@@ -44,6 +44,9 @@ spring:
     #数据库方式
     job-store-type: jdbc
 
+#xss相关配置
+
+
 
 # log
 logging:
@@ -58,6 +61,10 @@ mybatis:
 # 图片上传下载
 web:
   upload-path: ${user.dir}/img
+
+# 文件服务器
+fileServer: http://localhost:8099
+
 
 
 jwt:

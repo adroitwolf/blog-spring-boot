@@ -43,15 +43,8 @@ public class AdminController {
     @PutMapping("/changePassword")
     public BaseResponse updatePassword(@Valid @RequestBody PasswordParams passwordParams, HttpServletRequest request){
 //        String token = userService.getUsernameByToken(request.getHeader("Authentication"));
-            String token = request.getHeader("Authentication");
-        BaseResponse baseResponse = new BaseResponse();
-        if(accountService.updatePassword(passwordParams.getOldPassword(),passwordParams.getNewPassword(),token)){
-            baseResponse.setStatus(HttpStatus.OK.value());
-        }else{
-            baseResponse.setStatus(HttpStatus.BAD_REQUEST.value());
-        }
 
-        return baseResponse;
+        return accountService.updatePassword(passwordParams.getOldPassword(),passwordParams.getNewPassword(),request.getHeader("Authentication"));
     }
 
     @ApiOperation("注册新用户")

@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +27,7 @@ import run.app.service.UserService;
 import run.app.util.AppUtil;
 import run.app.util.UploadUtil;
 
+import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -54,6 +56,10 @@ public class AttachmentServiceImpl implements AttachmentService {
     @Autowired
     TokenService tokenService;
 
+
+    @Value("${fileServer}")
+    String fileServer;
+
     private final  Integer DEFAULT_NUM = 0;
 
 
@@ -71,12 +77,12 @@ public class AttachmentServiceImpl implements AttachmentService {
 
 
     @Override
-    public BaseResponse getAttachmentList(int pageSize, int pageNum, AttachmentQueryParams attachmentQueryParams, String token) {
+    public BaseResponse getAttachmentList(run.app.entity.VO.PageInfo pageInfo, AttachmentQueryParams attachmentQueryParams, String token) {
 
         Long id = tokenService.getUserIdWithToken(token);
 
 
-        PageHelper.startPage(pageNum,pageSize);
+        PageHelper.startPage(pageInfo.getPageNum(),pageInfo.getPageNum());
 
         /**
         * 功能描述: 修改成模糊查询
@@ -166,7 +172,11 @@ public class AttachmentServiceImpl implements AttachmentService {
 
     @Override
     public String getPathById(Long id) {
-        return bloggerPictureMapper.selectByPrimaryKey(id).getPath();
+        StringBuilder builder = new StringBuilder();
+        builder.append(fileServer);
+        builder.append(File.separator);
+        builder.append(bloggerPictureMapper.selectByPrimaryKey(id).getPath());
+        return builder.toString();
     }
 
     @Override

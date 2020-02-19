@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import run.app.entity.VO.PageInfo;
 import run.app.entity.model.BlogLabel;
 import run.app.entity.model.BlogLabelExample;
 import run.app.entity.model.BlogTagMapExample;
@@ -207,12 +208,13 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    public List<Long> selectBlogIdByTagId(int pageSize,int pageNum,Long id) {
+    public List<Long> selectBlogIdByTagId(PageInfo pageInfo, Long id) {
+
         BlogTagMapExample blogTagMapExample = new BlogTagMapExample();
         BlogTagMapExample.Criteria criteria = blogTagMapExample.createCriteria();
         criteria.andTagIdEqualTo(id);
 
-        PageHelper.startPage(pageNum,pageSize);
+        PageHelper.startPage(pageInfo.getPageNum(),pageInfo.getPageSize());
 
 
         return  blogTagMapMapper.selectByExampleForBlogId(blogTagMapExample);

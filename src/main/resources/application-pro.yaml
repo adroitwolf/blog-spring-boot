@@ -26,7 +26,8 @@ spring:
 
 # redis
 
-
+# 文件服务器
+fileServer: http://whoami1231.xyz
 
 # log
 logging:

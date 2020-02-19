@@ -8,6 +8,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import run.app.entity.VO.PageInfo;
 import run.app.entity.VO.LoginParams;
 import run.app.entity.VO.QueryParams;
 import run.app.exception.BadRequestException;
@@ -48,7 +49,10 @@ public class AccountServiceTest {
 
     @Test
     public void queryUser(){
-        System.out.println(accountService.selectUserByExample(1,5,new QueryParams()).toString());
+        PageInfo pageInfo = new PageInfo();
+        pageInfo.setPageNum(1);
+        pageInfo.setPageSize(5);
+        System.out.println(accountService.selectUserByExample(pageInfo,new QueryParams()).toString());
     }
 
     @Test

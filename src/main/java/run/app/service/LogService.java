@@ -10,6 +10,13 @@ import run.app.entity.model.BlogLog;
  */
 public interface LogService {
 
+    /**
+    * 功能描述: 存储日志
+    * @Param: [blogLog]
+    * @Return: void
+    * @Author: WHOAMI
+    * @Date: 2020/1/30 19:43
+     */
     void storageLog(BlogLog blogLog);
 
 }

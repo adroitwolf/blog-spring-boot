@@ -4,10 +4,12 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import run.app.entity.DTO.BaseResponse;
+import run.app.entity.VO.PageInfo;
 import run.app.entity.VO.QueryParams;
 import run.app.service.AccountService;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 /**
  * Created with IntelliJ IDEA.
@@ -42,10 +44,9 @@ public class UserController {
     @GetMapping("/query")
     @ApiOperation("查询用户状态")
     public BaseResponse queryUserByExample(
-            @RequestParam int pageNum,
-            @RequestParam int pageSize,
+            @Valid PageInfo pageInfo,
             QueryParams queryParams){
-        return accountService.selectUserByExample(pageNum,pageSize,queryParams);
+        return accountService.selectUserByExample(pageInfo,queryParams);
     }
 
 

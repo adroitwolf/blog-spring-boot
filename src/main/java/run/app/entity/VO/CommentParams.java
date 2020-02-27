@@ -22,16 +22,16 @@ public class CommentParams {
 
     @JsonSerialize(using = ToStringSerializer.class)
     @Min(value = 0,message = "请不要进行非法操作")
-    private Long objectId;
+    private Long objectId = 0L;
 
     @JsonSerialize(using = ToStringSerializer.class)
     @Min(value = 0,message = "请不要进行非法操作")
     private Long toId;
 
 
-    @JsonSerialize(using = ToStringSerializer.class)
-    @Min(value = 0,message = "请不要进行非法操作")
-    private Long root = 0L;
+//    @JsonSerialize(using = ToStringSerializer.class)
+//    @Min(value = 0,message = "请不要进行非法操作")
+//    private Long root = 0L;
 
     @NonNull
     private String type;

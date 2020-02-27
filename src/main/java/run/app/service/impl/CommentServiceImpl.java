@@ -62,7 +62,22 @@ public class CommentServiceImpl implements CommentService {
 
         // 这里来判断一下是否为作者
         // 这里应该确定文章是否存在
+
         Blog blog = articleService.getBlogByBlogId(commentParams.getObjectId());
+
+        //这里应该确定父评论id是否存在
+
+        if(!commentParams.getPid().equals(0L)){ //如果这是一个子评论
+            Comments parent = commentsMapper.selectByPrimaryKey(commentParams.getPid());
+
+            if(null == parent){
+                throw new NotFoundException("评论失败");
+            }else{
+                comments.setRoot(parent.getRoot().equals(0L)? parent.getId():parent.getRoot());
+            }
+        }else{
+            comments.setRoot(0L);
+        }
 
         if(null == blog){
             throw new  NotFoundException("该文章已飞到火星,评论失败");
@@ -88,6 +103,9 @@ public class CommentServiceImpl implements CommentService {
 
         comments.setContent(content);
 
+        //设定评论未被删除
+        comments.setIsDel((byte)0);
+
         commentsMapper.insertSelective(comments);
 
         return new BaseResponse(HttpStatus.OK.value(),"评论成功",null);
@@ -95,6 +113,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public BaseResponse getList(Long id, String type,  PageInfo pageInfo) {
+
        DataGrid dataGrid =CommentTypeEnum.BLOG_COMMENT.equals(CommentTypeEnum.valueOf(type))  ?
                getPCommentsList(id,pageInfo):getChildCommentsList(id,pageInfo);
         BaseResponse baseResponse = new BaseResponse();
@@ -321,7 +340,7 @@ public class CommentServiceImpl implements CommentService {
 
         StringBuilder builder = new StringBuilder();
 
-        if(null == id || id.equals(0L)){ //这说明是一个子评论
+        if(null == id || id.equals(0L)){ //这说明是一个父评论
 
             builder.append(content);
 
@@ -329,6 +348,7 @@ public class CommentServiceImpl implements CommentService {
             builder.append("回复");
             builder.append(userService.getNicknameById(id));
             builder.append(": ");
+            builder.append(content);
         }
 
         return builder.toString();

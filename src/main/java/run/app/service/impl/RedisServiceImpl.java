@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import run.app.entity.DTO.ClickStatus;
 import run.app.entity.DTO.PopularBlog;
 import run.app.entity.model.BlogStatus;
+import run.app.exception.BadRequestException;
+import run.app.exception.UnAuthenticationException;
 import run.app.service.RedisService;
 import run.app.util.RedisUtil;
 
@@ -26,10 +28,12 @@ public class RedisServiceImpl implements RedisService {
     @Autowired
     RedisTemplate redisTemplate;
 
-//    用户点击--redis锁
-    private final String LOCAL_BLOG_CLICK_KEY = "LOCAL_BLOG_CLICK_KEY";
+    //redis通用锁value
+    private final String LOCAL_VALUE = "LOCAL_VALUE";
 
-    private final String LOCAL_BLOG_CLICK_VALUE = "LOCAL_BLOG_CLICK_KEY";
+    //    用户点击--redis锁
+    private final String LOCAL_BLOG_CLICK_PRE = "LOCAL_BLOG_CLICK_KEY";
+
 
     private static final String BLOG_CLICKED_KEY="BLOG_CLICKED";
 
@@ -38,11 +42,20 @@ public class RedisServiceImpl implements RedisService {
 //    更新top5文章--redis锁
     private static final String LOCAL_TOP5_POST_UPDATE_KEY = "LOCAL_TOP5_POST_UPDATE_KEY";
 
-    private static final String LOCAL_TOP5_POST_UPDATE_VALUE = "LOCAL_TOP5_POST_UPDATE_VALUE";
+
+
+// 用户登陆--redis锁
+    private static final String LOCAL_TOKEN_PRE = "LOCAL_TOKEN_PRE";
+
+
 
     @Override
     public void incrementBlogClickedCount(ClickStatus clickStatus) {
-        Boolean lock = getLock(LOCAL_BLOG_CLICK_KEY,LOCAL_BLOG_CLICK_VALUE,2,TimeUnit.SECONDS);
+        StringBuilder builder = new StringBuilder();
+        builder.append(LOCAL_BLOG_CLICK_PRE);
+        builder.append(clickStatus.getBlogId());
+        Boolean lock = getLock(builder.toString(),LOCAL_VALUE,2,TimeUnit.SECONDS);
+
         if(!lock){
             log.info("redis正在添加缓存...请稍等"); //此时锁有人占用
             return ;
@@ -59,7 +72,7 @@ public class RedisServiceImpl implements RedisService {
             redisTemplate.expire(key,1,TimeUnit.DAYS); //过期时间为1天
 //            redisTemplate.expire(key,10,TimeUnit.SECONDS);
         }finally {
-            deleteLock(LOCAL_BLOG_CLICK_KEY);
+            deleteLock(builder.toString());
         }
     }
 
@@ -91,7 +104,7 @@ public class RedisServiceImpl implements RedisService {
     @Override
     public void transTop5Posts2Redis(List<PopularBlog> list) {
 
-        Boolean lock = getLock(LOCAL_TOP5_POST_UPDATE_KEY,LOCAL_TOP5_POST_UPDATE_VALUE,2*60,TimeUnit.SECONDS);
+        Boolean lock = getLock(LOCAL_TOP5_POST_UPDATE_KEY,LOCAL_VALUE,2*60,TimeUnit.SECONDS);
         if(!lock){
             log.info("redis正在添加缓存...请稍等"); //此时锁有人占用
             return ;
@@ -134,6 +147,38 @@ public class RedisServiceImpl implements RedisService {
     public Boolean getLock(String key,String value,int timeout,TimeUnit timeUnit){
         return redisTemplate.opsForValue().setIfAbsent(key, value, timeout,timeUnit);
     }
+
+    @Override
+    public void putAutoToken(String refreshToken, Long userId, int timeout, TimeUnit timeUnit) {
+
+        StringBuilder lockKey = new StringBuilder();
+
+        lockKey.append(LOCAL_TOKEN_PRE);
+
+        lockKey.append(userId);
+        Boolean lock = getLock(lockKey.toString(),LOCAL_VALUE,5,TimeUnit.SECONDS);
+        if(!lock){
+            throw new BadRequestException("请不要频繁登陆");
+        }
+        try{
+            redisTemplate.opsForValue().setIfAbsent(refreshToken,userId,timeout,timeUnit);
+        }finally {
+            deleteLock(lockKey.toString());
+        }
+
+    }
+
+    @Override
+    public Long getUserIdByRefreshToken(String key) {
+
+        Long id =(Long) redisTemplate.opsForValue().get(key);
+
+        if(null == id || id.equals(0L)){
+            throw new UnAuthenticationException("ReFreshToken凭证已失效，请重新登录");
+        }
+        return id;
+    }
+
 
     //删除redis锁
     @Override

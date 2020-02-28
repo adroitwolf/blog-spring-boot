@@ -49,7 +49,7 @@ public class JwtUtil {
         long currentTimeMillis = System.currentTimeMillis();
         return JWT.create()
                 .withIssuer(jwtUtil.jwtProperties.getName())
-                .withExpiresAt(new Date(currentTimeMillis+jwtUtil.jwtProperties.getJwtExpires()))
+                .withExpiresAt(new Date(currentTimeMillis+jwtUtil.jwtProperties.getJwtExpires()*1000))
                 .withClaim("userId",user.getId())
                 .withArrayClaim("roles",user.getRoles().toArray(new String[user.getRoles().size()]))
                 .withAudience(user.getId().toString(),user.getUsername())

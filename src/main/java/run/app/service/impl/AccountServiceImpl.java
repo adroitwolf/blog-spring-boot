@@ -11,10 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import run.app.entity.DTO.BaseResponse;
-import run.app.entity.DTO.DataGrid;
-import run.app.entity.DTO.User;
-import run.app.entity.DTO.UserInfo;
+import run.app.entity.DTO.*;
 import run.app.entity.VO.QueryParams;
 import run.app.entity.enums.RoleEnum;
 import run.app.entity.enums.UserStatusEnum;
@@ -83,9 +80,10 @@ public class AccountServiceImpl implements AccountService{
 ////        }
         //判断用户是用邮箱还是账号登陆的
         final BloggerAccount user;
+
         User userRs = new User();
 
-        Optional<String> token = Optional.ofNullable(null);
+//        Optional<String> token = Optional.ofNullable(null);
 
         try {
             user = Validator.isEmail(loginParams.getP()) ? loginWithEmail(loginParams.getP()) : loginWithUsername(loginParams.getP());
@@ -100,20 +98,42 @@ public class AccountServiceImpl implements AccountService{
             if(!UserStatusEnum.YES.getName().equals(user.getisEnabled())){ //说明被封禁
                 throw new BadRequestException(BLOCKED);
             }
-            BeanUtils.copyProperties(user,userRs);
-            userRs.setRoles(roleService.getRolesByUserId(userRs.getId())
-                    .stream().map(n->n.getAuthority()).collect(Collectors.toList()));
-                token  = Optional.ofNullable(Optional.ofNullable( tokenService.generateToken(userRs))).orElseThrow(() -> new ServiceException("服务异常"));
+            userRs = convertBloggerAccount2User(user);
+
+
         }else{
                 throw new BadRequestException(PASSERROR);
         }
+
         BaseResponse baseResponse = new BaseResponse();
-        HashMap<String, Object> map = new HashMap<>();
-        map.put("token",token.get());
-        map.put("user",userRs);
-        baseResponse.setData(map);
-        baseResponse.setMessage(LOGINSUCCESS);
+
+        baseResponse.setData(tokenService.buildAutoToken(userRs));
+
+//        HashMap<String, Object> map = new HashMap<>();
+//        map.put("token",token.get());
+//        map.put("user",userRs);
+//        baseResponse.setData(map);
+//        baseResponse.setMessage(LOGINSUCCESS);
         baseResponse.setStatus(HttpStatus.OK.value());
+        return baseResponse;
+    }
+
+    @Override
+    public BaseResponse refresh(String refresh) {
+        Long userId = tokenService.getUserIdByRefreshToken(refresh);
+
+        BloggerAccount bloggerAccount = bloggerAccountMapper.selectByPrimaryKey(userId);
+
+        User user = convertBloggerAccount2User(bloggerAccount);
+
+        AutoToken autoToken = tokenService.buildAutoToken(user);
+
+        BaseResponse baseResponse = new BaseResponse();
+
+        baseResponse.setData(autoToken);
+
+        baseResponse.setStatus(HttpStatus.OK.value());
+
         return baseResponse;
     }
 
@@ -355,5 +375,21 @@ public class AccountServiceImpl implements AccountService{
     public BaseResponse logout(String token) {
         return new BaseResponse();
     }
+
+    @Override
+    public User convertBloggerAccount2User(BloggerAccount user) {
+        User userRs = new User();
+
+        BeanUtils.copyProperties(user,userRs);
+
+
+
+        userRs.setRoles(roleService.getRolesByUserId(userRs.getId())
+                .stream().map(n->n.getAuthority()).collect(Collectors.toList()));
+
+
+        return userRs;
+    }
+
 
 }

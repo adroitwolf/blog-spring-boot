@@ -54,6 +54,13 @@ public class AdminController {
     }
 
 
+    @ApiOperation("获取refresh令牌")
+    @GetMapping("/refresh/{refreshToken}")
+    public BaseResponse refresh(@PathVariable("refreshToken") String refreshToken){
+        return accountService.refresh(refreshToken);
+    }
+
+
     //    @MethodLog
 //    @PostMapping("/logout")
 //    @ApiOperation("用户登出")

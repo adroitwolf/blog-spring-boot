@@ -1,6 +1,7 @@
 package run.app.service;
 
 
+import lombok.NonNull;
 import run.app.entity.DTO.ClickStatus;
 import run.app.entity.DTO.PopularBlog;
 import run.app.entity.model.BlogStatus;
@@ -25,6 +26,20 @@ public interface RedisService {
     * @Date: 2020/1/30 19:45
      */
     Boolean getLock(String key, String value, int timeout, TimeUnit timeUnit);
+
+
+    /**
+    * 功能描述: 存放token与access_token机制
+    * @Param: [userId, accessToken, refreshToken, timeout, timeUnit]
+    * @Return: void
+    * @Author: WHOAMI
+    * @Date: 2020/2/27 22:03
+     */
+    void putAutoToken(String accessToken,Long userId,int timeout,  TimeUnit timeUnit);
+
+
+
+    Long getUserIdByRefreshToken(String key);
 
     /**
     * 功能描述: 删除redis锁

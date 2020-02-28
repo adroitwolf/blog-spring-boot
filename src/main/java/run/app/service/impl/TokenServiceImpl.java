@@ -9,17 +9,19 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import run.app.config.properties.JWTProperties;
+import run.app.entity.DTO.AutoToken;
 import run.app.entity.DTO.User;
 import run.app.entity.enums.RoleEnum;
+import run.app.exception.ServiceException;
 import run.app.exception.UnAccessException;
-import run.app.service.RoleService;
-import run.app.service.TokenService;
-import run.app.service.AccountService;
-import run.app.service.UserService;
+import run.app.service.*;
+import run.app.util.AppUtil;
 import run.app.util.JwtUtil;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created with IntelliJ IDEA.
@@ -43,9 +45,35 @@ public class TokenServiceImpl implements TokenService {
     AccountService accountService;
 
     @Autowired
+    RedisService redisService;
+
+
+    @Autowired
     JWTProperties jwtProperties;
 
 
+    @Override
+    public AutoToken buildAutoToken(User user) {
+        AutoToken autoToken = new AutoToken();
+        String access_token = Optional.ofNullable(generateToken(user)).orElseThrow(() -> new ServiceException("服务异常"));
+
+        String refresh_token = AppUtil.RandomUUIDWithoutDash();
+
+        redisService.putAutoToken(refresh_token,user.getId(), jwtProperties.getRefreshExpires(),TimeUnit.DAYS);
+
+        autoToken.setAccessToken(access_token);
+
+        autoToken.setRefreshToken(refresh_token);
+
+        autoToken.setExpiredIn(jwtProperties.getJwtExpires());
+
+        return autoToken;
+    }
+
+    @Override
+    public Long getUserIdByRefreshToken(String token) {
+        return redisService.getUserIdByRefreshToken(token);
+    }
 
     @Override
     public void authentication(Long id, String token) {
@@ -107,5 +135,8 @@ public class TokenServiceImpl implements TokenService {
        return  JWT.decode(token).getClaim("userId").asLong();
 
     }
+
+
+
 
 }

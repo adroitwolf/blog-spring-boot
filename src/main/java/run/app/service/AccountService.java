@@ -2,10 +2,12 @@ package run.app.service;
 
 import lombok.NonNull;
 import run.app.entity.DTO.BaseResponse;
+import run.app.entity.DTO.User;
 import run.app.entity.VO.PageInfo;
 import run.app.entity.VO.LoginParams;
 import run.app.entity.VO.QueryParams;
 import run.app.entity.VO.RegisterParams;
+import run.app.entity.model.BloggerAccount;
 
 /**
  * Created with IntelliJ IDEA.
@@ -25,6 +27,15 @@ public interface AccountService {
     @NonNull
     BaseResponse loginService(@NonNull LoginParams loginParams);
 
+
+    /**
+    * 功能描述: 通过refreshToken令牌对access令牌进行刷新
+    * @Param: [refresh]
+    * @Return: run.app.entity.DTO.BaseResponse
+    * @Author: WHOAMI
+    * @Date: 2020/2/27 21:31
+     */
+    BaseResponse refresh(String refresh);
 
     /**
     * 功能描述: 用户更新密码
@@ -111,5 +122,8 @@ public interface AccountService {
      * @Date: 2020/1/30 20:13
      */
     BaseResponse logout(String token);
+
+
+    User convertBloggerAccount2User(BloggerAccount user);
 
 }

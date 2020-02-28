@@ -25,6 +25,9 @@ public interface TokenService {
      */
     AutoToken buildAutoToken(User user);
 
+    void deleteRefreshToken(String key);
+
+
     /**
     * 功能描述: 通过refresh_token获取用户id   若token不存在会抛出401异常
     * @Param: [token]

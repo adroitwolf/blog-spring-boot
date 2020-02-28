@@ -42,13 +42,13 @@ public interface RedisService {
     Long getUserIdByRefreshToken(String key);
 
     /**
-    * 功能描述: 删除redis锁
+    * 功能描述: 删除redis键值对
     * @Param: [key]
     * @Return: void
     * @Author: WHOAMI
     * @Date: 2020/1/30 19:45
      */
-    void deleteLock(String key);
+    void delete(String key);
 
     /**
     * 功能描述: 增加用户点击量

@@ -74,7 +74,7 @@ public class BlogStatusServiceImpl implements BlogStatusService {
                 }
             });
         }finally {
-            redisService.deleteLock(LOCAL_TRANS_CLICK_UPDATE_KEY);
+            redisService.delete(LOCAL_TRANS_CLICK_UPDATE_KEY);
         }
     }
 

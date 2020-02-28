@@ -71,6 +71,11 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
+    public void deleteRefreshToken(String key) {
+        redisService.delete(key);
+    }
+
+    @Override
     public Long getUserIdByRefreshToken(String token) {
         return redisService.getUserIdByRefreshToken(token);
     }

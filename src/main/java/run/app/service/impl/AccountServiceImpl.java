@@ -126,7 +126,14 @@ public class AccountServiceImpl implements AccountService{
 
         User user = convertBloggerAccount2User(bloggerAccount);
 
+
+
         AutoToken autoToken = tokenService.buildAutoToken(user);
+
+
+        //删除原来的refreshToken
+        tokenService.deleteRefreshToken(refresh);
+
 
         BaseResponse baseResponse = new BaseResponse();
 

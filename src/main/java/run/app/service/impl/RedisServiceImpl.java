@@ -72,7 +72,7 @@ public class RedisServiceImpl implements RedisService {
             redisTemplate.expire(key,1,TimeUnit.DAYS); //过期时间为1天
 //            redisTemplate.expire(key,10,TimeUnit.SECONDS);
         }finally {
-            deleteLock(builder.toString());
+            delete(builder.toString());
         }
     }
 
@@ -131,7 +131,7 @@ public class RedisServiceImpl implements RedisService {
 //            }
 
         }finally {
-            deleteLock(LOCAL_TOP5_POST_UPDATE_KEY);
+            delete(LOCAL_TOP5_POST_UPDATE_KEY);
         }
     }
 
@@ -163,7 +163,7 @@ public class RedisServiceImpl implements RedisService {
         try{
             redisTemplate.opsForValue().setIfAbsent(refreshToken,userId,timeout,timeUnit);
         }finally {
-            deleteLock(lockKey.toString());
+            delete(lockKey.toString());
         }
 
     }
@@ -180,9 +180,9 @@ public class RedisServiceImpl implements RedisService {
     }
 
 
-    //删除redis锁
+    //删除redis键值对
     @Override
-    public void deleteLock(String key) {
+    public void delete(String key) {
         redisTemplate.delete(key);
     }
 

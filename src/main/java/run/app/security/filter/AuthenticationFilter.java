@@ -63,18 +63,18 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 
 
         if(StringUtils.isEmpty(authentication)){
-            handlerOnFailure(httpServletRequest,httpServletResponse, new UnAuthenticationException("用户未登录，请先登录！"));
+            handlerOnFailure(httpServletRequest,httpServletResponse, new UnAuthenticationException("用户未登录，请先登录！").setErrorData(authentication));
             return;
         }
 
 
         if(!tokenService.verifierToken(authentication)){
-            handlerOnFailure(httpServletRequest,httpServletResponse, new UnAuthenticationException("用户Token无效"));
+            handlerOnFailure(httpServletRequest,httpServletResponse, new UnAuthenticationException("用户Token无效").setErrorData(authentication));
             return;
         }
 
         if(tokenService.isExpire(authentication)){
-            handlerOnFailure(httpServletRequest,httpServletResponse, new UnAuthenticationException("用户Token已经过期"));
+            handlerOnFailure(httpServletRequest,httpServletResponse, new UnAuthenticationException("用户Token已经过期").setErrorData(authentication));
             return;
         }
 
@@ -127,9 +127,11 @@ public class AuthenticationFilter extends OncePerRequestFilter {
     public void handlerOnFailure(HttpServletRequest request, HttpServletResponse response, AppException appException) throws IOException {
         BaseResponse baseResponse = new BaseResponse();
         baseResponse.setStatus(appException.getStatus().value());
+        baseResponse.setData(appException.getErrorData());
         baseResponse.setMessage(appException.getMessage());
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         response.setStatus(HttpStatus.OK.value());
+//        response.setStatus(appException.getStatus().value());
         response.getWriter().write(JSONObject.toJSON(baseResponse).toString());
     }
 

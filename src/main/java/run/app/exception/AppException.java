@@ -2,6 +2,7 @@ package run.app.exception;
 
 import lombok.Data;
 import org.springframework.http.HttpStatus;
+import org.springframework.lang.Nullable;
 
 /**
  * Created with IntelliJ IDEA.
@@ -12,6 +13,7 @@ import org.springframework.http.HttpStatus;
 public abstract class AppException extends RuntimeException {
 
 
+    private Object errData;
 
     public AppException(String message){
         super(message);
@@ -24,5 +26,14 @@ public abstract class AppException extends RuntimeException {
 
     public abstract HttpStatus getStatus();
 
+    public Object getErrorData(){
+        return errData;
+    }
+
+
+    public AppException setErrorData(@Nullable Object errorData){
+        this.errData = errorData;
+        return this;
+    }
 
 }

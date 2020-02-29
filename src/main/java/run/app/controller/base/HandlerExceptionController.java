@@ -24,6 +24,7 @@ public class HandlerExceptionController {
         BaseResponse baseResponse = new BaseResponse();
         baseResponse.setStatus(e.getStatus().value());
         baseResponse.setMessage(e.getMessage());
+        baseResponse.setData(e.getErrorData());
         return baseResponse;
     }
 

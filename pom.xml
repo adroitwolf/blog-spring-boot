@@ -8,7 +8,7 @@
         <version>2.1.4.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>run.example</groupId>
+    <groupId>run.whoami</groupId>
     <artifactId>app</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>eblog</name>
@@ -120,6 +120,13 @@
             <version>2.6.1</version>
         </dependency>
 
+        <!--xss防护-->
+
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.10.2</version>
+        </dependency>
 
         <!--redis 框架接管高并发-->
         <dependency>
@@ -193,5 +200,20 @@
         </plugins>
     </build>
 
+    <licenses>
+        <license>
+            <name>Apache2.0</name>
+
+        </license>
+    </licenses>
+
+
+    <developers>
+        <developer>
+            <id>WHOAMI</id>
+            <name>shoGun</name>
+            <email>13012403735@163.com</email>
+        </developer>
+    </developers>
 
 </project>

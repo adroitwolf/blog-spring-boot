@@ -2,9 +2,9 @@ package run.app.BeanTest.enums;
 
 import org.assertj.core.util.Lists;
 import org.junit.Test;
-import run.app.entity.enums.Role;
+import run.app.entity.enums.RoleEnum;
+import run.app.entity.enums.UserStatusEnum;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -19,7 +19,7 @@ public class RoleTest {
 
     @Test
     public void getName(){
-        System.out.println(Role.ADMIN.getAuthority());
+        System.out.println(RoleEnum.ADMIN.getAuthority());
     }
 
     @Test
@@ -29,6 +29,14 @@ public class RoleTest {
         list.add(2);
 
         list.stream().filter(Objects::isNull).forEach(x-> System.out.println(x));
+    }
+
+
+
+    @Test
+    public void equalTest(){
+        String ENABLED = "YES";
+        System.out.println(UserStatusEnum.YES.getName().equals(ENABLED));
     }
 
 }

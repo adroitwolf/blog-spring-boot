@@ -3,7 +3,9 @@ package run.app.entity.DTO;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -19,38 +21,9 @@ import java.util.List;
  */
 @Data
 @ToString
+@AllArgsConstructor
+@NoArgsConstructor
 public class Blog implements Serializable {
-
-    public Blog() {
-    }
-
-
-//    提供给后台分页查询数据
-    public Blog(Long id, String status, String title, String summary, Date releaseDate, Date nearestModifyDate, List<String> tagsTitle,String picture) {
-        this.id = id;
-        this.status = status;
-        this.title = title;
-        this.summary = summary;
-        this.releaseDate = releaseDate;
-        this.nearestModifyDate = nearestModifyDate;
-        this.tagsTitle = tagsTitle;
-        this.picture = picture;
-    }
-
-//    提供给前台博客卡片数据
-    public Blog(Long id, String title, String summary, Date releaseDate, List<String> tagsTitle,String picture) {
-        this.id = id;
-        this.title = title;
-        this.summary = summary;
-        this.releaseDate = releaseDate;
-        this.tagsTitle = tagsTitle;
-        this.picture = picture;
-    }
-
-
-
-    private String picture;
-
 
     @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
@@ -70,5 +43,29 @@ public class Blog implements Serializable {
     private Date nearestModifyDate;
 
     private List<String> tagsTitle;
+
+    private String picture;
+
+//    提供给后台分页查询数据
+//    public Blog(Long id, String status, String title, String summary, Date releaseDate, Date nearestModifyDate, List<String> tagsTitle,String picture) {
+//        this.id = id;
+//        this.status = status;
+//        this.title = title;
+//        this.summary = summary;
+//        this.releaseDate = releaseDate;
+//        this.nearestModifyDate = nearestModifyDate;
+//        this.tagsTitle = tagsTitle;
+//        this.picture = picture;
+//    }
+
+//    提供给前台博客卡片数据
+//    public Blog(Long id, String title, String summary, Date releaseDate, List<String> tagsTitle,String picture) {
+//        this.id = id;
+//        this.title = title;
+//        this.summary = summary;
+//        this.releaseDate = releaseDate;
+//        this.tagsTitle = tagsTitle;
+//        this.picture = picture;
+//    }
 
 }

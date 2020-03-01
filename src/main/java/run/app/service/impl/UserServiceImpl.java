@@ -2,6 +2,7 @@ package run.app.service.impl;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import run.app.entity.DTO.BaseResponse;
+import run.app.entity.DTO.UserDTO;
 import run.app.entity.DTO.UserDetail;
 import run.app.entity.model.*;
 import run.app.entity.VO.UserParams;
@@ -53,12 +55,13 @@ public class UserServiceImpl implements UserService {
     public @NonNull UserDetail findUserDetailByBloggerId(@NonNull Long bloggerId) {
 
         BloggerAccount bloggerAccount = bloggerAccountMapper.selectByPrimaryKey(bloggerId);
+
         BloggerProfile bloggerProfile = bloggerProfileMapper.selectByPrimaryKey(bloggerId);
 
         UserDetail userDetail = new UserDetail();
         BeanUtils.copyProperties(bloggerAccount,userDetail);
         BeanUtils.copyProperties(bloggerProfile,userDetail);
-        userDetail.setUsername(bloggerProfile.getNickname());
+        userDetail.setNickname(bloggerProfile.getNickname());
 //        需要判断是否为空
         if(null != bloggerProfile.getAvatarId()){
 
@@ -72,12 +75,25 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public @NonNull BaseResponse updateProfileById(@NonNull UserParams userParams, @NonNull String token) {
 
         BaseResponse baseResponse = new BaseResponse();
 
         Long userId = tokenService.getUserIdWithToken(token);
         BloggerProfile bloggerProfile = new BloggerProfile();
+
+//        设置phone 和email
+
+        BloggerAccount bloggerAccount = new BloggerAccount();
+
+        bloggerAccount.setId(userId);
+        BeanUtils.copyProperties(userParams,bloggerAccount);
+
+        log.info(bloggerAccount.toString());
+
+        bloggerAccountMapper.updateByPrimaryKeySelective(bloggerAccount);
+
 
 //    这个才是昵称
         bloggerProfile.setBloggerId(userId);
@@ -90,8 +106,9 @@ public class UserServiceImpl implements UserService {
         UserDetail userDetail = new UserDetail();
 
         userDetail.setAboutMe(bloggerProfile.getAboutMe());
-        userDetail.setUsername(bloggerProfile.getNickname());
-
+        userDetail.setNickname(bloggerProfile.getNickname());
+        userDetail.setPhone(bloggerAccount.getPhone());
+        userDetail.setEmail(bloggerAccount.getEmail());
         baseResponse.setData(userDetail);
         baseResponse.setStatus(HttpStatus.OK.value());
 
@@ -128,10 +145,28 @@ public class UserServiceImpl implements UserService {
         return new BaseResponse(HttpStatus.OK.value(),"更新头像成功",attachmentService.getPathById(picId));
     }
 
+
+
     @Override
-    public boolean logout(String token) {
-        return true;
+    public UserDTO getUserDTOById(Long id) {
+        BloggerProfile bloggerProfile = bloggerProfileMapper.selectByPrimaryKey(id);
+
+        UserDTO user = new UserDTO();
+
+        user.setId(bloggerProfile.getBloggerId());
+
+        user.setNickname(bloggerProfile.getNickname());
+
+
+        String avatar = null == bloggerProfile.getAvatarId() ? null : attachmentService.getPathById(bloggerProfile.getAvatarId());
+
+        user.setAvatar(avatar);
+
+        return user;
     }
 
-
+    @Override
+    public String getNicknameById(Long id) {
+        return bloggerProfileMapper.selectByPrimaryKey(id).getNickname();
+    }
 }

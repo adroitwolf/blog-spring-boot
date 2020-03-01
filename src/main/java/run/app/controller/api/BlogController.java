@@ -3,19 +3,16 @@ package run.app.controller.api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import run.app.entity.DTO.BaseResponse;
-import run.app.entity.DTO.BlogDetail;
+import run.app.entity.VO.PageInfo;
 import run.app.entity.VO.ArticleParams;
-import run.app.entity.VO.PostQueryParams;
 import run.app.aop.annotation.MethodLog;
+import run.app.entity.VO.QueryParams;
 import run.app.service.ArticleService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created with IntelliJ IDEA.
@@ -38,27 +35,15 @@ public class BlogController {
     @PostMapping("/submit")
     public BaseResponse submitArticle(@Valid @RequestBody ArticleParams articleParams, HttpServletRequest request){
         log.info(articleParams.toString());
-        String token = request.getHeader(AUTHENICATION);
-
-        articleService.submitArticle(articleParams,token);
-        BaseResponse baseResponse = new BaseResponse();
-        baseResponse.setStatus(HttpStatus.OK.value());
-        baseResponse.setMessage("上传成功");
-        return baseResponse;
+        return articleService.submitArticle(articleParams, request.getHeader(AUTHENICATION));
     }
 
     @MethodLog
-    @ApiOperation("博客-回收站之间的操作")
+    @ApiOperation("更新博客状态的操作")
     @PutMapping("/{BlogId:\\d+}/status/{status}")
     public BaseResponse updateArticleStatus(@PathVariable("BlogId")Long blogId ,
                               @PathVariable("status")String status,HttpServletRequest request){
-        articleService.updateArticleStatus(blogId,status,request.getHeader(AUTHENICATION));
-        BaseResponse baseResponse = new BaseResponse();
-        baseResponse.setStatus(HttpStatus.OK.value());
-        Map<String,String> updateStatus = new HashMap<>();
-        updateStatus.put("status",status);
-        baseResponse.setData(updateStatus);
-        return baseResponse;
+        return articleService.updateArticleStatus(blogId,status,request.getHeader(AUTHENICATION));
     }
 
 
@@ -76,32 +61,27 @@ public class BlogController {
 
         log.debug(articleParams.toString());
 
-        articleService.updateArticle(articleParams,blogId,request.getHeader(AUTHENICATION));
-
-        BaseResponse baseResponse = new BaseResponse();
-        baseResponse.setStatus(HttpStatus.OK.value());
-        return baseResponse;
+        return articleService.updateArticle(articleParams,blogId,request.getHeader(AUTHENICATION));
     }
 
 
     @MethodLog
     @ApiOperation("文章查询")
     @GetMapping("query")
-    public BaseResponse getListByExample(@RequestParam int pageNum,
-                                     @RequestParam int pageSize,
-                                     PostQueryParams postQueryParams,
-                                     HttpServletRequest request){
+    public BaseResponse getListByExample(PageInfo pageInfo,
+                                         QueryParams postQueryParams,
+                                         HttpServletRequest request){
 
         log.info(postQueryParams.toString());
-        return articleService.getArticleListByExample(pageNum,pageSize,postQueryParams,request.getHeader(AUTHENICATION));
+        return articleService.getArticleListByExample(pageInfo,postQueryParams,request.getHeader(AUTHENICATION));
     }
 
     @MethodLog
     @ApiOperation("删除博客")
     @DeleteMapping("{blogId:\\d+}")
     public BaseResponse deleteBlog(@PathVariable("blogId")Long blogId,HttpServletRequest request){
-        articleService.deleteBlog(blogId,request.getHeader(AUTHENICATION));
-        return new BaseResponse(HttpStatus.OK.value(),"删除成功",null);
+
+        return articleService.deleteBlog(blogId,request.getHeader(AUTHENICATION));
     }
 
     @ApiOperation("获取博客数量")

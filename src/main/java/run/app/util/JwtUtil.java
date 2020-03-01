@@ -4,15 +4,12 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import run.app.config.properties.JWTProperties;
 import run.app.entity.DTO.User;
-import run.app.entity.enums.Role;
+import run.app.entity.enums.RoleEnum;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
 
@@ -52,7 +49,7 @@ public class JwtUtil {
         long currentTimeMillis = System.currentTimeMillis();
         return JWT.create()
                 .withIssuer(jwtUtil.jwtProperties.getName())
-                .withExpiresAt(new Date(currentTimeMillis+jwtUtil.jwtProperties.getJwtExpires()))
+                .withExpiresAt(new Date(currentTimeMillis+jwtUtil.jwtProperties.getJwtExpires()*1000))
                 .withClaim("userId",user.getId())
                 .withArrayClaim("roles",user.getRoles().toArray(new String[user.getRoles().size()]))
                 .withAudience(user.getId().toString(),user.getUsername())
@@ -71,8 +68,8 @@ public class JwtUtil {
     }
 
 
-    public static List<Role> generateRole(String token){
-        return JWT.decode(token).getClaim("roles").asList(Role.class);
+    public static List<RoleEnum> generateRole(String token){
+        return JWT.decode(token).getClaim("roles").asList(RoleEnum.class);
     }
 
     public static Long generateExpirationId(String token){

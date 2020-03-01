@@ -24,6 +24,7 @@ public class HandlerExceptionController {
         BaseResponse baseResponse = new BaseResponse();
         baseResponse.setStatus(e.getStatus().value());
         baseResponse.setMessage(e.getMessage());
+        baseResponse.setData(e.getErrorData());
         return baseResponse;
     }
 
@@ -56,6 +57,21 @@ public class HandlerExceptionController {
 
         return  baseResponse;
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public BaseResponse handlerMIllegalArgumentExceptionException(IllegalArgumentException e){
+        BaseResponse baseResponse = new BaseResponse();
+
+        baseResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+
+        log.debug(e.getMessage());
+
+        baseResponse.setMessage("请不要尝试注入非法字符");
+
+        return  baseResponse;
+    }
+
 //
 //
 //

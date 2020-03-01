@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
  * Created with IntelliJ IDEA.
  * User: WHOAMI
  * Time: 2019 2019/10/18 15:04
- * Description: 权限异常
+ * Description: 未授权，需要进行认证 403验证
  */
 public class UnAccessException extends  AppException {
     public UnAccessException(String message) {

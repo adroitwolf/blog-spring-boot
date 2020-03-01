@@ -1,7 +1,5 @@
 server:
   port: 8099
-
-
 spring:
   application:
     name: WHOAMI
@@ -23,8 +21,30 @@ spring:
   servlet:
     multipart:
       max-file-size: 10MB
+#  quartz:
+#    #相关属性配置
+#    properties:
+#      org:
+#        quartz:
+#          scheduler:
+#            instanceName: clusteredScheduler
+#            instanceId: AUTO
+#          jobStore:
+#            class: org.quartz.impl.jdbcjobstore.JobStoreTX
+#            driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
+#            tablePrefix: QRTZ_
+#            isClustered: true
+#            clusterCheckinInterval: 10000
+#            useProperties: false
+#          threadPool:
+#            class: org.quartz.simpl.SimpleThreadPool
+#            threadCount: 10
+#            threadPriority: 5
+#            threadsInheritContextClassLoaderOfInitializingThread: true
+    #数据库方式
+    job-store-type: jdbc
 
-# redis
+#xss相关配置
 
 
 
@@ -38,11 +58,13 @@ mybatis:
   mapper-locations: classpath:/mappering/*.xml
 
 
-
-
 # 图片上传下载
 web:
   upload-path: ${user.dir}/img
+
+# 文件服务器
+fileServer: http://localhost:8099
+
 
 
 jwt:
@@ -50,8 +72,10 @@ jwt:
   name: WHOAMI
   # 密钥, 经过Base64加密,去等 可自行替换 默认development
   base64Secret: ZGV2ZWxvcG1lbnQ
-  #jwt中过期时间设置(ms)
-  jwtExpires: 7200000
+  #jwt中过期时间设置(s)
+  jwtExpires: 7200
+  # refresh过期时间(day)
+  refreshExpires: 5
 
 
 whoami:

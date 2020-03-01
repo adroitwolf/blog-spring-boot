@@ -8,7 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 import run.app.entity.DTO.BaseResponse;
-import run.app.entity.enums.Role;
+import run.app.entity.enums.RoleEnum;
 import run.app.exception.AppException;
 import run.app.exception.UnAccessException;
 import run.app.exception.UnAuthenticationException;
@@ -37,7 +37,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 
     private Set<String> excludeUrlPatterns  = new HashSet<>();
 
-    private Map<Role,List<String>> authorityPatterns = new HashMap<>();
+    private Map<RoleEnum,List<String>> authorityPatterns = new HashMap<>();
 
 
     public AuthenticationFilter(TokenService tokenService){
@@ -45,6 +45,12 @@ public class AuthenticationFilter extends OncePerRequestFilter {
     }
 
 
+    /**
+    * 功能描述: 取代spring security的认证功能 单体应用下的认证
+    * @Return: void
+    * @Author: WHOAMI
+    * @Date: 2020/2/15 12:47
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
         String authentication = httpServletRequest.getHeader("Authentication");
@@ -57,18 +63,18 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 
 
         if(StringUtils.isEmpty(authentication)){
-            handlerOnFailure(httpServletRequest,httpServletResponse, new UnAuthenticationException("用户未登录，请先登录！"));
+            handlerOnFailure(httpServletRequest,httpServletResponse, new UnAuthenticationException("用户未登录，请先登录！").setErrorData(authentication));
             return;
         }
 
 
         if(!tokenService.verifierToken(authentication)){
-            handlerOnFailure(httpServletRequest,httpServletResponse, new UnAuthenticationException("用户Token无效，请重新登陆！"));
+            handlerOnFailure(httpServletRequest,httpServletResponse, new UnAuthenticationException("用户Token无效").setErrorData(authentication));
             return;
         }
 
         if(tokenService.isExpire(authentication)){
-            handlerOnFailure(httpServletRequest,httpServletResponse, new UnAuthenticationException("用户Token已经过期，请重新登录！"));
+            handlerOnFailure(httpServletRequest,httpServletResponse, new UnAuthenticationException("用户Token已经过期").setErrorData(authentication));
             return;
         }
 
@@ -95,28 +101,37 @@ public class AuthenticationFilter extends OncePerRequestFilter {
     }
 
 
-//    判断过滤  false表示有权限
-    private boolean verifyAuthority(List<Role> roles,HttpServletRequest request){
+        /**
+        * 功能描述: 判断过滤  false表示有权限
+        * @Param: [roles, request]
+        * @Return: boolean
+        * @Author: WHOAMI
+        * @Date: 2020/2/15 12:47
+         */
+    private boolean verifyAuthority(List<RoleEnum> roles, HttpServletRequest request){
             return roles.stream()
                     .filter(p->
                         authorityPatterns.get(p)
                                 .stream().anyMatch(x-> antPathMatcher
                                 .match(x,request.getServletPath()))).count()>0?false:true;
     }
+
     /**
     * 功能描述: 添加权限控制
-     * 这里由于功能简单，只有管理员和用户，所以权限应该
+     * 这里由于功能简单，只有管理员和用户，所以权限应该分别对待
      */
-    public void addAuthorityPatterns(Map<Role,List<String>>url){
+    public void addAuthorityPatterns(Map<RoleEnum,List<String>>url){
         this.authorityPatterns = url;
     }
 
     public void handlerOnFailure(HttpServletRequest request, HttpServletResponse response, AppException appException) throws IOException {
         BaseResponse baseResponse = new BaseResponse();
         baseResponse.setStatus(appException.getStatus().value());
+        baseResponse.setData(appException.getErrorData());
         baseResponse.setMessage(appException.getMessage());
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         response.setStatus(HttpStatus.OK.value());
+//        response.setStatus(appException.getStatus().value());
         response.getWriter().write(JSONObject.toJSON(baseResponse).toString());
     }
 

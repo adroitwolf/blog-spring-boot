@@ -1,7 +1,7 @@
 package run.app.entity.enums.converter;
 
 import org.springframework.stereotype.Component;
-import run.app.entity.enums.Role;
+import run.app.entity.enums.RoleEnum;
 
 /**
  * Created with IntelliJ IDEA.
@@ -10,8 +10,8 @@ import run.app.entity.enums.Role;
  * Description: 角色转换器
  */
 @Component
-public class RoleConverter extends BaseConverter<Role,String>{
+public class RoleConverter extends BaseConverter<RoleEnum,String>{
     public RoleConverter() {
-        super(Role.class);
+        super(RoleEnum.class);
     }
 }

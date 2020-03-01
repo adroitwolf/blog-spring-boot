@@ -26,7 +26,7 @@ public class QuartzConfig {
     @Bean
     public Trigger clickQuartzTrigger(){
         SimpleScheduleBuilder scheduleBuilder = SimpleScheduleBuilder.simpleSchedule()
-                .withIntervalInMinutes(1)//10c/s
+                .withIntervalInMinutes(1)// 1c/m
                 .repeatForever();  //一直执行
         return TriggerBuilder.newTrigger().forJob(clickQuartzDetail())
                 .withIdentity(CLICK_TASK_IDENTITY)
@@ -44,6 +44,7 @@ public class QuartzConfig {
     public Trigger topPostQuartzTrigger(){
         SimpleScheduleBuilder scheduleBuilder = SimpleScheduleBuilder.simpleSchedule()
                 .withIntervalInHours(24)//1d
+//                .withIntervalInSeconds(20)
                 .repeatForever();  //一直执行
         return TriggerBuilder.newTrigger().forJob(topPostsQuartzDetail())
                 .withIdentity(TOP_POST_TASK_IDENTITY)

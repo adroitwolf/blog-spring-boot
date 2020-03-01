@@ -2,7 +2,7 @@ package run.app.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import run.app.entity.enums.Role;
+import run.app.entity.enums.RoleEnum;
 import run.app.entity.model.BloggerRole;
 import run.app.entity.model.BloggerRoleExample;
 import run.app.entity.model.BloggerRoleMapExample;
@@ -11,7 +11,6 @@ import run.app.exception.ServiceException;
 import run.app.mapper.BloggerRoleMapMapper;
 import run.app.mapper.BloggerRoleMapper;
 import run.app.service.RoleService;
-import run.app.util.AppUtil;
 
 import java.util.List;
 import java.util.Objects;
@@ -36,9 +35,12 @@ public class RoleServiceImpl implements RoleService {
 
 
     @Override
-    public void setRoleWithUserId(Role role, Long userId) {
-        Long roleId = getRoleIdByType(role);
-        bloggerRoleMapMapper.insert(new BloggerRoleMapKey(userId,roleId));
+    public void setRolesWithUserId(List<RoleEnum> roles, Long userId) {
+        roles.stream().forEach(roleEnum -> {
+            Long roleId = getRoleIdByType(roleEnum);
+            bloggerRoleMapMapper.insert(new BloggerRoleMapKey(userId,roleId));
+        });
+
     }
 
 
@@ -49,7 +51,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public Long getRoleIdByType(Role role) {
+    public Long getRoleIdByType(RoleEnum role) {
         BloggerRoleExample bloggerRoleExample = new BloggerRoleExample();
         BloggerRoleExample.Criteria criteria = bloggerRoleExample.createCriteria();
         criteria.andRoleNameEqualTo(role.getAuthority());
@@ -58,7 +60,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public List<Role> getRolesByUserId(Long userId) {
+    public List<RoleEnum> getRolesByUserId(Long userId) {
         BloggerRoleMapExample bloggerRoleMapExample = new BloggerRoleMapExample();
         BloggerRoleMapExample.Criteria criteria = bloggerRoleMapExample.createCriteria();
         criteria.andUserIdEqualTo(userId);
@@ -69,7 +71,15 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public Role getRoleById(Long id) {
-        return Role.valueOf(bloggerRoleMapper.selectByPrimaryKey(id).getRoleName());
+    public RoleEnum getRoleById(Long id) {
+        return RoleEnum.valueOf(bloggerRoleMapper.selectByPrimaryKey(id).getRoleName());
+    }
+
+    @Override
+    public void deleteUserById(Long id) {
+        BloggerRoleMapExample example = new BloggerRoleMapExample();
+        BloggerRoleMapExample.Criteria criteria = example.createCriteria();
+        criteria.andUserIdEqualTo(id);
+        bloggerRoleMapMapper.deleteByExample(example);
     }
 }

@@ -6,11 +6,9 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-import run.app.entity.enums.Role;
-import run.app.entity.model.Blog;
+import run.app.entity.enums.RoleEnum;
 import run.app.entity.model.BloggerRole;
 import run.app.service.RoleService;
-import run.app.util.AppUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,8 +36,8 @@ public class RoleServiceTest {
     public void initRoleDatabase(){
         List<BloggerRole> roles = new ArrayList<BloggerRole>(){
             {
-                add(new BloggerRole(387055195109982208L, Role.ADMIN.getAuthority(),"管理员"));
-                add(new BloggerRole(387055486085627904L,Role.USER.getAuthority(),"用户"));
+                add(new BloggerRole(387055195109982208L, RoleEnum.ADMIN.getAuthority(),"管理员"));
+                add(new BloggerRole(387055486085627904L, RoleEnum.USER.getAuthority(),"用户"));
             }
         };
 

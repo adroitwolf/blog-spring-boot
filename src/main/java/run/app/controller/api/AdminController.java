@@ -43,21 +43,21 @@ public class AdminController {
     @PutMapping("/changePassword")
     public BaseResponse updatePassword(@Valid @RequestBody PasswordParams passwordParams, HttpServletRequest request){
 //        String token = userService.getUsernameByToken(request.getHeader("Authentication"));
-            String token = request.getHeader("Authentication");
-        BaseResponse baseResponse = new BaseResponse();
-        if(accountService.updatePassword(passwordParams.getOldPassword(),passwordParams.getNewPassword(),token)){
-            baseResponse.setStatus(HttpStatus.OK.value());
-        }else{
-            baseResponse.setStatus(HttpStatus.BAD_REQUEST.value());
-        }
 
-        return baseResponse;
+        return accountService.updatePassword(passwordParams.getOldPassword(),passwordParams.getNewPassword(),request.getHeader("Authentication"));
     }
 
     @ApiOperation("注册新用户")
     @PostMapping("/register")
     public BaseResponse register(@Valid @RequestBody RegisterParams registerParams){
         return accountService.registerUser(registerParams);
+    }
+
+
+    @ApiOperation("获取refresh令牌")
+    @GetMapping("/refresh/{refreshToken}")
+    public BaseResponse refresh(@PathVariable("refreshToken") String refreshToken){
+        return accountService.refresh(refreshToken);
     }
 
 

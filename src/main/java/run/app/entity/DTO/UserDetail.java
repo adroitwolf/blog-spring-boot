@@ -17,7 +17,8 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 public class UserDetail {
-    private String username;
+    //这里指的是用户用户名称
+    private String nickname;
 
     private String phone;
 

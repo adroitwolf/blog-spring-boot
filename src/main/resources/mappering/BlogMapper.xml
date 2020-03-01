@@ -90,7 +90,7 @@
   </select>
 
 
-    <select id="selectByUserExample" parameterType="run.app.entity.VO.PostQueryParams" resultMap="BaseResultMap">
+    <select id="selectByUserExample" parameterType="run.app.entity.VO.QueryParams" resultMap="BaseResultMap">
         select
         a.id, a.blogger_id, a.status, a.title,a.picture_id , a.summary,a.release_date, a.nearest_modify_date, a.tag_title
         from blog as a,blog_content as b

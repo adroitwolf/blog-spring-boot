@@ -29,3 +29,8 @@ build/
 
 ### VS Code ###
 .vscode/
+*.log
+*.log
+*.gz
+logs/spring.log
+*.jpg

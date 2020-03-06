@@ -46,26 +46,6 @@ public class Blog implements Serializable {
 
     private String picture;
 
-//    提供给后台分页查询数据
-//    public Blog(Long id, String status, String title, String summary, Date releaseDate, Date nearestModifyDate, List<String> tagsTitle,String picture) {
-//        this.id = id;
-//        this.status = status;
-//        this.title = title;
-//        this.summary = summary;
-//        this.releaseDate = releaseDate;
-//        this.nearestModifyDate = nearestModifyDate;
-//        this.tagsTitle = tagsTitle;
-//        this.picture = picture;
-//    }
-
-//    提供给前台博客卡片数据
-//    public Blog(Long id, String title, String summary, Date releaseDate, List<String> tagsTitle,String picture) {
-//        this.id = id;
-//        this.title = title;
-//        this.summary = summary;
-//        this.releaseDate = releaseDate;
-//        this.tagsTitle = tagsTitle;
-//        this.picture = picture;
-//    }
-
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long pictureId;
 }

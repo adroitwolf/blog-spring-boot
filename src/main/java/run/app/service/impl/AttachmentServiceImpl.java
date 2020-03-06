@@ -82,7 +82,7 @@ public class AttachmentServiceImpl implements AttachmentService {
         Long id = tokenService.getUserIdWithToken(token);
 
 
-        PageHelper.startPage(pageInfo.getPageNum(),pageInfo.getPageNum());
+        PageHelper.startPage(pageInfo.getPageNum(),pageInfo.getPageSize());
 
         /**
         * 功能描述: 修改成模糊查询
@@ -95,7 +95,7 @@ public class AttachmentServiceImpl implements AttachmentService {
 
         //todo:代码优化
         List<Picture> pictures = bloggerPictures.stream().filter(Objects::nonNull).map(item ->{
-            return new Picture(item.getId(),item.getPath(),item.getTitle());
+            return new Picture(item.getId(),covertAttachmentPath(item.getPath()),item.getTitle());
 
                 }
         ).collect(Collectors.toList());
@@ -172,10 +172,16 @@ public class AttachmentServiceImpl implements AttachmentService {
 
     @Override
     public String getPathById(Long id) {
+        return  covertAttachmentPath(bloggerPictureMapper.selectByPrimaryKey(id).getPath());
+    }
+
+
+    @Override
+    public String covertAttachmentPath(String path){
         StringBuilder builder = new StringBuilder();
         builder.append(fileServer);
         builder.append(File.separator);
-        builder.append(bloggerPictureMapper.selectByPrimaryKey(id).getPath());
+        builder.append(path);
         return builder.toString();
     }
 

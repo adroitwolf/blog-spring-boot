@@ -119,8 +119,8 @@ public class ArtcileServiceImpl implements ArticleService {
          * @Date: 2019/9/4 20:17
          */
 
-        if(!StringUtils.isBlank(articleParams.getPicture())){
-            blog.setPictureId(attachmentService.getIdByTitle(articleParams.getPicture()));
+        if(null != articleParams.getPictureId()){
+            blog.setPictureId(articleParams.getPictureId());
 //            相对应的应该让改图片引用人数+1
             attachmentService.changePictureStatus(blog.getPictureId(), CiteNumEnum.ADD);
         }
@@ -185,17 +185,23 @@ public class ArtcileServiceImpl implements ArticleService {
 
         Long picture_id = -1L;
 
-        if(null != articleParams.getPicture()){
-            picture_id = attachmentService.getIdByTitle(articleParams.getPicture());
+        if(null != articleParams.getPictureId()){
+//            picture_id = attachmentService.getIdByTitle(articleParams.getPictureId());
+            picture_id = articleParams.getPictureId();
             /**
             * 功能描述: 相应当前所引用的博客图片人数进行更新
             * @Author: WHOAMI
             * @Date: 2019/11/10 13:22
              */
-            if(!StringUtils.isBlank(blog1.getPictureId().toString()) && picture_id != blog1.getPictureId()){
+            if(null == blog1.getPictureId() ){
+                attachmentService.changePictureStatus(picture_id, CiteNumEnum.ADD);
+            }else if(picture_id != blog1.getPictureId()){
                 attachmentService.changePictureStatus(picture_id, CiteNumEnum.ADD);
                 attachmentService.changePictureStatus(blog1.getPictureId(), CiteNumEnum.REDUCE);
             }
+
+
+
         }
 
         /*增加代码结束*/
@@ -287,6 +293,7 @@ public class ArtcileServiceImpl implements ArticleService {
         BlogDetail blogDetail = new BlogDetail();
 
         BeanUtils.copyProperties(blog,blogDetail);
+
         BeanUtils.copyProperties(blogContent,blogDetail);
 
 //        todo tag标签问题

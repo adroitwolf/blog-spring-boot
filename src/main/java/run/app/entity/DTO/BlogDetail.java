@@ -24,20 +24,7 @@ public class BlogDetail  extends Blog{
 
     private String content;
 
-//    private String contentMd;
+    private String contentMd;
 
-    //    public BlogDetail() {
-//    }
 
-//    准对前台将status属性去掉
-//    public BlogDetail(Long id, String title, String summary, Date releaseDate, List<String> tagsTitle, String picture,String content) {
-//        super(id,title,summary,releaseDate,tagsTitle,picture);
-//        this.content = content;
-//    }
-
-//    public BlogDetail(Long id, String status, String title, String summary, Date releaseDate, Date nearestModifyDate, List<String> tagTitle, String picture,String content, String contentMd) {
-//        super(id,status,title,summary,releaseDate,nearestModifyDate,tagTitle,picture);
-//        this.content = content;
-//        this.contentMd = contentMd;
-//    }
 }

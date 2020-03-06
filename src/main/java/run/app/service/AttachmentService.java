@@ -132,4 +132,14 @@ public interface AttachmentService {
     * @Date: 2020/1/30 19:40
      */
     void changePictureStatus(Long id, CiteNumEnum citeNumEnum);
+
+
+    /**
+     * 功能描述: 将附件的地址转换成可以访问的url
+     * @Param: [path]
+     * @Return: java.lang.String
+     * @Author: WHOAMI
+     * @Date: 2020/3/5 22:14
+     */
+    String covertAttachmentPath(String path);
 }

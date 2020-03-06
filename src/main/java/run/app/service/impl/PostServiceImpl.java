@@ -240,7 +240,7 @@ public class PostServiceImpl implements PostService {
             String pic = "";
 
             if(null != item.getPictureId()){
-                pic = attachmentService.selectPicById(item.getPictureId());
+                pic = attachmentService.getPathById(item.getPictureId());
             }
 
             run.app.entity.DTO.Blog blog = new run.app.entity.DTO.Blog();

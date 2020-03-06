@@ -126,8 +126,6 @@ public class AccountServiceImpl implements AccountService{
 
         User user = convertBloggerAccount2User(bloggerAccount);
 
-
-
         AutoToken autoToken = tokenService.buildAutoToken(user);
 
 

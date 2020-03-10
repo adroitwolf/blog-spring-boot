@@ -7,7 +7,7 @@ import run.app.entity.VO.QueryParams;
 import run.app.entity.model.BloggerAccount;
 import run.app.entity.model.BloggerAccountExample;
 
-public interface BloggerAccountMapper extends BaseMapper<BloggerAccount,Long> {
+public interface BloggerAccountMapper extends BaseMapper<BloggerAccount,Long>{
     long countByExample(BloggerAccountExample example);
 
     int deleteByExample(BloggerAccountExample example);
@@ -18,6 +18,6 @@ public interface BloggerAccountMapper extends BaseMapper<BloggerAccount,Long> {
 
     int updateByExample(@Param("record") BloggerAccount record, @Param("example") BloggerAccountExample example);
 
-    List<UserInfo> selectByQueryParams(@Param("query") QueryParams postQueryParams);
 
+    List<UserInfo> selectByQueryParams(@Param("query") QueryParams postQueryParams);
 }

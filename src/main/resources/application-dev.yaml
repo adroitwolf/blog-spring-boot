@@ -21,32 +21,41 @@ spring:
   servlet:
     multipart:
       max-file-size: 10MB
-#  quartz:
-#    #相关属性配置
-#    properties:
-#      org:
-#        quartz:
-#          scheduler:
-#            instanceName: clusteredScheduler
-#            instanceId: AUTO
-#          jobStore:
-#            class: org.quartz.impl.jdbcjobstore.JobStoreTX
-#            driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
-#            tablePrefix: QRTZ_
-#            isClustered: true
-#            clusterCheckinInterval: 10000
-#            useProperties: false
-#          threadPool:
-#            class: org.quartz.simpl.SimpleThreadPool
-#            threadCount: 10
-#            threadPriority: 5
-#            threadsInheritContextClassLoaderOfInitializingThread: true
+  mail:
+    properties.mail.smtp.port: 587
+    password: aoswvsdtfcoeeabf
+    host: smtp.qq.com
+    username: 2301520611@qq.com
+    default-encoding: UTF-8
+    nickname: 逝痕枫舞
+    from: 2301520611@qq.com
+
+
+
+    #xss相关配置
+
+    #  quartz:
+    #    #相关属性配置
+    #    properties:
+    #      org:
+    #        quartz:
+    #          scheduler:
+    #            instanceName: clusteredScheduler
+    #            instanceId: AUTO
+    #          jobStore:
+    #            class: org.quartz.impl.jdbcjobstore.JobStoreTX
+    #            driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
+    #            tablePrefix: QRTZ_
+    #            isClustered: true
+    #            clusterCheckinInterval: 10000
+    #            useProperties: false
+    #          threadPool:
+    #            class: org.quartz.simpl.SimpleThreadPool
+    #            threadCount: 10
+    #            threadPriority: 5
+    #            threadsInheritContextClassLoaderOfInitializingThread: true
     #数据库方式
-    job-store-type: jdbc
-
-#xss相关配置
-
-
+    #job-store-type: jdbc
 
 # log
 logging:

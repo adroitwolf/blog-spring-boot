@@ -11,7 +11,7 @@
  Target Server Version : 50634
  File Encoding         : 65001
 
- Date: 19/02/2020 17:23:23
+ Date: 10/03/2020 21:56:24
 */
 
 SET NAMES utf8mb4;
@@ -31,6 +31,7 @@ CREATE TABLE `blog`  (
   `RELEASE_DATE` datetime(0) NOT NULL COMMENT '发布日期',
   `NEAREST_MODIFY_DATE` datetime(0) NOT NULL COMMENT '最近修改时间',
   `TAG_TITLE` varchar(1024) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '标签',
+  `COLUMN_10` char(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   PRIMARY KEY (`ID`) USING BTREE,
   UNIQUE INDEX `BLOGGER_ID`(`BLOGGER_ID`, `TITLE`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
@@ -98,14 +99,12 @@ CREATE TABLE `blog_tag_map`  (
 DROP TABLE IF EXISTS `blogger_account`;
 CREATE TABLE `blogger_account`  (
   `ID` bigint(20) UNSIGNED NOT NULL COMMENT '用户id',
-  `USERNAME` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '用户账号',
   `PASSWORD` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '用户密码',
   `REGISTER_DATE` datetime(0) NOT NULL COMMENT '注册日期',
-  `PHONE` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '手机号',
   `EMAIL` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '邮箱',
   `IS_ENABLED` varchar(5) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '账号是否可用',
   PRIMARY KEY (`ID`) USING BTREE,
-  UNIQUE INDEX `USERNAME`(`USERNAME`) USING BTREE
+  UNIQUE INDEX `email`(`EMAIL`) USING BTREE COMMENT '注册邮箱'
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
 
 -- ----------------------------
@@ -210,7 +209,7 @@ CREATE TABLE `photowall`  (
   `PATH` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '物理地址映射',
   `CREATEDATE` datetime(0) NULL DEFAULT NULL COMMENT '入库时间',
   PRIMARY KEY (`ID`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3978 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Table structure for role_permission_map
@@ -259,8 +258,6 @@ CREATE TABLE `sys_permission`  (
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
 
 SET FOREIGN_KEY_CHECKS = 1;
-
-
 -- ----------------------------
 -- 初始化权限表
 -- ----------------------------

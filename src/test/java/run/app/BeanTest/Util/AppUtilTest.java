@@ -16,4 +16,10 @@ public class AppUtilTest {
 
         System.out.println(AppUtil.nextId());
     }
+
+
+    @Test
+    public void codeTest(){
+        System.out.println(AppUtil.getCode());
+    }
 }

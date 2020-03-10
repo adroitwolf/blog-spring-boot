@@ -83,22 +83,24 @@ public class UserServiceImpl implements UserService {
         Long userId = tokenService.getUserIdWithToken(token);
         BloggerProfile bloggerProfile = new BloggerProfile();
 
-//        设置phone 和email
+//        设置phone 和email  (不能更改)
 
-        BloggerAccount bloggerAccount = new BloggerAccount();
+//        BloggerAccount bloggerAccount = new BloggerAccount();
 
-        bloggerAccount.setId(userId);
-        BeanUtils.copyProperties(userParams,bloggerAccount);
+//        bloggerAccount.setId(userId);
+//        BeanUtils.copyProperties(userParams,bloggerAccount);
 
-        log.info(bloggerAccount.toString());
-
-        bloggerAccountMapper.updateByPrimaryKeySelective(bloggerAccount);
+//        log.info(bloggerAccount.toString());
+//
+//        bloggerAccountMapper.updateByPrimaryKeySelective(bloggerAccount);
 
 
 //    这个才是昵称
         bloggerProfile.setBloggerId(userId);
-        bloggerProfile.setNickname(userParams.getUsername());
-        bloggerProfile.setAboutMe(userParams.getAboutMe());
+
+        BeanUtils.copyProperties(userParams,bloggerProfile);
+//        bloggerProfile.setNickname(userParams.getUsername());
+//        bloggerProfile.setAboutMe(userParams.getAboutMe());
 //        bloggerProfileMapper.updateByExampleSelective(bloggerProfileWithBLOBs,bloggerProfileExample);
 
         bloggerProfileMapper.updateByPrimaryKeySelective(bloggerProfile);
@@ -107,8 +109,7 @@ public class UserServiceImpl implements UserService {
 
         userDetail.setAboutMe(bloggerProfile.getAboutMe());
         userDetail.setNickname(bloggerProfile.getNickname());
-        userDetail.setPhone(bloggerAccount.getPhone());
-        userDetail.setEmail(bloggerAccount.getEmail());
+//        userDetail.setEmail(bloggerAccount.getEmail());
         baseResponse.setData(userDetail);
         baseResponse.setStatus(HttpStatus.OK.value());
 

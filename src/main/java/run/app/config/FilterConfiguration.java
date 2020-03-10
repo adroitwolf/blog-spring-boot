@@ -62,7 +62,7 @@ public class FilterConfiguration {
         AuthenticationFilter authenticationFilter = new AuthenticationFilter(tokenService);
 
 //        添加不拦截路径
-        authenticationFilter.addExcludePatterns("/api/admin/login","/api/admin/register","/api/post/**","/api/admin/refresh/**");
+        authenticationFilter.addExcludePatterns("/api/admin/login","/api/admin/register","/api/post/**","/api/admin/refresh/**","/api/admin/getMailCode/**");
 
 
 //        添加拦截角色路径

@@ -52,7 +52,7 @@ public class JwtUtil {
                 .withExpiresAt(new Date(currentTimeMillis+jwtUtil.jwtProperties.getJwtExpires()*1000))
                 .withClaim("userId",user.getId())
                 .withArrayClaim("roles",user.getRoles().toArray(new String[user.getRoles().size()]))
-                .withAudience(user.getId().toString(),user.getUsername())
+                .withAudience(user.getId().toString(),user.getEmail())
                 .sign(Algorithm.HMAC256(jwtUtil.jwtProperties.getBase64Secret()));
     }
 

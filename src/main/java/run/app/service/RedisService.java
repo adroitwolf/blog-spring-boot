@@ -1,7 +1,6 @@
 package run.app.service;
 
 
-import lombok.NonNull;
 import run.app.entity.DTO.ClickStatus;
 import run.app.entity.DTO.PopularBlog;
 import run.app.entity.model.BlogStatus;
@@ -37,6 +36,16 @@ public interface RedisService {
      */
     void putAutoToken(String accessToken,Long userId,int timeout,  TimeUnit timeUnit);
 
+    /**
+    * 功能描述: 存放email和code的匹配序列
+    * @Param: [email, code, timeout, timeUnit]
+    * @Return: void
+    * @Author: WHOAMI
+    * @Date: 2020/3/10 12:47
+     */
+    void putEmailCode(String email,String code,int timeout,TimeUnit timeUnit);
+
+    String getEmailByCode(String code);
 
 
     Long getUserIdByRefreshToken(String key);

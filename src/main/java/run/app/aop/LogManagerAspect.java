@@ -45,7 +45,7 @@ public class LogManagerAspect {
 
         String token = request.getHeader("Authentication");
 //        blogLog.setUsername(tokenService.getUsernameByToken(token));
-        blogLog.setUsername(accountService.getUsernameByToken(token));
+        blogLog.setUsername(accountService.getEmailByToken(token));
         blogLog.setRomoteip(ip);
         blogLog.setRomotetime(new Date());
         blogLog.setOperation(targetName+"."+methodName);

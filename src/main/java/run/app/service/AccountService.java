@@ -54,7 +54,7 @@ public interface AccountService {
     * @Author: WHOAMI
     * @Date: 2020/1/30 17:52
      */
-    String getUsernameByToken(@NonNull String token);
+    String getEmailByToken(@NonNull String token);
 
 
     /**
@@ -64,18 +64,17 @@ public interface AccountService {
     * @Author: WHOAMI
     * @Date: 2020/1/30 17:58
      */
-    String getUsernameById(Long userId);
+    String getEmailById(Long userId);
+
 
     /**
-    * 功能描述: 根据账号获取到角色Id
-    * @Param: [username]
-    * @Return: java.lang.Long
+    * 功能描述: 验证邮箱有效性和验证码
+    * @Param: [mail]
+    * @Return: run.app.entity.DTO.BaseResponse
     * @Author: WHOAMI
-    * @Date: 2020/1/30 17:58
+    * @Date: 2020/3/10 11:59
      */
-    @NonNull
-    Long findBloggerIdByUsername(@NonNull String username);
-
+    void getMailCode(String mail);
 
     /**
     * 功能描述: 注册服务
@@ -125,5 +124,16 @@ public interface AccountService {
 
 
     User convertBloggerAccount2User(BloggerAccount user);
+
+
+    //    /**
+//    * 功能描述: 根据账号获取到角色Id
+//    * @Param: [username]
+//    * @Return: java.lang.Long
+//    * @Author: WHOAMI
+//    * @Date: 2020/1/30 17:58
+//     */
+//    @NonNull
+//    Long findBloggerIdByUsername(@NonNull String username);
 
 }

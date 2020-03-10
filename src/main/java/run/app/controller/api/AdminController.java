@@ -36,8 +36,6 @@ public class AdminController {
         return accountService.loginService(loginParams);
     }
 
-
-
     @MethodLog
     @ApiOperation("更改用户密码")
     @PutMapping("/changePassword")
@@ -45,6 +43,12 @@ public class AdminController {
 //        String token = userService.getUsernameByToken(request.getHeader("Authentication"));
 
         return accountService.updatePassword(passwordParams.getOldPassword(),passwordParams.getNewPassword(),request.getHeader("Authentication"));
+    }
+
+    @ApiOperation("发送邮箱验证码")
+    @GetMapping("/getMailCode/{mail}")
+    public void getMailCode(@PathVariable("mail")String mail){
+        accountService.getMailCode(mail);
     }
 
     @ApiOperation("注册新用户")

@@ -26,13 +26,11 @@ import run.app.exception.ServiceException;
 import run.app.exception.UnAccessException;
 import run.app.mapper.BloggerAccountMapper;
 import run.app.mapper.BloggerProfileMapper;
-import run.app.service.AttachmentService;
-import run.app.service.TokenService;
-import run.app.service.AccountService;
-import run.app.service.RoleService;
+import run.app.service.*;
 import run.app.util.AppUtil;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -64,6 +62,14 @@ public class AccountServiceImpl implements AccountService{
     TokenService tokenService;
 
 
+    @Autowired
+    RedisService redisService;
+
+
+    @Autowired
+    QMailService qMailService;
+
+
     private final static  String PASSERROR = "用户名或密码不正确";
 
     private final static  String LOGINSUCCESS ="用户登陆成功";
@@ -86,20 +92,19 @@ public class AccountServiceImpl implements AccountService{
 //        Optional<String> token = Optional.ofNullable(null);
 
         try {
-            user = Validator.isEmail(loginParams.getP()) ? loginWithEmail(loginParams.getP()) : loginWithUsername(loginParams.getP());
+            user =loginWithEmail(loginParams.getP());
         }catch (NotFoundException e){
                 throw new BadRequestException(PASSERROR);
         }
 
-        if(user.getPassword().equals(loginParams.getPassword())){
+        if(user.getPassword().equals(loginParams.getPassword())){ //判断密码是否正确
 
 //            这里应该判断账户是否被封禁
             log.info(user.toString());
-            if(!UserStatusEnum.YES.getName().equals(user.getisEnabled())){ //说明被封禁
+            if(!UserStatusEnum.YES.getName().equals(user.getIsEnabled())){ //说明被封禁
                 throw new BadRequestException(BLOCKED);
             }
             userRs = convertBloggerAccount2User(user);
-
 
         }else{
                 throw new BadRequestException(PASSERROR);
@@ -175,64 +180,117 @@ public class AccountServiceImpl implements AccountService{
 
 
     @Override
-    public String getUsernameByToken(@NonNull String token) {
+    public String getEmailByToken(@NonNull String token) {
 
         Long id = tokenService.getUserIdWithToken(token);
 
-        return getUsernameById(id);
+        return getEmailById(id);
     }
 
     @Override
-    public String getUsernameById(Long userId) {
+    public String getEmailById(Long userId) {
         BloggerAccount bloggerAccount = bloggerAccountMapper.selectByPrimaryKey(userId);
         /**
          * 问题描述: 开发环境与生产环境的jwt生成算法必须不一致
          * @Author: WHOAMI
          * @Date: 2019/12/2 23:11
          */
-        return bloggerAccount.getUsername();
+        return bloggerAccount.getEmail();
     }
 
-    @Override
-    public @NonNull Long findBloggerIdByUsername(@NonNull String username) {
+//    @Override
+//    public @NonNull Long findBloggerIdByUsername(@NonNull String username) {
+//
+//        BloggerAccountExample bloggerAccountExample = new BloggerAccountExample();
+//        BloggerAccountExample.Criteria criteria = bloggerAccountExample.createCriteria();
+//        criteria.andUsernameEqualTo(username);
+//
+//        List<BloggerAccount> bloggerAccounts = bloggerAccountMapper.selectByExample(bloggerAccountExample);
+//
+//        for (BloggerAccount bloggerAccount: bloggerAccounts) {
+//            return bloggerAccount.getId();
+//        }
+//        return new Long(-1L);
+//    }
 
+    @Override
+    public void getMailCode(String mail) {
+
+        //邮箱是否合法
+        if(!Validator.isEmail(mail)){ //不是邮箱直接舍弃
+            log.error("该账号非邮箱");
+            return ;
+        }
+
+        StringBuilder mailContent = new StringBuilder();
+
+        //判断邮箱是否被注册过
         BloggerAccountExample bloggerAccountExample = new BloggerAccountExample();
+
         BloggerAccountExample.Criteria criteria = bloggerAccountExample.createCriteria();
-        criteria.andUsernameEqualTo(username);
+
+        criteria.andEmailEqualTo(mail);
 
         List<BloggerAccount> bloggerAccounts = bloggerAccountMapper.selectByExample(bloggerAccountExample);
 
-        for (BloggerAccount bloggerAccount: bloggerAccounts) {
-            return bloggerAccount.getId();
+        if(bloggerAccounts.size()>0){
+            mailContent.append("该邮箱已被注册");
+            log.error("该邮箱已被注册");
+        }else{
+            //生成验证码
+            String code = AppUtil.getCode();
+            //存储到缓存中 有效期一天
+            redisService.putEmailCode(mail,code,2, TimeUnit.HOURS);
+            mailContent.append("验证码为：");
+            mailContent.append(code);
+            mailContent.append("            ");
+            mailContent.append("验证码有效期为2小时,请尽快完成注册");
         }
-        return new Long(-1L);
+
+        qMailService.sendSimpleMail(mail,"用户注册",mailContent.toString());
+
     }
 
     @Override
     public BaseResponse registerUser(@NonNull RegisterParams registerParams) {
         BaseResponse baseResponse = new BaseResponse();
 
-//        先查询是否账号是否可用
+        //判断邮箱是否被注册过
+        BloggerAccountExample bloggerAccountExample = new BloggerAccountExample();
 
-        if(findBloggerIdByUsername(registerParams.getAccount()) != -1){
-            baseResponse.setStatus(HttpStatus.BAD_REQUEST.value());
-            baseResponse.setMessage("此账号已被人抢先注册了！");
-            return baseResponse;
+        BloggerAccountExample.Criteria criteria = bloggerAccountExample.createCriteria();
+
+        criteria.andEmailEqualTo(registerParams.getEmail());
+
+        List<BloggerAccount> bloggerAccounts = bloggerAccountMapper.selectByExample(bloggerAccountExample);
+
+        if(bloggerAccounts.size()>0){
+            throw new BadRequestException("此邮箱已被注册");
         }
 
+        //验证验证码是否正确
+        if(!registerParams.getEmail().equals(redisService.getEmailByCode(registerParams.getCode()))){
+            throw  new BadRequestException("验证码不正确！");
+        }
+////        先查询是否账号是否可用
+//
+//        if(findBloggerIdByUsername(registerParams.getAccount()) != -1){
+//            baseResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+//            baseResponse.setMessage("此账号已被人抢先注册了！");
+//            return baseResponse;
+//        }
+//
         BloggerAccount bloggerAccount = new BloggerAccount();
 
         BeanUtils.copyProperties(registerParams,bloggerAccount);
 
         bloggerAccount.setId(AppUtil.nextId());
-        bloggerAccount.setUsername(registerParams.getAccount());
-        //todo 设置发送邮件
+//        bloggerAccount.setUsername(registerParams.getAccount());
         bloggerAccount.setRegisterDate(new Date());
-
-        bloggerAccount.setisEnabled(UserStatusEnum.YES.getName());
+//
+        bloggerAccount.setIsEnabled(UserStatusEnum.YES.getName());
 
         log.debug(bloggerAccount.toString());
-
 
 
         if( bloggerAccountMapper.insertSelective(bloggerAccount) == 0){
@@ -243,14 +301,13 @@ public class AccountServiceImpl implements AccountService{
 
         BloggerProfile bloggerProfile = new BloggerProfile();
 
-        //初始用户名就是你的账号名
-        bloggerProfile.setNickname(registerParams.getAccount());
+        bloggerProfile.setNickname(registerParams.getUsername());
         bloggerProfile.setBloggerId(bloggerAccount.getId());
-
+//
         bloggerProfileMapper.insertSelective(bloggerProfile);
         baseResponse.setStatus(HttpStatus.OK.value());
-
-
+//
+//
         //设置用户角色
         //默认都是User用户
 
@@ -258,7 +315,7 @@ public class AccountServiceImpl implements AccountService{
         roles.add(RoleEnum.USER);
 
         roleService.setRolesWithUserId(roles,bloggerAccount.getId());
-
+//
         return baseResponse;
     }
 
@@ -275,18 +332,18 @@ public class AccountServiceImpl implements AccountService{
         return user.orElseThrow(() -> new NotFoundException("用户邮箱不存在"));
     }
 
-    public BloggerAccount loginWithUsername(String username) {
-
-        BloggerAccountExample bloggerAccountExample = new BloggerAccountExample();
-        BloggerAccountExample.Criteria criteria = bloggerAccountExample.createCriteria();
-        criteria.andUsernameEqualTo(username);
-
-        List<BloggerAccount> bloggerAccounts = bloggerAccountMapper.selectByExample(bloggerAccountExample);
-
-        Optional<BloggerAccount> user = bloggerAccounts.stream().filter(Objects::nonNull).findFirst();
-
-        return user.orElseThrow(() -> new NotFoundException("用户账号不存在"));
-    }
+//    private BloggerAccount loginWithUsername(String username) {
+//
+//        BloggerAccountExample bloggerAccountExample = new BloggerAccountExample();
+//        BloggerAccountExample.Criteria criteria = bloggerAccountExample.createCriteria();
+//        criteria.andUsernameEqualTo(username);
+//
+//        List<BloggerAccount> bloggerAccounts = bloggerAccountMapper.selectByExample(bloggerAccountExample);
+//
+//        Optional<BloggerAccount> user = bloggerAccounts.stream().filter(Objects::nonNull).findFirst();
+//
+//        return user.orElseThrow(() -> new NotFoundException("用户账号不存在"));
+//    }
 
 
     @Override
@@ -299,7 +356,7 @@ public class AccountServiceImpl implements AccountService{
 //        应该考虑用户不存在的情况
         BloggerAccount bloggerAccount = new BloggerAccount();
         bloggerAccount.setId(bloggerId);
-        bloggerAccount.setisEnabled(UserStatusEnum.valueOf(status).getName()); //这里防止了非法字符注入
+        bloggerAccount.setIsEnabled(UserStatusEnum.valueOf(status).getName()); //这里防止了非法字符注入
         if(bloggerAccountMapper.updateByPrimaryKeySelective(bloggerAccount) ==0){
             throw new BadRequestException(NOTFOUND);
         }

@@ -42,7 +42,8 @@ public class RedisServiceImpl implements RedisService {
 //    更新top5文章--redis锁
     private static final String LOCAL_TOP5_POST_UPDATE_KEY = "LOCAL_TOP5_POST_UPDATE_KEY";
 
-
+//  邮箱验证码--redis锁
+    private static final String LOCAL_EMAIL_CODE_RE = "LOCAL_EMAIL_CODE_PRE";
 
 // 用户登陆--redis锁
     private static final String LOCAL_TOKEN_PRE = "LOCAL_TOKEN_PRE";
@@ -156,6 +157,8 @@ public class RedisServiceImpl implements RedisService {
         lockKey.append(LOCAL_TOKEN_PRE);
 
         lockKey.append(userId);
+
+
         Boolean lock = getLock(lockKey.toString(),LOCAL_VALUE,5,TimeUnit.SECONDS);
         if(!lock){
             throw new BadRequestException("请不要频繁登陆");
@@ -166,6 +169,37 @@ public class RedisServiceImpl implements RedisService {
             delete(lockKey.toString());
         }
 
+    }
+
+    @Override
+    public void putEmailCode(String email, String code, int timeout, TimeUnit timeUnit) {
+        StringBuilder lockKey = new StringBuilder();
+
+        lockKey.append(LOCAL_EMAIL_CODE_RE);
+
+        lockKey.append(email);
+
+        Boolean lock = getLock(lockKey.toString(),LOCAL_VALUE,5,TimeUnit.SECONDS);
+
+        if(!lock){
+            throw new BadRequestException("请不要频繁操作");
+        }
+        try{
+
+            redisTemplate.opsForValue().setIfAbsent(code,email,timeout,timeUnit);
+
+        }finally {
+            delete(lockKey.toString());
+        }
+    }
+
+    @Override
+    public String getEmailByCode(String code) {
+        String string = redisTemplate.opsForValue().get(code).toString();
+
+        delete(code); //删除验证码
+
+        return string;
     }
 
     @Override

@@ -83,4 +83,22 @@ public class AppUtil {
     }
 
 
+    /**
+    * 功能描述: 生成6位验证码
+    * @Param: []
+    * @Return: java.lang.String
+    * @Author: WHOAMI
+    * @Date: 2020/3/10 12:43
+     */
+    public static String getCode(){
+        StringBuilder builder = new StringBuilder();
+        Random random = new Random();
+        for(int i =0;i<6;i++){
+            int randomInt = random.nextInt(10);
+            builder.append(randomInt);
+        }
+
+        return builder.toString();
+    }
+
 }

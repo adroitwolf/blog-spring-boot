@@ -197,7 +197,7 @@ public class PostServiceImpl implements PostService {
                 }
 
                 if(null != blog.getPictureId()){
-                    blogx.setPicture(attachmentService.selectPicById(blog.getPictureId()));
+                    blogx.setPicture(attachmentService.covertAttachmentPath(attachmentService.selectPicById(blog.getPictureId())));
                 }
 
                 blogs.add(blogx);

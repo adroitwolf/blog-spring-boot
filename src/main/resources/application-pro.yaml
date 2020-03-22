@@ -23,11 +23,18 @@ spring:
   servlet:
     multipart:
       max-file-size: 10MB
-
+  mail:
+    properties.mail.smtp.port: 587
+    password: aoswvsdtfcoeeabf
+    host: smtp.qq.com
+    username: 2301520611@qq.com
+    default-encoding: UTF-8
+    nickname: 逝痕枫舞
+    from: 2301520611@qq.com
 # redis
 
 # 文件服务器
-fileServer: http://whoami1231.xyz
+fileServer: http://www.whoami1231.xyz/server
 
 # log
 logging:

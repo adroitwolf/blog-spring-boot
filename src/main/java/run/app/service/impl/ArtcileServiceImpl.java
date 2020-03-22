@@ -25,6 +25,7 @@ import run.app.mapper.*;
 import run.app.service.*;
 import run.app.util.AppUtil;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -146,16 +147,23 @@ public class ArtcileServiceImpl implements ArticleService {
         String tag = tagService.submitArticleWithTagString(articleParams.getTagList(), blog_id);
 
         blog.setTagTitle(tag);
-
-        blogMapper.insertSelective(blog);
-
+        try{
+            blogMapper.insertSelective(blog);
+        }catch (Exception e){
+            log.info(e.getMessage());
+            if(e.getCause() instanceof SQLIntegrityConstraintViolationException){
+                throw new BadRequestException("您已经发布过类似文章，请仔细查询");
+            }
+        }
         /*增加代码结束*/
 
         BlogContent blogContent = new BlogContent();
 
         BeanUtils.copyProperties(articleParams,blogContent);
         blogContent.setId(blog.getId());
+
         blogContentMapper.insert(blogContent);
+
 
         return new BaseResponse(HttpStatus.OK.value(),"上传成功",null);
     }
@@ -219,7 +227,15 @@ public class ArtcileServiceImpl implements ArticleService {
         if(picture_id != -1){
             blog.setPictureId(picture_id);
         }
-        blogMapper.updateByPrimaryKeySelective(blog);
+        try{
+            blogMapper.updateByPrimaryKeySelective(blog);
+
+        }catch (Exception e){
+            log.info(e.getMessage());
+            if(e.getCause() instanceof SQLIntegrityConstraintViolationException){
+                throw new BadRequestException("您已经发布过类似文章，请仔细查询");
+            }
+        }
 
         BlogContent blogContent = new BlogContent();
 

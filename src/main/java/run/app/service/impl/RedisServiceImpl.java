@@ -35,19 +35,18 @@ public class RedisServiceImpl implements RedisService {
     private final String LOCAL_BLOG_CLICK_PRE = "LOCAL_BLOG_CLICK_KEY";
 
 
-    private static final String BLOG_CLICKED_KEY="BLOG_CLICKED";
+    private static final String BLOG_CLICKED_KEY = "BLOG_CLICKED";
 
     private static final String LIST_TOP5_POSTS = "TOP5_POSTS";
 
-//    更新top5文章--redis锁
+    //    更新top5文章--redis锁
     private static final String LOCAL_TOP5_POST_UPDATE_KEY = "LOCAL_TOP5_POST_UPDATE_KEY";
 
-//  邮箱验证码--redis锁
+    //  邮箱验证码--redis锁
     private static final String LOCAL_EMAIL_CODE_RE = "LOCAL_EMAIL_CODE_PRE";
 
-// 用户登陆--redis锁
+    // 用户登陆--redis锁
     private static final String LOCAL_TOKEN_PRE = "LOCAL_TOKEN_PRE";
-
 
 
     @Override
@@ -55,49 +54,49 @@ public class RedisServiceImpl implements RedisService {
         StringBuilder builder = new StringBuilder();
         builder.append(LOCAL_BLOG_CLICK_PRE);
         builder.append(clickStatus.getBlogId());
-        Boolean lock = getLock(builder.toString(),LOCAL_VALUE,2,TimeUnit.SECONDS);
+        Boolean lock = getLock(builder.toString(), LOCAL_VALUE, 2, TimeUnit.SECONDS);
 
-        if(!lock){
+        if (!lock) {
             log.info("redis正在添加缓存...请稍等"); //此时锁有人占用
-            return ;
+            return;
         }
 
-        try{
+        try {
             String key = RedisUtil.getClickSetKey(clickStatus);
-            if(redisTemplate.opsForSet().isMember(key,clickStatus.getBlogId())){
+            if (redisTemplate.opsForSet().isMember(key, clickStatus.getBlogId())) {
                 return;
             }
-            redisTemplate.opsForHash().increment(BLOG_CLICKED_KEY,clickStatus.getBlogId(),clickStatus.getCount());
+            redisTemplate.opsForHash().increment(BLOG_CLICKED_KEY, clickStatus.getBlogId(), clickStatus.getCount());
 
-            redisTemplate.opsForSet().add(key,clickStatus.getBlogId());
-            redisTemplate.expire(key,1,TimeUnit.DAYS); //过期时间为1天
+            redisTemplate.opsForSet().add(key, clickStatus.getBlogId());
+            redisTemplate.expire(key, 1, TimeUnit.DAYS); //过期时间为1天
 //            redisTemplate.expire(key,10,TimeUnit.SECONDS);
-        }finally {
+        } finally {
             delete(builder.toString());
         }
     }
 
     @Override
     public Integer getBlogClickedCount(Long blogId) {
-        return (Integer) redisTemplate.opsForHash().get(BLOG_CLICKED_KEY,blogId);
+        return (Integer) redisTemplate.opsForHash().get(BLOG_CLICKED_KEY, blogId);
     }
 
     @Override
     public List<BlogStatus> listBlogClickedCounts() {
-        Cursor<Map.Entry<Object,Object>> cursor = redisTemplate.opsForHash().scan(BLOG_CLICKED_KEY, ScanOptions.NONE);
+        Cursor<Map.Entry<Object, Object>> cursor = redisTemplate.opsForHash().scan(BLOG_CLICKED_KEY, ScanOptions.NONE);
 
         List<BlogStatus> list = new ArrayList<>();
 
-        while (cursor.hasNext()){
-            Map.Entry<Object,Object> entry =  cursor.next();
+        while (cursor.hasNext()) {
+            Map.Entry<Object, Object> entry = cursor.next();
             String key = (String) entry.getKey();
-            Long  blogId = Long.valueOf(key);
+            Long blogId = Long.valueOf(key);
             Integer count = (Integer) entry.getValue();
 
             BlogStatus status = new BlogStatus(blogId, count);
 
             list.add(status);
-            redisTemplate.opsForHash().delete(BLOG_CLICKED_KEY,blogId);
+            redisTemplate.opsForHash().delete(BLOG_CLICKED_KEY, blogId);
         }
         return list;
     }
@@ -105,23 +104,23 @@ public class RedisServiceImpl implements RedisService {
     @Override
     public void transTop5Posts2Redis(List<PopularBlog> list) {
 
-        Boolean lock = getLock(LOCAL_TOP5_POST_UPDATE_KEY,LOCAL_VALUE,2*60,TimeUnit.SECONDS);
-        if(!lock){
+        Boolean lock = getLock(LOCAL_TOP5_POST_UPDATE_KEY, LOCAL_VALUE, 2 * 60, TimeUnit.SECONDS);
+        if (!lock) {
             log.info("redis正在添加缓存...请稍等"); //此时锁有人占用
-            return ;
+            return;
         }
-        try{
+        try {
             /**
-            * 当文章少于5的时候，为了填满5个会出现一些重复序列
-            * @Author: WHOAMI
-            * @Date: 2019/12/13 14:10
+             * 当文章少于5的时候，为了填满5个会出现一些重复序列
+             * @Author: WHOAMI
+             * @Date: 2019/12/13 14:10
              */
             //-先增，然后删除，避免在更新的时候有人访问-[不对]
             redisTemplate.delete(LIST_TOP5_POSTS);
-            list.stream().filter(Objects::nonNull).forEach(entity ->{
+            list.stream().filter(Objects::nonNull).forEach(entity -> {
 //                PopularBlogRedis blogRedis = new PopularBlogRedis();
 //                BeanUtils.copyProperties(entity,blogRedis);
-                redisTemplate.opsForZSet().add(LIST_TOP5_POSTS,entity,entity.getClickcount());
+                redisTemplate.opsForZSet().add(LIST_TOP5_POSTS, entity, entity.getClickcount());
             });
 
 
@@ -131,7 +130,7 @@ public class RedisServiceImpl implements RedisService {
 //                redisTemplate.opsForZSet().removeRange(LIST_TOP5_POSTS, 0, end);
 //            }
 
-        }finally {
+        } finally {
             delete(LOCAL_TOP5_POST_UPDATE_KEY);
         }
     }
@@ -145,8 +144,8 @@ public class RedisServiceImpl implements RedisService {
 
 
     //    获取redis锁
-    public Boolean getLock(String key,String value,int timeout,TimeUnit timeUnit){
-        return redisTemplate.opsForValue().setIfAbsent(key, value, timeout,timeUnit);
+    public Boolean getLock(String key, String value, int timeout, TimeUnit timeUnit) {
+        return redisTemplate.opsForValue().setIfAbsent(key, value, timeout, timeUnit);
     }
 
     @Override
@@ -159,13 +158,13 @@ public class RedisServiceImpl implements RedisService {
         lockKey.append(userId);
 
 
-        Boolean lock = getLock(lockKey.toString(),LOCAL_VALUE,5,TimeUnit.SECONDS);
-        if(!lock){
+        Boolean lock = getLock(lockKey.toString(), LOCAL_VALUE, 5, TimeUnit.SECONDS);
+        if (!lock) {
             throw new BadRequestException("请不要频繁登陆");
         }
-        try{
-            redisTemplate.opsForValue().setIfAbsent(refreshToken,userId,timeout,timeUnit);
-        }finally {
+        try {
+            redisTemplate.opsForValue().setIfAbsent(refreshToken, userId, timeout, timeUnit);
+        } finally {
             delete(lockKey.toString());
         }
 
@@ -179,16 +178,16 @@ public class RedisServiceImpl implements RedisService {
 
         lockKey.append(email);
 
-        Boolean lock = getLock(lockKey.toString(),LOCAL_VALUE,5,TimeUnit.SECONDS);
+        Boolean lock = getLock(lockKey.toString(), LOCAL_VALUE, 5, TimeUnit.SECONDS);
 
-        if(!lock){
+        if (!lock) {
             throw new BadRequestException("请不要频繁操作");
         }
-        try{
+        try {
 
-            redisTemplate.opsForValue().setIfAbsent(code,email,timeout,timeUnit);
+            redisTemplate.opsForValue().setIfAbsent(code, email, timeout, timeUnit);
 
-        }finally {
+        } finally {
             delete(lockKey.toString());
         }
     }
@@ -205,9 +204,9 @@ public class RedisServiceImpl implements RedisService {
     @Override
     public Long getUserIdByRefreshToken(String key) {
 
-        Long id =(Long) redisTemplate.opsForValue().get(key);
+        Long id = (Long) redisTemplate.opsForValue().get(key);
 
-        if(null == id || id.equals(0L)){
+        if (null == id || id.equals(0L)) {
             throw new UnAuthenticationException("ReFreshToken凭证已失效，请重新登录");
         }
         return id;
@@ -219,8 +218,6 @@ public class RedisServiceImpl implements RedisService {
     public void delete(String key) {
         redisTemplate.delete(key);
     }
-
-
 
 
 }

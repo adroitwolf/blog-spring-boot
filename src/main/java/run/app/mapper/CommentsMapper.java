@@ -1,11 +1,12 @@
 package run.app.mapper;
 
 import java.util.List;
+
 import org.apache.ibatis.annotations.Param;
 import run.app.entity.model.Comments;
 import run.app.entity.model.CommentsExample;
 
-public interface CommentsMapper extends BaseMapper<Comments,Long>{
+public interface CommentsMapper extends BaseMapper<Comments, Long> {
     long countByExample(CommentsExample example);
 
     int deleteByExample(CommentsExample example);

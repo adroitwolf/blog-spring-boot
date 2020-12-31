@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 public interface BaseEnum<T> {
 
 
-    static <V,E extends BaseEnum<V> > E ValueConvertToEnum(Class<E> enumType,V value){
+    static <V, E extends BaseEnum<V>> E ValueConvertToEnum(Class<E> enumType, V value) {
         return Stream.of(enumType.getEnumConstants())
                 .filter(item -> item.equals(value))
                 .findFirst()

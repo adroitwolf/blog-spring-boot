@@ -17,7 +17,7 @@ import java.util.List;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class PComment extends Comment{
+public class PComment extends Comment {
 
     private long children_count;
 

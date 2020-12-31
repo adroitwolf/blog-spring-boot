@@ -17,10 +17,10 @@ import javax.validation.constraints.Size;
 @ToString
 public class UserParams {
     @NotBlank(message = "昵称不能为空！")
-    @Size(max = 20,message = "昵称不能超过{max}")
+    @Size(max = 20, message = "昵称不能超过{max}")
     private String nickname;
 
-    @Size(max = 50,message = "自我介绍不能超过{max}")
+    @Size(max = 50, message = "自我介绍不能超过{max}")
     private String aboutMe;
 
 //    @Email(message = "电子邮件格式不正确")

@@ -47,11 +47,11 @@ public class BlogStatusServiceImpl implements BlogStatusService {
     @Override
     @Transactional
     public void transClickedCountFromRedis2DB() {
-        Boolean lock = redisService.getLock(LOCAL_TRANS_CLICK_UPDATE_KEY,LOCAL_TRANS_CLICK_UPDATE_VALUE,1, TimeUnit.DAYS);
-        if(!lock){
+        Boolean lock = redisService.getLock(LOCAL_TRANS_CLICK_UPDATE_KEY, LOCAL_TRANS_CLICK_UPDATE_VALUE, 1, TimeUnit.DAYS);
+        if (!lock) {
             log.info("redis正在添加缓存...请稍等"); //此时锁有人占用
             log.info("=====更新数据库文章点击任务失败=====");
-            return ;
+            return;
         }
         try {
             log.info("=====更新数据库文章点击任务开始=====");
@@ -59,7 +59,7 @@ public class BlogStatusServiceImpl implements BlogStatusService {
 
             statusList.stream().filter(Objects::nonNull).forEach(entity -> {
 
-                if(StringUtils.isEmpty(articleService.getArticleNameByBlogId(entity.getId()))){ //说明这个博客id无效
+                if (StringUtils.isEmpty(articleService.getArticleNameByBlogId(entity.getId()))) { //说明这个博客id无效
                     return;
                 }
 
@@ -73,7 +73,7 @@ public class BlogStatusServiceImpl implements BlogStatusService {
                     blogStatusMapper.insert(entity);
                 }
             });
-        }finally {
+        } finally {
             redisService.delete(LOCAL_TRANS_CLICK_UPDATE_KEY);
         }
     }
@@ -83,11 +83,11 @@ public class BlogStatusServiceImpl implements BlogStatusService {
         BlogStatusExample example = new BlogStatusExample();
         example.setOrderByClause("clickCount desc");
         List<PopularBlog> result = new ArrayList<>();
-        PageHelper.startPage(0,5);
+        PageHelper.startPage(0, 5);
         List<BlogStatus> statuses = blogStatusMapper.selectByExample(example);
-        statuses.stream().filter(Objects::nonNull).forEach(status->{
+        statuses.stream().filter(Objects::nonNull).forEach(status -> {
             PopularBlog popularBlog = new PopularBlog();
-            BeanUtils.copyProperties(status,popularBlog);
+            BeanUtils.copyProperties(status, popularBlog);
             popularBlog.setBlogName(articleService.getArticleNameByBlogId(popularBlog.getId()));
             result.add(popularBlog);
         });

@@ -15,23 +15,23 @@ public abstract class AppException extends RuntimeException {
 
     private Object errData;
 
-    public AppException(String message){
+    public AppException(String message) {
         super(message);
     }
 
-    public AppException(String message, Throwable cause){
-        super(message,cause);
+    public AppException(String message, Throwable cause) {
+        super(message, cause);
     }
 
 
     public abstract HttpStatus getStatus();
 
-    public Object getErrorData(){
+    public Object getErrorData() {
         return errData;
     }
 
 
-    public AppException setErrorData(@Nullable Object errorData){
+    public AppException setErrorData(@Nullable Object errorData) {
         this.errData = errorData;
         return this;
     }

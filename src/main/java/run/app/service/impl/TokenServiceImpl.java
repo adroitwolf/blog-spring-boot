@@ -59,7 +59,7 @@ public class TokenServiceImpl implements TokenService {
 
         String refresh_token = AppUtil.RandomUUIDWithoutDash();
 
-        redisService.putAutoToken(refresh_token,user.getId(), jwtProperties.getRefreshExpires(),TimeUnit.DAYS);
+        redisService.putAutoToken(refresh_token, user.getId(), jwtProperties.getRefreshExpires(), TimeUnit.DAYS);
 
         autoToken.setAccessToken(access_token);
 
@@ -82,9 +82,9 @@ public class TokenServiceImpl implements TokenService {
 
     @Override
     public void authentication(Long id, String token) {
-        if(roleService.getRolesByUserId(getUserIdWithToken(token)).contains(RoleEnum.ADMIN)){
-            return ;
-        }else if(null == id || !id.equals(getUserIdWithToken(token))){
+        if (roleService.getRolesByUserId(getUserIdWithToken(token)).contains(RoleEnum.ADMIN)) {
+            return;
+        } else if (null == id || !id.equals(getUserIdWithToken(token))) {
 
             throw new UnAccessException("您没有权限进行该操作");
         }
@@ -100,23 +100,23 @@ public class TokenServiceImpl implements TokenService {
     public boolean verifierToken(String token) {
         try {
             JwtUtil.generateVerifier().verify(token);
-            return  true;
-        }catch (JWTVerificationException e){
+            return true;
+        } catch (JWTVerificationException e) {
             log.error(e.getMessage());
             return false;
-        }catch (Exception e){
+        } catch (Exception e) {
             return false;
         }
     }
 
     @Override
     public boolean isExpire(String token) {
-        try{
+        try {
             Date date = JwtUtil.generateExpirationDate(token);
-            return date.compareTo(new Date()) <= 0? true:false;
-        }catch (JWTDecodeException e){
+            return date.compareTo(new Date()) <= 0 ? true : false;
+        } catch (JWTDecodeException e) {
             return false;
-        }catch (Exception e){
+        } catch (Exception e) {
 
             return false;
         }
@@ -137,11 +137,9 @@ public class TokenServiceImpl implements TokenService {
     @Override
     public Long getUserIdWithToken(String token) {
 
-       return  JWT.decode(token).getClaim("userId").asLong();
+        return JWT.decode(token).getClaim("userId").asLong();
 
     }
-
-
 
 
 }

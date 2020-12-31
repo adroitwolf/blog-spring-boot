@@ -24,9 +24,9 @@ public class JwtUtil {
 
 
     @Autowired
-    public  JWTProperties jwtProperties;
+    public JWTProperties jwtProperties;
 
-    public  static JwtUtil jwtUtil;
+    public static JwtUtil jwtUtil;
 //
 //
 //
@@ -45,19 +45,19 @@ public class JwtUtil {
         jwtUtil.jwtProperties = this.jwtProperties;
     }
 
-    public static String generateToken(User user){
+    public static String generateToken(User user) {
         long currentTimeMillis = System.currentTimeMillis();
         return JWT.create()
                 .withIssuer(jwtUtil.jwtProperties.getName())
-                .withExpiresAt(new Date(currentTimeMillis+jwtUtil.jwtProperties.getJwtExpires()*1000))
-                .withClaim("userId",user.getId())
-                .withArrayClaim("roles",user.getRoles().toArray(new String[user.getRoles().size()]))
-                .withAudience(user.getId().toString(),user.getEmail())
+                .withExpiresAt(new Date(currentTimeMillis + jwtUtil.jwtProperties.getJwtExpires() * 1000))
+                .withClaim("userId", user.getId())
+                .withArrayClaim("roles", user.getRoles().toArray(new String[user.getRoles().size()]))
+                .withAudience(user.getId().toString(), user.getEmail())
                 .sign(Algorithm.HMAC256(jwtUtil.jwtProperties.getBase64Secret()));
     }
 
 
-    public static JWTVerifier generateVerifier(){
+    public static JWTVerifier generateVerifier() {
         return JWT.require(Algorithm.HMAC256(jwtUtil.jwtProperties.getBase64Secret()))
                 .withIssuer(jwtUtil.jwtProperties.getName())
                 .build();
@@ -68,11 +68,11 @@ public class JwtUtil {
     }
 
 
-    public static List<RoleEnum> generateRole(String token){
+    public static List<RoleEnum> generateRole(String token) {
         return JWT.decode(token).getClaim("roles").asList(RoleEnum.class);
     }
 
-    public static Long generateExpirationId(String token){
+    public static Long generateExpirationId(String token) {
         return JWT.decode(token).getClaim("userId").asLong();
     }
 

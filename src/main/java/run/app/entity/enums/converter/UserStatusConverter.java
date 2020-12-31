@@ -10,7 +10,7 @@ import run.app.entity.enums.UserStatusEnum;
  * Description: 用户状态枚举转换类
  */
 @Component
-public class UserStatusConverter  extends BaseConverter<UserStatusEnum,String>{
+public class UserStatusConverter extends BaseConverter<UserStatusEnum, String> {
     public UserStatusConverter() {
         super(UserStatusEnum.class);
     }

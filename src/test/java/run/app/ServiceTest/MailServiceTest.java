@@ -24,7 +24,7 @@ public class MailServiceTest {
 
 
     @Test
-    public void send(){
-        qMailService.sendSimpleMail("1363531458@qq.com","测试邮件","测试邮件发送成功");
+    public void send() {
+        qMailService.sendSimpleMail("1363531458@qq.com", "测试邮件", "测试邮件发送成功");
     }
 }

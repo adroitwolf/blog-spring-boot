@@ -1,15 +1,15 @@
 package run.app.mapper;
 
 
-
 /**
  * mapper的底层接口层
  */
 
-public interface BaseMapper<T,PK> {
+public interface BaseMapper<T, PK> {
 
     /**
      * 新增
+     *
      * @param record
      * @return
      */
@@ -17,6 +17,7 @@ public interface BaseMapper<T,PK> {
 
     /**
      * 新增非空字段
+     *
      * @param record
      * @return
      */
@@ -24,6 +25,7 @@ public interface BaseMapper<T,PK> {
 
     /**
      * 根据主键搜索
+     *
      * @param pk
      * @return
      */
@@ -31,6 +33,7 @@ public interface BaseMapper<T,PK> {
 
     /**
      * 根据主键更新
+     *
      * @param record
      * @return
      */
@@ -38,6 +41,7 @@ public interface BaseMapper<T,PK> {
 
     /**
      * 根据非空字段更新tus
+     *
      * @param record
      * @return
      */
@@ -46,6 +50,7 @@ public interface BaseMapper<T,PK> {
 
     /**
      * 根据主键删除数据
+     *
      * @param pk
      * @return
      */

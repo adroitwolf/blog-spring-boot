@@ -16,7 +16,7 @@ import java.util.List;
 public class ArticleStatusTest {
 
     @Test
-    public void enmuTest(){
+    public void enmuTest() {
 
         ArticleStatusEnum articleStatus;
         articleStatus = ArticleStatusEnum.PUBLISHED;
@@ -24,17 +24,17 @@ public class ArticleStatusTest {
     }
 
     @Test
-    public void valueTest(){
+    public void valueTest() {
         ArticleStatusEnum.valueOf("CHECK");
     }
 
     @Test
-    public void equalTest(){
+    public void equalTest() {
         Long userId = 412727960840175616L;
         List<RoleEnum> roles = new ArrayList<>();
         roles.add(RoleEnum.USER);
         roles.add(RoleEnum.ADMIN);
-        String status = roles.contains(RoleEnum.ADMIN) ? ArticleStatusEnum.PUBLISHED.getName(): ArticleStatusEnum.CHECK.getName();
+        String status = roles.contains(RoleEnum.ADMIN) ? ArticleStatusEnum.PUBLISHED.getName() : ArticleStatusEnum.CHECK.getName();
         System.out.println(status);
     }
 }

@@ -34,7 +34,7 @@ public class UserController {
     @MethodLog
     @ApiOperation("获取用户详细信息")
     @GetMapping("/getUserDetail")
-    public BaseResponse getUserDetail(HttpServletRequest request){
+    public BaseResponse getUserDetail(HttpServletRequest request) {
 
         return userService.getUserDetailByToken(request.getHeader(AUTHENICATION));
     }
@@ -43,19 +43,18 @@ public class UserController {
     @MethodLog
     @ApiOperation("更新用户资料")
     @PutMapping("/profile")
-    public  BaseResponse updateProfile(@Valid @RequestBody UserParams userParams, HttpServletRequest request){
+    public BaseResponse updateProfile(@Valid @RequestBody UserParams userParams, HttpServletRequest request) {
         log.debug(userParams.toString());
-        return userService.updateProfileById(userParams,request.getHeader(AUTHENICATION));
+        return userService.updateProfileById(userParams, request.getHeader(AUTHENICATION));
     }
 
 
     @ApiOperation("上传用户图片")
     @PostMapping("/updateAvatar")
-    public BaseResponse updateProfile(@RequestParam(value = "avatar",required = true)MultipartFile avatar,
-                                      HttpServletRequest request){
-      return userService.updateAvatar(avatar,request.getHeader(AUTHENICATION));
+    public BaseResponse updateProfile(@RequestParam(value = "avatar", required = true) MultipartFile avatar,
+                                      HttpServletRequest request) {
+        return userService.updateAvatar(avatar, request.getHeader(AUTHENICATION));
     }
-
 
 
 }

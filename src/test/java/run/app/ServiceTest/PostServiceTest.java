@@ -24,7 +24,7 @@ public class PostServiceTest {
     PostService postService;
 
     @Test
-    public void listTop5Test(){
+    public void listTop5Test() {
         BaseResponse posts = postService.getTopPosts();
         System.out.println(posts);
     }

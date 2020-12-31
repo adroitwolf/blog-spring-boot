@@ -1,11 +1,12 @@
 package run.app.mapper;
 
 import java.util.List;
+
 import org.apache.ibatis.annotations.Param;
 import run.app.entity.model.BlogLog;
 import run.app.entity.model.BlogLogExample;
 
-public interface BlogLogMapper extends BaseMapper<BlogLog,Long>{
+public interface BlogLogMapper extends BaseMapper<BlogLog, Long> {
     long countByExample(BlogLogExample example);
 
     int deleteByExample(BlogLogExample example);

@@ -55,7 +55,7 @@ public class CommentServiceImpl implements CommentService {
 
         Comments comments = new Comments();
 
-        BeanUtils.copyProperties(commentParams,comments);
+        BeanUtils.copyProperties(commentParams, comments);
 
         comments.setType(CommentTypeEnum.valueOf(commentParams.getType()).getValue());
         Long userId = tokenService.getUserIdWithToken(token);
@@ -67,23 +67,23 @@ public class CommentServiceImpl implements CommentService {
 
         //这里应该确定父评论id是否存在
 
-        if(!commentParams.getPid().equals(0L)){ //如果这是一个子评论
+        if (!commentParams.getPid().equals(0L)) { //如果这是一个子评论
             Comments parent = commentsMapper.selectByPrimaryKey(commentParams.getPid());
 
-            if(null == parent){
+            if (null == parent) {
                 throw new NotFoundException("评论失败");
-            }else{
-                comments.setRoot(parent.getRoot().equals(0L)? parent.getId():parent.getRoot());
+            } else {
+                comments.setRoot(parent.getRoot().equals(0L) ? parent.getId() : parent.getRoot());
             }
-        }else{
+        } else {
             comments.setRoot(0L);
         }
 
-        if(null == blog){
-            throw new  NotFoundException("该文章已飞到火星,评论失败");
+        if (null == blog) {
+            throw new NotFoundException("该文章已飞到火星,评论失败");
         }
 
-        Byte isAuthor = userId.equals(blog.getBloggerId()) ? (byte)1:(byte)0;
+        Byte isAuthor = userId.equals(blog.getBloggerId()) ? (byte) 1 : (byte) 0;
 
         comments.setIsAuthor(isAuthor);
 
@@ -99,23 +99,23 @@ public class CommentServiceImpl implements CommentService {
 
         comments.setUpdateTime(new Date());
 
-        String content = wrapContent(commentParams.getToId(),commentParams.getContent());
+        String content = wrapContent(commentParams.getToId(), commentParams.getContent());
 
         comments.setContent(content);
 
         //设定评论未被删除
-        comments.setIsDel((byte)0);
+        comments.setIsDel((byte) 0);
 
         commentsMapper.insertSelective(comments);
 
-        return new BaseResponse(HttpStatus.OK.value(),"评论成功",null);
+        return new BaseResponse(HttpStatus.OK.value(), "评论成功", null);
     }
 
     @Override
-    public BaseResponse getList(Long id, String type,  PageInfo pageInfo) {
+    public BaseResponse getList(Long id, String type, PageInfo pageInfo) {
 
-       DataGrid dataGrid =CommentTypeEnum.BLOG_COMMENT.equals(CommentTypeEnum.valueOf(type))  ?
-               getPCommentsList(id,pageInfo):getChildCommentsList(id,pageInfo);
+        DataGrid dataGrid = CommentTypeEnum.BLOG_COMMENT.equals(CommentTypeEnum.valueOf(type)) ?
+                getPCommentsList(id, pageInfo) : getChildCommentsList(id, pageInfo);
         BaseResponse baseResponse = new BaseResponse();
 
         baseResponse.setStatus(HttpStatus.OK.value());
@@ -129,10 +129,10 @@ public class CommentServiceImpl implements CommentService {
     public BaseResponse getListByToken(PageInfo pageInfo, String token) {
 
         /**
-        * 功能描述: 注意这里其实是可以看到那些删除评论相关的子评论的  具体结构是本体评论并且带上父评论 和哔哩哔哩的评论机制差不多
-        * @Return: run.app.entity.DTO.BaseResponse
-        * @Author: WHOAMI
-        * @Date: 2020/2/17 12:16
+         * 功能描述: 注意这里其实是可以看到那些删除评论相关的子评论的  具体结构是本体评论并且带上父评论 和哔哩哔哩的评论机制差不多
+         * @Return: run.app.entity.DTO.BaseResponse
+         * @Author: WHOAMI
+         * @Date: 2020/2/17 12:16
          */
         BaseResponse baseResponse = new BaseResponse();
 
@@ -148,22 +148,20 @@ public class CommentServiceImpl implements CommentService {
 
         criteria.andAuthorIdEqualTo(userId);
 
-        criteria.andIsDelEqualTo((byte) 0 );
+        criteria.andIsDelEqualTo((byte) 0);
 
 
-        PageHelper.startPage(pageInfo.getPageNum(),pageInfo.getPageSize());
-
+        PageHelper.startPage(pageInfo.getPageNum(), pageInfo.getPageSize());
 
 
         List<Comments> commentsList = commentsMapper.selectByExample(example);
-
 
 
         com.github.pagehelper.PageInfo<Comments> list = new com.github.pagehelper.PageInfo<>(commentsList);
 
         //这里应该是一个子评论加一个父评论的效果
 
-        List<MComment> collect = list.getList().stream().map(item->{
+        List<MComment> collect = list.getList().stream().map(item -> {
 
             MComment mComment = new MComment();
 
@@ -173,7 +171,7 @@ public class CommentServiceImpl implements CommentService {
             mComment.setSelf(comment);
 
 
-            if(0L != comment.getPid()){  //这时候的父评论不管是否删除过都会显示
+            if (0L != comment.getPid()) {  //这时候的父评论不管是否删除过都会显示
                 mComment.setParent(commentsConvertToDto(commentsMapper.selectByPrimaryKey(comment.getPid())));
             }
 
@@ -203,29 +201,28 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     public BaseResponse deleteComment(Long commentId, String token) {
         /**
-        * 功能描述:这里的逻辑是 逻辑删除,物理删除需要通过专门的服务进行清理
-        * @Author: WHOAMI
-        * @Date: 2020/2/15 19:56
+         * 功能描述:这里的逻辑是 逻辑删除,物理删除需要通过专门的服务进行清理
+         * @Author: WHOAMI
+         * @Date: 2020/2/15 19:56
          */
         Comments comments = commentsMapper.selectByPrimaryKey(commentId);
 
 
-
-        if(null == comments){
+        if (null == comments) {
             throw new BadRequestException("请不要进行注入操作");
         }
-        tokenService.authentication(comments.getAuthorId(),token);
+        tokenService.authentication(comments.getAuthorId(), token);
 
-        comments.setIsDel((byte)1);
+        comments.setIsDel((byte) 1);
 
 
         commentsMapper.updateByPrimaryKeySelective(comments);
 
-        return new BaseResponse(HttpStatus.OK.value(),"删除评论成功",null);
+        return new BaseResponse(HttpStatus.OK.value(), "删除评论成功", null);
     }
 
 
-    private DataGrid getPCommentsList(Long id, PageInfo pageInfo){
+    private DataGrid getPCommentsList(Long id, PageInfo pageInfo) {
 
         DataGrid dataGrid = new DataGrid();
 
@@ -243,42 +240,42 @@ public class CommentServiceImpl implements CommentService {
 
         criteria.andIsDelEqualTo((byte) 0);
 
-        PageHelper.startPage(pageInfo.getPageNum(),pageInfo.getPageSize());
+        PageHelper.startPage(pageInfo.getPageNum(), pageInfo.getPageSize());
 
         List<Comments> comments = commentsMapper.selectByExample(commentsExample);
 
-        com.github.pagehelper.PageInfo<Comments> list =  new com.github.pagehelper.PageInfo<>(comments);
+        com.github.pagehelper.PageInfo<Comments> list = new com.github.pagehelper.PageInfo<>(comments);
 
         dataGrid.setTotal(list.getTotal());
 
-        List<PComment> data = list.getList().stream().map(parent->{
+        List<PComment> data = list.getList().stream().map(parent -> {
             PComment comment = new PComment();
 
-            BeanUtils.copyProperties(parent,comment);
+            BeanUtils.copyProperties(parent, comment);
 
             //获取到评论人相关信息
             UserDTO user = userService.getUserDTOById(parent.getFromId());
 
             comment.setUser(user);
-            
+
             //这里只会获取前三条子评论
 
             commentsExample.clear();
-            
+
             commentsExample.setOrderByClause(sortSql);
 
 
             CommentsExample.Criteria criteria1 = commentsExample.createCriteria();
-            
+
             criteria1.andRootEqualTo(parent.getId());
 
-            PageHelper.startPage(1,3);
+            PageHelper.startPage(1, 3);
 
             List<Comments> commentsList = commentsMapper.selectByExample(commentsExample);
 
             com.github.pagehelper.PageInfo<Comments> commentsPageInfo = new com.github.pagehelper.PageInfo<>(commentsList);
 
-            List<Comment> childs = commentsPageInfo.getList().stream().map(child->{
+            List<Comment> childs = commentsPageInfo.getList().stream().map(child -> {
 
                 return commentsConvertToDto(child);
             }).collect(Collectors.toList());
@@ -296,7 +293,7 @@ public class CommentServiceImpl implements CommentService {
 
     }
 
-    private DataGrid getChildCommentsList(Long id, PageInfo pageInfo){ //获取子评论，这里的id是父评论id
+    private DataGrid getChildCommentsList(Long id, PageInfo pageInfo) { //获取子评论，这里的id是父评论id
 
         DataGrid dataGrid = new DataGrid();
 
@@ -310,16 +307,16 @@ public class CommentServiceImpl implements CommentService {
 
         criteria.andRootEqualTo(id);
 
-        criteria.andIsDelEqualTo((byte) 0 );
+        criteria.andIsDelEqualTo((byte) 0);
 
-        PageHelper.startPage(pageInfo.getPageNum(),pageInfo.getPageSize());
+        PageHelper.startPage(pageInfo.getPageNum(), pageInfo.getPageSize());
 
         List<Comments> commentsList = commentsMapper.selectByExample(commentsExample);
 
 
         com.github.pagehelper.PageInfo<Comments> commentsPageInfo = new com.github.pagehelper.PageInfo<>(commentsList);
 
-        List<Comment> comments = commentsPageInfo.getList().stream().map(child->{
+        List<Comment> comments = commentsPageInfo.getList().stream().map(child -> {
 
             return commentsConvertToDto(child);
 
@@ -335,16 +332,16 @@ public class CommentServiceImpl implements CommentService {
     }
 
 
-    private String wrapContent(Long id,String content){
+    private String wrapContent(Long id, String content) {
 
 
         StringBuilder builder = new StringBuilder();
 
-        if(null == id || id.equals(0L)){ //这说明是一个父评论
+        if (null == id || id.equals(0L)) { //这说明是一个父评论
 
             builder.append(content);
 
-        }else{
+        } else {
             builder.append("回复");
             builder.append(userService.getNicknameById(id));
             builder.append(": ");
@@ -355,10 +352,10 @@ public class CommentServiceImpl implements CommentService {
     }
 
 
-    private Comment commentsConvertToDto(Comments comments){
+    private Comment commentsConvertToDto(Comments comments) {
 
         Comment comment1 = new Comment();
-        BeanUtils.copyProperties(comments,comment1);
+        BeanUtils.copyProperties(comments, comment1);
 
         UserDTO user1 = userService.getUserDTOById(comments.getFromId());
 

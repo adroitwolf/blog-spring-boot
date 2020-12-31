@@ -33,23 +33,23 @@ public class JwtUtilTest {
     TokenService tokenService;
 
     @Test
-    public void jwtPropertiesTest(){
+    public void jwtPropertiesTest() {
 
 
-        List<String> roles = new ArrayList<String>(){
+        List<String> roles = new ArrayList<String>() {
             {
                 add(RoleEnum.ADMIN.name());
             }
         };
 
 
-        System.out.println(JwtUtil.generateToken(new User(1L,"zzz",roles)));
+        System.out.println(JwtUtil.generateToken(new User(1L, "zzz", roles)));
     }
 
 
     @Test
-    public void jwtVerfity(){
+    public void jwtVerfity() {
         String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOlsiMSIsInp6eiJdLCJyb2xlcyI6WyJBRE1JTiJdLCJpc3MiOiJXSE9BTUkiLCJleHAiOjE1NzI1MTEyMTgsInVzZXJJZCI6MX0.P0xV-qTEn5toukrO1poaoDzFQ-IVxPEGKzjKu0EcGGo";
-        JwtUtil.generateRole(token).stream().forEach(x-> System.out.println(x));
+        JwtUtil.generateRole(token).stream().forEach(x -> System.out.println(x));
     }
 }

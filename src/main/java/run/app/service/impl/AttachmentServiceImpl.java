@@ -46,7 +46,6 @@ public class AttachmentServiceImpl implements AttachmentService {
     BloggerPictureMapper bloggerPictureMapper;
 
 
-
     @Autowired
     UserService userService;
 
@@ -60,7 +59,7 @@ public class AttachmentServiceImpl implements AttachmentService {
     @Value("${fileServer}")
     String fileServer;
 
-    private final  Integer DEFAULT_NUM = 0;
+    private final Integer DEFAULT_NUM = 0;
 
 
     UploadUtil uploadUtil;
@@ -82,20 +81,20 @@ public class AttachmentServiceImpl implements AttachmentService {
         Long id = tokenService.getUserIdWithToken(token);
 
 
-        PageHelper.startPage(pageInfo.getPageNum(),pageInfo.getPageSize());
+        PageHelper.startPage(pageInfo.getPageNum(), pageInfo.getPageSize());
 
         /**
-        * 功能描述: 修改成模糊查询
-        * @Author: WHOAMI
-        * @Date: 2019/11/13 14:00
+         * 功能描述: 修改成模糊查询
+         * @Author: WHOAMI
+         * @Date: 2019/11/13 14:00
          */
-        List<BloggerPicture> bloggerPictures = bloggerPictureMapper.selectPictureByExample(attachmentQueryParams,id);
+        List<BloggerPicture> bloggerPictures = bloggerPictureMapper.selectPictureByExample(attachmentQueryParams, id);
 
         PageInfo<BloggerPicture> bloggerPicturePageInfo = new PageInfo<>(bloggerPictures);
 
         //todo:代码优化
-        List<Picture> pictures = bloggerPictures.stream().filter(Objects::nonNull).map(item ->{
-            return new Picture(item.getId(),covertAttachmentPath(item.getPath()),item.getTitle());
+        List<Picture> pictures = bloggerPictures.stream().filter(Objects::nonNull).map(item -> {
+                    return new Picture(item.getId(), covertAttachmentPath(item.getPath()), item.getTitle());
 
                 }
         ).collect(Collectors.toList());
@@ -117,14 +116,14 @@ public class AttachmentServiceImpl implements AttachmentService {
     @Override
     @Transactional
     public BaseResponse uploadAttachment(MultipartFile file, String token) {
-        uploadFile(file,tokenService.getUserIdWithToken(token),null);
-        return new BaseResponse(HttpStatus.OK.value(),null,"上传附件成功");
+        uploadFile(file, tokenService.getUserIdWithToken(token), null);
+        return new BaseResponse(HttpStatus.OK.value(), null, "上传附件成功");
     }
 
     @Override
-    public Long uploadFile(MultipartFile file, Long userId,String title) {
+    public Long uploadFile(MultipartFile file, Long userId, String title) {
         UploadUtil instance = UploadUtil.getInstance();
-        ImageFile imageFile = instance.uploadFile(file).orElseThrow(()->new BadRequestException("用户上传图片失败"));
+        ImageFile imageFile = instance.uploadFile(file).orElseThrow(() -> new BadRequestException("用户上传图片失败"));
         BloggerPicture bloggerPicture = new BloggerPicture();
 
         bloggerPicture.setId(AppUtil.nextId());
@@ -141,10 +140,10 @@ public class AttachmentServiceImpl implements AttachmentService {
 
         bloggerPicture.setMediaType(imageFile.getMediaType().getType());
 
-        BeanUtils.copyProperties(imageFile,bloggerPicture);
+        BeanUtils.copyProperties(imageFile, bloggerPicture);
 
 //        判断用户是否自主赋值title
-        if(!StringUtils.isBlank(title)){
+        if (!StringUtils.isBlank(title)) {
             bloggerPicture.setTitle(title);
         }
 
@@ -172,12 +171,12 @@ public class AttachmentServiceImpl implements AttachmentService {
 
     @Override
     public String getPathById(Long id) {
-        return  covertAttachmentPath(bloggerPictureMapper.selectByPrimaryKey(id).getPath());
+        return covertAttachmentPath(bloggerPictureMapper.selectByPrimaryKey(id).getPath());
     }
 
 
     @Override
-    public String covertAttachmentPath(String path){
+    public String covertAttachmentPath(String path) {
         StringBuilder builder = new StringBuilder();
         builder.append(fileServer);
         builder.append(File.separator);
@@ -187,11 +186,11 @@ public class AttachmentServiceImpl implements AttachmentService {
 
     @Override
     @Transactional
-    public BaseResponse updateInfo(Long id, AttachmentParams attachmentParams , String token) {
+    public BaseResponse updateInfo(Long id, AttachmentParams attachmentParams, String token) {
 
         BloggerPicture bloggerPicture = bloggerPictureMapper.selectByPrimaryKey(id);
 
-        tokenService.authentication(bloggerPicture.getBloggerId(),token);
+        tokenService.authentication(bloggerPicture.getBloggerId(), token);
 
         BloggerPicture bloggerPicture1 = new BloggerPicture();
 
@@ -211,13 +210,13 @@ public class AttachmentServiceImpl implements AttachmentService {
         BloggerPicture bloggerPicture = bloggerPictureMapper.selectByPrimaryKey(id);
 
         //需要处理空字符问题
-        tokenService.authentication(bloggerPicture.getBloggerId(),token);
+        tokenService.authentication(bloggerPicture.getBloggerId(), token);
 
         PictureInfo pictureInfo = new PictureInfo();
 
-        BeanUtils.copyProperties(bloggerPicture,pictureInfo);
+        BeanUtils.copyProperties(bloggerPicture, pictureInfo);
 
-        return new BaseResponse(HttpStatus.OK.value(),null,pictureInfo);
+        return new BaseResponse(HttpStatus.OK.value(), null, pictureInfo);
     }
 
     @Override
@@ -226,14 +225,14 @@ public class AttachmentServiceImpl implements AttachmentService {
         BloggerPicture bloggerPicture = bloggerPictureMapper.selectByPrimaryKey(id);
 
         //需要处理空字符问题
-        tokenService.authentication(bloggerPicture.getBloggerId(),token);
+        tokenService.authentication(bloggerPicture.getBloggerId(), token);
 
         articleService.deleteQuotePic(id);
 
 //          todo 这里多做了一次查询
         deletePic(bloggerPicture.getId());
 
-        return new BaseResponse(HttpStatus.OK.value(),"图片删除成功",null);
+        return new BaseResponse(HttpStatus.OK.value(), "图片删除成功", null);
     }
 
     @Override
@@ -250,14 +249,14 @@ public class AttachmentServiceImpl implements AttachmentService {
     public BaseResponse findAllMediaType(String token) {
         Long id = tokenService.getUserIdWithToken(token);
 
-        return new BaseResponse(HttpStatus.OK.value(),null,bloggerPictureMapper.findAllMediaType(id));
+        return new BaseResponse(HttpStatus.OK.value(), null, bloggerPictureMapper.findAllMediaType(id));
     }
 
     @Override
     public void changePictureStatus(Long id, CiteNumEnum citeNumEnum) {
-        if(citeNumEnum.getValue()){
+        if (citeNumEnum.getValue()) {
             bloggerPictureMapper.updatePictureByAddCiteNum(id);
-        }else{
+        } else {
             bloggerPictureMapper.updatePictureByReduceCiteNum(id);
         }
     }

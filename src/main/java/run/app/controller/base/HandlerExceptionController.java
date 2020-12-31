@@ -20,7 +20,7 @@ import run.app.exception.*;
 public class HandlerExceptionController {
 
     @ExceptionHandler(AppException.class)
-    public BaseResponse handlerAppException(AppException e){
+    public BaseResponse handlerAppException(AppException e) {
         BaseResponse baseResponse = new BaseResponse();
         baseResponse.setStatus(e.getStatus().value());
         baseResponse.setMessage(e.getMessage());
@@ -29,7 +29,7 @@ public class HandlerExceptionController {
     }
 
 
-//
+    //
 //    @ExceptionHandler(BadRequestException.class)
 //    @ResponseStatus(HttpStatus.BAD_REQUEST)
 //    public BaseResponse handlerBadException(BadRequestException e){
@@ -46,7 +46,7 @@ public class HandlerExceptionController {
 //
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public BaseResponse handlerMethodArgumentNotValidException(MethodArgumentNotValidException e){
+    public BaseResponse handlerMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         BaseResponse baseResponse = new BaseResponse();
 
         baseResponse.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -55,12 +55,12 @@ public class HandlerExceptionController {
 
         baseResponse.setMessage("字段验证错误，请重试！");
 
-        return  baseResponse;
+        return baseResponse;
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public BaseResponse handlerMIllegalArgumentExceptionException(IllegalArgumentException e){
+    public BaseResponse handlerMIllegalArgumentExceptionException(IllegalArgumentException e) {
         BaseResponse baseResponse = new BaseResponse();
 
         baseResponse.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -69,7 +69,7 @@ public class HandlerExceptionController {
 
         baseResponse.setMessage("请不要尝试注入非法字符");
 
-        return  baseResponse;
+        return baseResponse;
     }
 
 //

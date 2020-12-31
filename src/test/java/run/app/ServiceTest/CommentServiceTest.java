@@ -27,7 +27,7 @@ public class CommentServiceTest {
 
 
     @Test
-    public void getList(){
+    public void getList() {
 
         BaseResponse list = commentService.getList(413118736350838784L, "BLOG_COMMENT", new PageInfo(5, 1, null, null));
         log.info(list.toString());

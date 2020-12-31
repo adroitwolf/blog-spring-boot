@@ -33,16 +33,16 @@ public class FilterConfiguration {
     AppProperties appProperties;
 
     @Bean
-    public FilterRegistrationBean<LogFilter> initLogFilter(){
+    public FilterRegistrationBean<LogFilter> initLogFilter() {
         FilterRegistrationBean<LogFilter> filterRegistrationBean = new FilterRegistrationBean<>();
         filterRegistrationBean.setFilter(new LogFilter());
         filterRegistrationBean.addUrlPatterns("/*");
         filterRegistrationBean.setOrder(Ordered.LOWEST_PRECEDENCE);
-        return  filterRegistrationBean;
+        return filterRegistrationBean;
     }
 
     @Bean
-    public FilterRegistrationBean<CorsFilter> initCorsFilter(){
+    public FilterRegistrationBean<CorsFilter> initCorsFilter() {
         FilterRegistrationBean<CorsFilter> corsFilter = new FilterRegistrationBean<>();
 
         corsFilter.setOrder(Ordered.LOWEST_PRECEDENCE);
@@ -55,21 +55,21 @@ public class FilterConfiguration {
 
 
     @Bean
-    public FilterRegistrationBean<AuthenticationFilter> initAuthenticationFilter(TokenService tokenService){
+    public FilterRegistrationBean<AuthenticationFilter> initAuthenticationFilter(TokenService tokenService) {
 
 
         FilterRegistrationBean<AuthenticationFilter> authenticationFilterFilter = new FilterRegistrationBean<>();
         AuthenticationFilter authenticationFilter = new AuthenticationFilter(tokenService);
 
 //        添加不拦截路径
-        authenticationFilter.addExcludePatterns("/api/admin/login","/api/admin/register","/api/post/**","/api/admin/refresh/**","/api/admin/getMailCode/**");
+        authenticationFilter.addExcludePatterns("/api/admin/login", "/api/admin/register", "/api/post/**", "/api/admin/refresh/**", "/api/admin/getMailCode/**");
 
 
 //        添加拦截角色路径
-        Map<RoleEnum,List<String>> pattern = new HashMap<RoleEnum,List<String>>(){
+        Map<RoleEnum, List<String>> pattern = new HashMap<RoleEnum, List<String>>() {
             {
-                put(RoleEnum.USER,Arrays.asList("/api/**/*"));
-                put(RoleEnum.ADMIN,Arrays.asList("/manage/**/*"));
+                put(RoleEnum.USER, Arrays.asList("/api/**/*"));
+                put(RoleEnum.ADMIN, Arrays.asList("/manage/**/*"));
             }
         };
 
@@ -79,7 +79,7 @@ public class FilterConfiguration {
 
         authenticationFilterFilter.setOrder(Ordered.LOWEST_PRECEDENCE);
 
-        authenticationFilterFilter.addUrlPatterns("/api/*","/manage/*");
+        authenticationFilterFilter.addUrlPatterns("/api/*", "/manage/*");
 
         return authenticationFilterFilter;
     }

@@ -16,13 +16,12 @@ import javax.validation.constraints.Size;
 @ToString
 public class PasswordParams {
     @NotBlank(message = "密码不能为空")
-    @Size(max = 100,message = "超出特定密码长度")
+    @Size(max = 100, message = "超出特定密码长度")
     private String oldPassword;
 
 
-
     @NotBlank(message = "密码不能为空")
-    @Size(max = 100,message = "超出特定密码长度")
+    @Size(max = 100, message = "超出特定密码长度")
     private String newPassword;
 
 }

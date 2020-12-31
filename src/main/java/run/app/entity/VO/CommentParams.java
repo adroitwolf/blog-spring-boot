@@ -21,11 +21,11 @@ public class CommentParams {
 
 
     @JsonSerialize(using = ToStringSerializer.class)
-    @Min(value = 0,message = "请不要进行非法操作")
+    @Min(value = 0, message = "请不要进行非法操作")
     private Long objectId = 0L;
 
     @JsonSerialize(using = ToStringSerializer.class)
-    @Min(value = 0,message = "请不要进行非法操作")
+    @Min(value = 0, message = "请不要进行非法操作")
     private Long toId;
 
 
@@ -37,14 +37,13 @@ public class CommentParams {
     private String type;
 
 
-    @Size(max = 1023,message = "评论长度不能超过{max}")
+    @Size(max = 1023, message = "评论长度不能超过{max}")
     private String content;
 
 
     @JsonSerialize(using = ToStringSerializer.class)
-    @Min(value = 0,message = "不要进行非法操作")
+    @Min(value = 0, message = "不要进行非法操作")
     private Long pid = 0L;
-
 
 
 }

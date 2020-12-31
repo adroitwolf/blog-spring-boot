@@ -32,7 +32,7 @@ public class JWTProperties {
     private int jwtExpires;
 
     /**
-    * refresh_token过期时间（day）
+     * refresh_token过期时间（day）
      */
     private int refreshExpires;
 

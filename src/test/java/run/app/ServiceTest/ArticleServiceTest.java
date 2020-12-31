@@ -23,7 +23,7 @@ public class ArticleServiceTest {
     ArticleService articleService;
 
     @Test
-    public void test(){
+    public void test() {
         System.out.println(ArticleStatusEnum.valueOf("admin"));
 
     }

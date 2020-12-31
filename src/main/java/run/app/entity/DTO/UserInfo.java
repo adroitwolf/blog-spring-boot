@@ -15,7 +15,7 @@ import lombok.ToString;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserInfo extends User{
+public class UserInfo extends User {
 
     private String email;
 

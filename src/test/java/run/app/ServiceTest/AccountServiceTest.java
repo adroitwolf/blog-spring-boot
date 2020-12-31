@@ -32,7 +32,7 @@ public class AccountServiceTest {
     public ExpectedException expectedEx = ExpectedException.none();
 
     @Test
-    public void BlockTest(){
+    public void BlockTest() {
         expectedEx.expect(BadRequestException.class);
         expectedEx.expectMessage("账号未找到");
 //        accountService.updateUserStatus(123L,"YES");
@@ -41,22 +41,22 @@ public class AccountServiceTest {
 
 
     @Test
-    public void deleteUser(){
+    public void deleteUser() {
         expectedEx.expect(BadRequestException.class);
         expectedEx.expectMessage("账号未找到");
 //        accountService.deleteUser(123L);
     }
 
     @Test
-    public void queryUser(){
+    public void queryUser() {
         PageInfo pageInfo = new PageInfo();
         pageInfo.setPageNum(1);
         pageInfo.setPageSize(5);
-        System.out.println(accountService.selectUserByExample(pageInfo,new QueryParams()).toString());
+        System.out.println(accountService.selectUserByExample(pageInfo, new QueryParams()).toString());
     }
 
     @Test
-    public void testUser(){
+    public void testUser() {
         LoginParams loginParams = new LoginParams();
 
         loginParams.setP("123");

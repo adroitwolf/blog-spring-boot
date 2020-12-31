@@ -15,12 +15,12 @@ public class ImageTest {
     private File file;
 
     @Before
-    public void init(){
+    public void init() {
         file = new File("D:\\code\\java\\eblog\\img\\591875d595d14764af0ace1a217f78b2.jpg");
     }
 
     @Test
-    public void testApi(){
+    public void testApi() {
         System.out.println(file.getParent());
     }
 

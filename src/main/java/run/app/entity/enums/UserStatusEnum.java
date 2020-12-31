@@ -6,9 +6,10 @@ package run.app.entity.enums;
  * Time: 2019 2019/12/22 20:04
  * Description: 用户状态
  */
-public enum UserStatusEnum implements BaseEnum<String>{
+public enum UserStatusEnum implements BaseEnum<String> {
     YES,
     NO;
+
     public String getName() {
         return name();
     }

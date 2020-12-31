@@ -25,7 +25,7 @@ public class StartTask implements CommandLineRunner {
         initImgFileFolder();
     }
 
-    private void initImgFileFolder(){
+    private void initImgFileFolder() {
 
         // 初始化用户图片文件夹
         String filePath = imgUpload;

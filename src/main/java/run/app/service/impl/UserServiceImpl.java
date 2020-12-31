@@ -49,34 +49,36 @@ public class UserServiceImpl implements UserService {
     TokenService tokenService;
 
 
-    private final String TITLE="用户头像";
+    private final String TITLE = "用户头像";
 
     @Override
-    public @NonNull UserDetail findUserDetailByBloggerId(@NonNull Long bloggerId) {
+    public @NonNull
+    UserDetail findUserDetailByBloggerId(@NonNull Long bloggerId) {
 
         BloggerAccount bloggerAccount = bloggerAccountMapper.selectByPrimaryKey(bloggerId);
 
         BloggerProfile bloggerProfile = bloggerProfileMapper.selectByPrimaryKey(bloggerId);
 
         UserDetail userDetail = new UserDetail();
-        BeanUtils.copyProperties(bloggerAccount,userDetail);
-        BeanUtils.copyProperties(bloggerProfile,userDetail);
+        BeanUtils.copyProperties(bloggerAccount, userDetail);
+        BeanUtils.copyProperties(bloggerProfile, userDetail);
         userDetail.setNickname(bloggerProfile.getNickname());
 //        需要判断是否为空
-        if(null != bloggerProfile.getAvatarId()){
+        if (null != bloggerProfile.getAvatarId()) {
 
             userDetail.setAvatar(attachmentService.getPathById(bloggerProfile.getAvatarId()));
         }
 
         //找到用户权限
-        userDetail.setRoles(roleService.getRolesByUserId(bloggerId).stream().map(n->n.getAuthority()).collect(Collectors.toList()));
+        userDetail.setRoles(roleService.getRolesByUserId(bloggerId).stream().map(n -> n.getAuthority()).collect(Collectors.toList()));
 
         return userDetail;
     }
 
     @Override
     @Transactional
-    public @NonNull BaseResponse updateProfileById(@NonNull UserParams userParams, @NonNull String token) {
+    public @NonNull
+    BaseResponse updateProfileById(@NonNull UserParams userParams, @NonNull String token) {
 
         BaseResponse baseResponse = new BaseResponse();
 
@@ -98,7 +100,7 @@ public class UserServiceImpl implements UserService {
 //    这个才是昵称
         bloggerProfile.setBloggerId(userId);
 
-        BeanUtils.copyProperties(userParams,bloggerProfile);
+        BeanUtils.copyProperties(userParams, bloggerProfile);
 //        bloggerProfile.setNickname(userParams.getUsername());
 //        bloggerProfile.setAboutMe(userParams.getAboutMe());
 //        bloggerProfileMapper.updateByExampleSelective(bloggerProfileWithBLOBs,bloggerProfileExample);
@@ -120,7 +122,7 @@ public class UserServiceImpl implements UserService {
     public BaseResponse getUserDetailByToken(@NonNull String token) {
         Long id = tokenService.getUserIdWithToken(token);
 
-        return new BaseResponse(HttpStatus.OK.value(),"",findUserDetailByBloggerId(id));
+        return new BaseResponse(HttpStatus.OK.value(), "", findUserDetailByBloggerId(id));
 
     }
 
@@ -138,14 +140,13 @@ public class UserServiceImpl implements UserService {
         }
 
         //        添加现有附件
-        Long picId = attachmentService.uploadFile(avatar,id,TITLE);
+        Long picId = attachmentService.uploadFile(avatar, id, TITLE);
         BloggerProfile profile = new BloggerProfile();
         profile.setBloggerId(id);
         profile.setAvatarId(picId);
         bloggerProfileMapper.updateByPrimaryKeySelective(profile);
-        return new BaseResponse(HttpStatus.OK.value(),"更新头像成功",attachmentService.getPathById(picId));
+        return new BaseResponse(HttpStatus.OK.value(), "更新头像成功", attachmentService.getPathById(picId));
     }
-
 
 
     @Override

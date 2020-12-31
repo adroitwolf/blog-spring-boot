@@ -17,7 +17,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @ToString
 @Builder
-public final class PopularBlog implements Serializable,Comparable {
+public final class PopularBlog implements Serializable, Comparable {
     private String blogName;
 
     @JsonSerialize(using = ToStringSerializer.class)
@@ -26,22 +26,21 @@ public final class PopularBlog implements Serializable,Comparable {
     private Integer clickcount;
 
     @Override
-    public boolean equals(Object obj)
-    {
-        System.out.println(this+"....equals...."+obj);
+    public boolean equals(Object obj) {
+        System.out.println(this + "....equals...." + obj);
 
-        if(this==obj)
+        if (this == obj)
             return true;
-        if(!(obj instanceof PopularBlog))
+        if (!(obj instanceof PopularBlog))
             return false;
-        PopularBlog p = (PopularBlog)obj;
-        return this.blogName.equals(p.blogName) && this.id==p.id;
+        PopularBlog p = (PopularBlog) obj;
+        return this.blogName.equals(p.blogName) && this.id == p.id;
     }
 
     @Override
     public int compareTo(Object o) {
-        System.out.println(this+"....compareTo...."+o);
-        PopularBlog p = (PopularBlog)o;
+        System.out.println(this + "....compareTo...." + o);
+        PopularBlog p = (PopularBlog) o;
         return this.clickcount.compareTo(p.clickcount);
     }
 }

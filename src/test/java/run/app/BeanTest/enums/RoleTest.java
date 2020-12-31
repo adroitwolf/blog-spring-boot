@@ -18,23 +18,22 @@ public class RoleTest {
 
 
     @Test
-    public void getName(){
+    public void getName() {
         System.out.println(RoleEnum.ADMIN.getAuthority());
     }
 
     @Test
-    public void lamTest(){
+    public void lamTest() {
         List<Integer> list = Lists.newArrayList();
         list.add(1);
         list.add(2);
 
-        list.stream().filter(Objects::isNull).forEach(x-> System.out.println(x));
+        list.stream().filter(Objects::isNull).forEach(x -> System.out.println(x));
     }
 
 
-
     @Test
-    public void equalTest(){
+    public void equalTest() {
         String ENABLED = "YES";
         System.out.println(UserStatusEnum.YES.getName().equals(ENABLED));
     }

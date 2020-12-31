@@ -39,7 +39,7 @@ public class BlogClickAspect {
 
         Object[] args = joinPoint.getArgs();
 
-        Long blogId = (Long)args[0];
+        Long blogId = (Long) args[0];
 
         ClickStatus clickStatus = new ClickStatus();
         clickStatus.setBlogId(blogId);

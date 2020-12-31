@@ -28,48 +28,48 @@ public class AttachmentController {
     @Autowired
     AttachmentService attachmentService;
 
-    private final String  TOKEN = "Authentication";
+    private final String TOKEN = "Authentication";
 
     @GetMapping("list")
     @ApiOperation("获取所有附件")
     public BaseResponse getAttachmentList(PageInfo pageInfo,
                                           AttachmentQueryParams attachmentQueryParams,
-                                          HttpServletRequest request){
-        return attachmentService.getAttachmentList(pageInfo,attachmentQueryParams,request.getHeader(TOKEN));
+                                          HttpServletRequest request) {
+        return attachmentService.getAttachmentList(pageInfo, attachmentQueryParams, request.getHeader(TOKEN));
     }
 
 
     @PostMapping("upload")
     @ApiOperation("上传图片")
-    public BaseResponse uploadFile(MultipartFile file,HttpServletRequest request){
-        return attachmentService.uploadAttachment(file,request.getHeader(TOKEN));
+    public BaseResponse uploadFile(MultipartFile file, HttpServletRequest request) {
+        return attachmentService.uploadAttachment(file, request.getHeader(TOKEN));
     }
 
 
     @GetMapping("{picId:\\d+}/info")
     @ApiOperation("获取图片的详细信息")
-    public BaseResponse getInfo(@PathVariable("picId") Long picId,HttpServletRequest request){
-        return attachmentService.getInfo(picId,request.getHeader(TOKEN));
+    public BaseResponse getInfo(@PathVariable("picId") Long picId, HttpServletRequest request) {
+        return attachmentService.getInfo(picId, request.getHeader(TOKEN));
     }
 
 
     @PutMapping("{picId:\\d+}/info")
     @ApiOperation("更新图片信息")
-    public BaseResponse updateInfo(@PathVariable("picId")Long picId, @Valid @RequestBody AttachmentParams attachmentParams, HttpServletRequest request){
-        return attachmentService.updateInfo(picId,attachmentParams,request.getHeader(TOKEN));
+    public BaseResponse updateInfo(@PathVariable("picId") Long picId, @Valid @RequestBody AttachmentParams attachmentParams, HttpServletRequest request) {
+        return attachmentService.updateInfo(picId, attachmentParams, request.getHeader(TOKEN));
     }
 
 
     @DeleteMapping("{picId:\\d+}")
     @ApiOperation("删除图片")
-    public BaseResponse deleteAttachment(@PathVariable("picId")Long picId,HttpServletRequest request){
-        return attachmentService.deleteAttachment(picId,request.getHeader(TOKEN));
+    public BaseResponse deleteAttachment(@PathVariable("picId") Long picId, HttpServletRequest request) {
+        return attachmentService.deleteAttachment(picId, request.getHeader(TOKEN));
     }
 
 
     @GetMapping("/list_media")
     @ApiOperation("列出所有媒体类型")
-    public BaseResponse findAllMediaType(HttpServletRequest request){
+    public BaseResponse findAllMediaType(HttpServletRequest request) {
         return attachmentService.findAllMediaType(request.getHeader(TOKEN));
     }
 

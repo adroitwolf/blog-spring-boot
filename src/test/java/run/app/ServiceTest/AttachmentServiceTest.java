@@ -27,11 +27,11 @@ public class AttachmentServiceTest {
 
 
     @Test
-    public void listTest(){
+    public void listTest() {
         PageInfo pageInfo = new PageInfo();
         pageInfo.setPageNum(1);
         pageInfo.setPageSize(5);
-        BaseResponse attachmentList = attachmentService.getAttachmentList(pageInfo, new AttachmentQueryParams("用户头像",null), "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOlsiMzg3MTkzNzE3MDg3MjcyOTYwIiwidGVzdCJdLCJyb2xlcyI6WyJVU0VSIl0sImlzcyI6IldIT0FNSSIsImV4cCI6MTU3MzYzMjI1OCwidXNlcklkIjozODcxOTM3MTcwODcyNzI5NjB9.NpNj9MDGQPCJN6L5btoExJM0DrDGbN9KjaDXS_DsUGA");
+        BaseResponse attachmentList = attachmentService.getAttachmentList(pageInfo, new AttachmentQueryParams("用户头像", null), "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOlsiMzg3MTkzNzE3MDg3MjcyOTYwIiwidGVzdCJdLCJyb2xlcyI6WyJVU0VSIl0sImlzcyI6IldIT0FNSSIsImV4cCI6MTU3MzYzMjI1OCwidXNlcklkIjozODcxOTM3MTcwODcyNzI5NjB9.NpNj9MDGQPCJN6L5btoExJM0DrDGbN9KjaDXS_DsUGA");
 
         log.debug(attachmentList.getData().toString());
     }

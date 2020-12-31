@@ -9,7 +9,7 @@ import run.app.entity.enums.BaseEnum;
  * Time: 2019 2019/10/18 17:14
  * Description: :基础的转换器
  */
-public abstract class BaseConverter<E extends BaseEnum<V>,V>  implements Converter<V,E> {
+public abstract class BaseConverter<E extends BaseEnum<V>, V> implements Converter<V, E> {
 
     private final Class<E> classz;
 
@@ -19,7 +19,7 @@ public abstract class BaseConverter<E extends BaseEnum<V>,V>  implements Convert
     }
 
     @Override
-     public E convert(V v) {
-        return BaseEnum.ValueConvertToEnum(classz,v);
+    public E convert(V v) {
+        return BaseEnum.ValueConvertToEnum(classz, v);
     }
 }

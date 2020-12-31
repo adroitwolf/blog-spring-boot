@@ -13,7 +13,7 @@ import java.nio.charset.Charset;
  * Time: 2019 2019/12/3 16:52
  * Description: 字符串序列器
  */
-public class StringRedisSerializer  implements RedisSerializer<Object> {
+public class StringRedisSerializer implements RedisSerializer<Object> {
 
     private final Charset charset;
 
@@ -42,7 +42,7 @@ public class StringRedisSerializer  implements RedisSerializer<Object> {
     }
 
     @Override
-    public String  deserialize(byte[] bytes) throws SerializationException {
+    public String deserialize(byte[] bytes) throws SerializationException {
         return (bytes == null ? null : new String(bytes, charset));
     }
 }

@@ -1,13 +1,14 @@
 package run.app.mapper;
 
 import java.util.List;
+
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import run.app.entity.VO.QueryParams;
 import run.app.entity.model.Blog;
 import run.app.entity.model.BlogExample;
 
-public interface BlogMapper extends BaseMapper<Blog,Long>{
+public interface BlogMapper extends BaseMapper<Blog, Long> {
     long countByExample(BlogExample example);
 
     int deleteByExample(BlogExample example);
@@ -15,7 +16,6 @@ public interface BlogMapper extends BaseMapper<Blog,Long>{
     List<Blog> selectByExample(BlogExample example);
 
     List<Blog> selectByUserExample(@Param("query") QueryParams postQueryParams, @Param("blogger_id") Long blogger_id);
-
 
 
     int updateByExampleSelective(@Param("record") Blog record, @Param("example") BlogExample example);

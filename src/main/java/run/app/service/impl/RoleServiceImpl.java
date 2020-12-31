@@ -33,16 +33,14 @@ public class RoleServiceImpl implements RoleService {
     private BloggerRoleMapMapper bloggerRoleMapMapper;
 
 
-
     @Override
     public void setRolesWithUserId(List<RoleEnum> roles, Long userId) {
         roles.stream().forEach(roleEnum -> {
             Long roleId = getRoleIdByType(roleEnum);
-            bloggerRoleMapMapper.insert(new BloggerRoleMapKey(userId,roleId));
+            bloggerRoleMapMapper.insert(new BloggerRoleMapKey(userId, roleId));
         });
 
     }
-
 
 
     @Override
@@ -56,7 +54,7 @@ public class RoleServiceImpl implements RoleService {
         BloggerRoleExample.Criteria criteria = bloggerRoleExample.createCriteria();
         criteria.andRoleNameEqualTo(role.getAuthority());
         return bloggerRoleMapper.selectByExample(bloggerRoleExample).stream()
-                .findFirst().orElseThrow(()->new ServiceException("服务异常")).getId();
+                .findFirst().orElseThrow(() -> new ServiceException("服务异常")).getId();
     }
 
     @Override
@@ -66,7 +64,7 @@ public class RoleServiceImpl implements RoleService {
         criteria.andUserIdEqualTo(userId);
         return bloggerRoleMapMapper.selectByExample(bloggerRoleMapExample).stream()
                 .filter(Objects::nonNull)
-                .map(n->getRoleById(n.getRoleId()))
+                .map(n -> getRoleById(n.getRoleId()))
                 .collect(Collectors.toList());
     }
 

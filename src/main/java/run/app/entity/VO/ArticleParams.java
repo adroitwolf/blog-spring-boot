@@ -18,9 +18,8 @@ import java.util.List;
 @ToString
 public class ArticleParams {
     @NotBlank(message = "文章标题不能为空")
-    @Size(max = 30,message = "标题字数不能超过{max}")
+    @Size(max = 30, message = "标题字数不能超过{max}")
     private String title;
-
 
 
     @NotBlank(message = "文章内容不能为空")
@@ -36,10 +35,8 @@ public class ArticleParams {
 //    private Integer tag;
 
     @NotBlank(message = "文章总结不能为空")
-    @Size(max=100,message = "文章总结不能超过{maxz}")
+    @Size(max = 100, message = "文章总结不能超过{maxz}")
     private String summary;
-
-
 
 
 }

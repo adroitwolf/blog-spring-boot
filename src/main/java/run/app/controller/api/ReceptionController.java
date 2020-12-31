@@ -32,60 +32,58 @@ public class ReceptionController {
     CommentService commentService;
 
 
-
     private final static String TOKEN = "Authentication";
 
     @GetMapping("/query")
     @ApiOperation("搜索文章")
     public BaseResponse getListByExample(@Valid PageInfo pageInfo,
-                                     @RequestParam String keyword){
-        return postService.getArticleListByExample(pageInfo,keyword);
+                                         @RequestParam String keyword) {
+        return postService.getArticleListByExample(pageInfo, keyword);
     }
 
     @GetMapping("tag")
     @ApiOperation("查询相应tag标签")
-    public BaseResponse searchTagBlogList(@Valid  PageInfo pageInfo,
-                                      @RequestParam String tag){
-        return postService.getArticleListByTag(pageInfo,tag);
+    public BaseResponse searchTagBlogList(@Valid PageInfo pageInfo,
+                                          @RequestParam String tag) {
+        return postService.getArticleListByTag(pageInfo, tag);
     }
 
     @GetMapping("/list")
     @ApiOperation("获取当前所有文章，并且默认按照创建时间排序")
-    public BaseResponse getList(PageInfo pageInfo){
+    public BaseResponse getList(PageInfo pageInfo) {
         return postService.getArticleList(pageInfo);
     }
 
     @ApiOperation("获取博客详细内容")
     @GetMapping("/detail/{BlogId:\\d+}")
     @IncrementClickCount
-    public BaseResponse getBlogDetail(@PathVariable("BlogId")Long blogId){
+    public BaseResponse getBlogDetail(@PathVariable("BlogId") Long blogId) {
         return postService.getArticleDetail(blogId);
     }
 
 
     @ApiOperation("获取点击量前五的文章")
     @GetMapping("/top")
-    public BaseResponse getTopPosts(){
+    public BaseResponse getTopPosts() {
         return postService.getTopPosts();
     }
 
 
-
     @PostMapping("/comments")
     @ApiOperation("发布评论")
-    public BaseResponse comment(@RequestBody @Valid CommentParams commentParams, HttpServletRequest httpServletRequest){
+    public BaseResponse comment(@RequestBody @Valid CommentParams commentParams, HttpServletRequest httpServletRequest) {
         log.info(commentParams.toString());
-        return commentService.comment(commentParams,httpServletRequest.getHeader(TOKEN));
+        return commentService.comment(commentParams, httpServletRequest.getHeader(TOKEN));
     }
 
 
     @GetMapping("/{id:\\d+}/comments")
     @ApiOperation("获取评论")
-    public BaseResponse getList(@PathVariable("id")Long id,
+    public BaseResponse getList(@PathVariable("id") Long id,
                                 @RequestParam String type,
-                                PageInfo pageInfo){
+                                PageInfo pageInfo) {
         log.info(pageInfo.toString());
-        return commentService.getList(id,type,pageInfo);
+        return commentService.getList(id, type, pageInfo);
 
     }
 

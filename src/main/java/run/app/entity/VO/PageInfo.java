@@ -19,11 +19,11 @@ import javax.validation.constraints.Min;
 public class PageInfo {
 
     @NonNull
-    @Min(value=0,message = "请不要进行非法操作")
+    @Min(value = 0, message = "请不要进行非法操作")
     int pageSize;
 
     @NonNull
-    @Min(value=0,message = "请不要进行非法操作")
+    @Min(value = 0, message = "请不要进行非法操作")
     int pageNum;
 
     @NonNull
@@ -33,14 +33,14 @@ public class PageInfo {
     String sortOrder;
 
 
-    public String convertToSortSql(){
+    public String convertToSortSql() {
 
         StringBuilder builder = new StringBuilder();
 
-        builder.append(StringUtils.isEmpty(sortName) ?null:sortName);
+        builder.append(StringUtils.isEmpty(sortName) ? null : sortName);
         builder.append(" ");
-        builder.append(StringUtils.isEmpty(sortOrder)?null:SortOrderEnum.valueOf(sortOrder));
-        return StringUtils.isEmpty(sortName)?null:builder.toString();
+        builder.append(StringUtils.isEmpty(sortOrder) ? null : SortOrderEnum.valueOf(sortOrder));
+        return StringUtils.isEmpty(sortName) ? null : builder.toString();
     }
 
 }

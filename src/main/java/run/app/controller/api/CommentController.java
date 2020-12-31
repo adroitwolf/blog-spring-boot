@@ -33,15 +33,15 @@ public class CommentController {
 
     @ApiOperation("管理评论列表")
     @GetMapping("/list")
-    public BaseResponse getList(PageInfo pageInfo, HttpServletRequest request){
-        return commentService.getListByToken(pageInfo,request.getHeader(TOKEN));
+    public BaseResponse getList(PageInfo pageInfo, HttpServletRequest request) {
+        return commentService.getListByToken(pageInfo, request.getHeader(TOKEN));
     }
 
 
     @DeleteMapping("{commentId:\\d+}/del")
     @ApiOperation("删除评论")
-    public BaseResponse deleteComment(@PathVariable("commentId") Long commentId,HttpServletRequest request){
-        return commentService.deleteComment(commentId,request.getHeader(TOKEN));
+    public BaseResponse deleteComment(@PathVariable("commentId") Long commentId, HttpServletRequest request) {
+        return commentService.deleteComment(commentId, request.getHeader(TOKEN));
     }
 
 

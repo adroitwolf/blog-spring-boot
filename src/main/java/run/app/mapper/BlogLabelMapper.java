@@ -1,11 +1,12 @@
 package run.app.mapper;
 
 import java.util.List;
+
 import org.apache.ibatis.annotations.Param;
 import run.app.entity.model.BlogLabel;
 import run.app.entity.model.BlogLabelExample;
 
-public interface BlogLabelMapper extends BaseMapper<BlogLabel,Long>{
+public interface BlogLabelMapper extends BaseMapper<BlogLabel, Long> {
     long countByExample(BlogLabelExample example);
 
     int deleteByExample(BlogLabelExample example);

@@ -29,7 +29,7 @@ import java.util.UUID;
 @Component
 public class UploadUtil {
 
-    private UploadUtil(){
+    private UploadUtil() {
 
     }
 
@@ -37,7 +37,7 @@ public class UploadUtil {
     private static final UploadUtil uploadUtil = new UploadUtil();
 
 
-    public static UploadUtil getInstance(){
+    public static UploadUtil getInstance() {
         return uploadUtil;
     }
 
@@ -45,12 +45,12 @@ public class UploadUtil {
     private static String imgPath;
 
     @Value(value = "${web.upload-path}")
-    public void setImgPath(String imgPath){
+    public void setImgPath(String imgPath) {
         this.imgPath = imgPath;
     }
 
 
-    public Optional<ImageFile> uploadFile(MultipartFile file){
+    public Optional<ImageFile> uploadFile(MultipartFile file) {
 
 
         ImageFile imageFile = new ImageFile();
@@ -58,11 +58,11 @@ public class UploadUtil {
         BufferedImage image;
         String originFilename = file.getOriginalFilename();
 
-        String type = originFilename.indexOf(".") == -1 ?null:originFilename.substring(originFilename.lastIndexOf(".")+1);
+        String type = originFilename.indexOf(".") == -1 ? null : originFilename.substring(originFilename.lastIndexOf(".") + 1);
 
-        String filename = UUID.randomUUID().toString().replace("-","");
+        String filename = UUID.randomUUID().toString().replace("-", "");
 
-        String finalFilename  =imgPath + File.separator + filename  + (null == type ? "" :("."+ type)) ;
+        String finalFilename = imgPath + File.separator + filename + (null == type ? "" : ("." + type));
 
         File file1 = new File(finalFilename);
 
@@ -77,36 +77,35 @@ public class UploadUtil {
 
         } catch (IOException e) {
             e.printStackTrace();
-            return  Optional.ofNullable(null);
+            return Optional.ofNullable(null);
         }
 
         //开始创建pojo对象
-        imageFile.setPath(filename  + (null == type ? "" :("."+ type)));
-        imageFile.setTitle(file.getOriginalFilename().indexOf(".") == -1 ? file.getOriginalFilename():
-                file.getOriginalFilename().substring(0,file.getOriginalFilename().lastIndexOf(".")));
+        imageFile.setPath(filename + (null == type ? "" : ("." + type)));
+        imageFile.setTitle(file.getOriginalFilename().indexOf(".") == -1 ? file.getOriginalFilename() :
+                file.getOriginalFilename().substring(0, file.getOriginalFilename().lastIndexOf(".")));
 
         imageFile.setSuffx(type);
         //todo  有漏洞  容易被人修改请求头
         imageFile.setMediaType(MediaType.valueOf(Objects.requireNonNull(file.getContentType())));
 
-        imageFile.setFileKey(filename  + (null == type ? "" :("."+ type)));
+        imageFile.setFileKey(filename + (null == type ? "" : ("." + type)));
 
         // 读取文件属性
         imageFile.setSize(file.getSize());
         imageFile.setHeight(image.getHeight());
         imageFile.setWidth(image.getWidth());
 
-        return  Optional.ofNullable(imageFile);
+        return Optional.ofNullable(imageFile);
     }
 
 
-
-    public void delFile(String filename){
-        File file = new File(imgPath+File.separator+ filename);
-        if(file.exists()){
-            log.info("文件删除"+file.delete() );
-        }else{
-            log.error("文件删除失败"+filename);
+    public void delFile(String filename) {
+        File file = new File(imgPath + File.separator + filename);
+        if (file.exists()) {
+            log.info("文件删除" + file.delete());
+        } else {
+            log.error("文件删除失败" + filename);
         }
     }
 

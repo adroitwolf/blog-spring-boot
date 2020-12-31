@@ -10,7 +10,7 @@ import run.app.entity.enums.RoleEnum;
  * Description: 角色转换器
  */
 @Component
-public class RoleConverter extends BaseConverter<RoleEnum,String>{
+public class RoleConverter extends BaseConverter<RoleEnum, String> {
     public RoleConverter() {
         super(RoleEnum.class);
     }

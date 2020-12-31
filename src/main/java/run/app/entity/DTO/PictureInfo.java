@@ -15,7 +15,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class PictureInfo extends Picture{
+public class PictureInfo extends Picture {
 
     private Date uploadDate;
 

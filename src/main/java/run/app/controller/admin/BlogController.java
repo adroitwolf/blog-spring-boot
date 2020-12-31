@@ -35,24 +35,24 @@ public class BlogController {
     @ApiOperation("管理员审核文章列表")
     public BaseResponse getListByExample(@Valid PageInfo pageInfo,
                                          QueryParams postQueryParams,
-                                         HttpServletRequest request){
+                                         HttpServletRequest request) {
 
         log.info(postQueryParams.toString());
-        return articleService.getArticleListToAdminByExample(pageInfo,postQueryParams,request.getHeader(AUTHENICATION));
+        return articleService.getArticleListToAdminByExample(pageInfo, postQueryParams, request.getHeader(AUTHENICATION));
     }
 
     @GetMapping("/detail/{blogId:\\d+}")
     @ApiOperation("博客详细信息")
-    public BaseResponse getDetail(@PathVariable("blogId")Long blogId){
+    public BaseResponse getDetail(@PathVariable("blogId") Long blogId) {
         return postService.getArticleDetail(blogId);
     }
 
 
     @PutMapping("/check/{blogId:\\d+}/result/{result}")
     @ApiOperation("文章审核状态")
-    public BaseResponse checkUserArticle(@PathVariable("result")String result,@PathVariable("blogId")Long blogId,HttpServletRequest request){
+    public BaseResponse checkUserArticle(@PathVariable("result") String result, @PathVariable("blogId") Long blogId, HttpServletRequest request) {
 
-        return articleService.updateArticleStatusByAdmin(blogId,result,request.getHeader(AUTHENICATION));
+        return articleService.updateArticleStatusByAdmin(blogId, result, request.getHeader(AUTHENICATION));
     }
 
 }

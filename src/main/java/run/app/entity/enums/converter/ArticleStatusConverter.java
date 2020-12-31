@@ -10,7 +10,7 @@ import run.app.entity.enums.ArticleStatusEnum;
  * Description: 博客状态转换器
  */
 @Component
-public class ArticleStatusConverter extends BaseConverter<ArticleStatusEnum,String>{
+public class ArticleStatusConverter extends BaseConverter<ArticleStatusEnum, String> {
     public ArticleStatusConverter() {
         super(ArticleStatusEnum.class);
     }

@@ -33,7 +33,7 @@ public class BlogController {
     @MethodLog
     @ApiOperation("提交新的博客文档")
     @PostMapping("/submit")
-    public BaseResponse submitArticle(@Valid @RequestBody ArticleParams articleParams, HttpServletRequest request){
+    public BaseResponse submitArticle(@Valid @RequestBody ArticleParams articleParams, HttpServletRequest request) {
         log.info(articleParams.toString());
         return articleService.submitArticle(articleParams, request.getHeader(AUTHENICATION));
     }
@@ -41,27 +41,27 @@ public class BlogController {
     @MethodLog
     @ApiOperation("更新博客状态的操作")
     @PutMapping("/{BlogId:\\d+}/status/{status}")
-    public BaseResponse updateArticleStatus(@PathVariable("BlogId")Long blogId ,
-                              @PathVariable("status")String status,HttpServletRequest request){
-        return articleService.updateArticleStatus(blogId,status,request.getHeader(AUTHENICATION));
+    public BaseResponse updateArticleStatus(@PathVariable("BlogId") Long blogId,
+                                            @PathVariable("status") String status, HttpServletRequest request) {
+        return articleService.updateArticleStatus(blogId, status, request.getHeader(AUTHENICATION));
     }
 
 
     @ApiOperation("查看博客详细内容")
     @GetMapping("detail/{BlogId:\\d+}")
-    public BaseResponse getBlogDetail(@PathVariable("BlogId")Long blogId,HttpServletRequest request){
-        return  articleService.getArticleDetail(blogId,request.getHeader(AUTHENICATION));
+    public BaseResponse getBlogDetail(@PathVariable("BlogId") Long blogId, HttpServletRequest request) {
+        return articleService.getArticleDetail(blogId, request.getHeader(AUTHENICATION));
     }
 
     @MethodLog
     @ApiOperation("更新博客文档")
     @PutMapping("{BlogId:\\d+}")
-    public BaseResponse updateArticle(@PathVariable("BlogId")Long blogId ,@Valid @RequestBody ArticleParams articleParams,
-                                      HttpServletRequest request){
+    public BaseResponse updateArticle(@PathVariable("BlogId") Long blogId, @Valid @RequestBody ArticleParams articleParams,
+                                      HttpServletRequest request) {
 
         log.debug(articleParams.toString());
 
-        return articleService.updateArticle(articleParams,blogId,request.getHeader(AUTHENICATION));
+        return articleService.updateArticle(articleParams, blogId, request.getHeader(AUTHENICATION));
     }
 
 
@@ -70,24 +70,24 @@ public class BlogController {
     @GetMapping("query")
     public BaseResponse getListByExample(PageInfo pageInfo,
                                          QueryParams postQueryParams,
-                                         HttpServletRequest request){
+                                         HttpServletRequest request) {
 
         log.info(postQueryParams.toString());
-        return articleService.getArticleListByExample(pageInfo,postQueryParams,request.getHeader(AUTHENICATION));
+        return articleService.getArticleListByExample(pageInfo, postQueryParams, request.getHeader(AUTHENICATION));
     }
 
     @MethodLog
     @ApiOperation("删除博客")
     @DeleteMapping("{blogId:\\d+}")
-    public BaseResponse deleteBlog(@PathVariable("blogId")Long blogId,HttpServletRequest request){
+    public BaseResponse deleteBlog(@PathVariable("blogId") Long blogId, HttpServletRequest request) {
 
-        return articleService.deleteBlog(blogId,request.getHeader(AUTHENICATION));
+        return articleService.deleteBlog(blogId, request.getHeader(AUTHENICATION));
     }
 
     @ApiOperation("获取博客数量")
     @GetMapping("count")
-    public BaseResponse countList(HttpServletRequest request){
-        return articleService.getArticleCount( request.getHeader(AUTHENICATION));
+    public BaseResponse countList(HttpServletRequest request) {
+        return articleService.getArticleCount(request.getHeader(AUTHENICATION));
     }
 
 

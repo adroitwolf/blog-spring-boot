@@ -12,42 +12,47 @@ import run.app.entity.VO.PageInfo;
 public interface PostService {
 
     /**
-    * 功能描述: 获取文章列表
-    * @Return: run.app.entity.DTO.BaseResponse
-    * @Author: WHOAMI
-    * @Date: 2020/1/30 17:48
+     * 功能描述: 获取文章列表
+     *
+     * @Return: run.app.entity.DTO.BaseResponse
+     * @Author: WHOAMI
+     * @Date: 2020/1/30 17:48
      */
     BaseResponse getArticleList(PageInfo pageInfo);
 
     /**
-    * 功能描述: 根据条件搜索文章
-    * @Return: run.app.entity.DTO.BaseResponse
-    * @Author: WHOAMI
-    * @Date: 2020/1/30 17:48
+     * 功能描述: 根据条件搜索文章
+     *
+     * @Return: run.app.entity.DTO.BaseResponse
+     * @Author: WHOAMI
+     * @Date: 2020/1/30 17:48
      */
     BaseResponse getArticleListByExample(PageInfo pageInfo, String keyword);
 
     /**
-    * 功能描述: 获取文章详细内容
-    * @Return: run.app.entity.DTO.BaseResponse
-    * @Author: WHOAMI
-    * @Date: 2020/1/30 17:48
+     * 功能描述: 获取文章详细内容
+     *
+     * @Return: run.app.entity.DTO.BaseResponse
+     * @Author: WHOAMI
+     * @Date: 2020/1/30 17:48
      */
     BaseResponse getArticleDetail(Long blogId);
 
     /**
-    * 功能描述: 根据tag标签获取到文章列表
-    * @Return: run.app.entity.DTO.BaseResponse
-    * @Author: WHOAMI
-    * @Date: 2020/1/30 17:49
+     * 功能描述: 根据tag标签获取到文章列表
+     *
+     * @Return: run.app.entity.DTO.BaseResponse
+     * @Author: WHOAMI
+     * @Date: 2020/1/30 17:49
      */
-    BaseResponse getArticleListByTag(PageInfo pageInfo,String tag);
+    BaseResponse getArticleListByTag(PageInfo pageInfo, String tag);
 
     /**
-    * 功能描述: 获取到每日精选文章
-    * @Return: run.app.entity.DTO.BaseResponse
-    * @Author: WHOAMI
-    * @Date: 2020/1/30 17:51
+     * 功能描述: 获取到每日精选文章
+     *
+     * @Return: run.app.entity.DTO.BaseResponse
+     * @Author: WHOAMI
+     * @Date: 2020/1/30 17:51
      */
     BaseResponse getTopPosts();
 }

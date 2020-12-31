@@ -18,13 +18,13 @@ public class QuartzConfig {
     private static final String TOP_POST_TASK_IDENTITY = "TopPostQuartz";
 
     @Bean
-    public JobDetail clickQuartzDetail(){
+    public JobDetail clickQuartzDetail() {
         return JobBuilder.newJob(ClickBlogTask.class).withIdentity(CLICK_TASK_IDENTITY).storeDurably().build();
     }
 
 
     @Bean
-    public Trigger clickQuartzTrigger(){
+    public Trigger clickQuartzTrigger() {
         SimpleScheduleBuilder scheduleBuilder = SimpleScheduleBuilder.simpleSchedule()
                 .withIntervalInMinutes(1)// 1c/m
                 .repeatForever();  //一直执行
@@ -36,12 +36,12 @@ public class QuartzConfig {
 
 
     @Bean
-    public JobDetail topPostsQuartzDetail(){
+    public JobDetail topPostsQuartzDetail() {
         return JobBuilder.newJob(TopPostsTask.class).withIdentity(TOP_POST_TASK_IDENTITY).storeDurably().build();
     }
 
     @Bean
-    public Trigger topPostQuartzTrigger(){
+    public Trigger topPostQuartzTrigger() {
         SimpleScheduleBuilder scheduleBuilder = SimpleScheduleBuilder.simpleSchedule()
                 .withIntervalInHours(24)//1d
 //                .withIntervalInSeconds(20)

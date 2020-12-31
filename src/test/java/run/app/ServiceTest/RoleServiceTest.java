@@ -30,17 +30,17 @@ public class RoleServiceTest {
 
 
     /**
-    * 功能描述: 初始化数据库
+     * 功能描述: 初始化数据库
      */
     @Test
-    public void initRoleDatabase(){
-        List<BloggerRole> roles = new ArrayList<BloggerRole>(){
+    public void initRoleDatabase() {
+        List<BloggerRole> roles = new ArrayList<BloggerRole>() {
             {
-                add(new BloggerRole(387055195109982208L, RoleEnum.ADMIN.getAuthority(),"管理员"));
-                add(new BloggerRole(387055486085627904L, RoleEnum.USER.getAuthority(),"用户"));
+                add(new BloggerRole(387055195109982208L, RoleEnum.ADMIN.getAuthority(), "管理员"));
+                add(new BloggerRole(387055486085627904L, RoleEnum.USER.getAuthority(), "用户"));
             }
         };
 
-        roles.stream().forEach(x->roleService.addRole(x));
+        roles.stream().forEach(x -> roleService.addRole(x));
     }
 }

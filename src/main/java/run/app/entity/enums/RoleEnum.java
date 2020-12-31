@@ -6,16 +6,16 @@ package run.app.entity.enums;
  * Time: 2019 2019/10/23 17:39
  * Description: 用户角色模型
  */
-public enum RoleEnum implements BaseEnum<String>,RoleOperation{
-    ADMIN{
+public enum RoleEnum implements BaseEnum<String>, RoleOperation {
+    ADMIN {
         @Override
-        public boolean confirm(){
+        public boolean confirm() {
             return true;
         }
     },
-    USER{
+    USER {
         @Override
-        public boolean confirm(){
+        public boolean confirm() {
             return false;
         }
     };

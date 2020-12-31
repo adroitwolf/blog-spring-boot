@@ -1,242 +1,244 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="run.app.mapper.BloggerAccountMapper">
-  <resultMap id="BaseResultMap" type="run.app.entity.model.BloggerAccount">
-    <id column="ID" jdbcType="BIGINT" property="id" />
-    <result column="PASSWORD" jdbcType="VARCHAR" property="password" />
-    <result column="REGISTER_DATE" jdbcType="TIMESTAMP" property="registerDate" />
-    <result column="EMAIL" jdbcType="VARCHAR" property="email" />
-    <result column="IS_ENABLED" jdbcType="VARCHAR" property="isEnabled" />
-  </resultMap>
-  <sql id="Example_Where_Clause">
-    <where>
-      <foreach collection="oredCriteria" item="criteria" separator="or">
-        <if test="criteria.valid">
-          <trim prefix="(" prefixOverrides="and" suffix=")">
-            <foreach collection="criteria.criteria" item="criterion">
-              <choose>
-                <when test="criterion.noValue">
-                  and ${criterion.condition}
-                </when>
-                <when test="criterion.singleValue">
-                  and ${criterion.condition} #{criterion.value}
-                </when>
-                <when test="criterion.betweenValue">
-                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
-                </when>
-                <when test="criterion.listValue">
-                  and ${criterion.condition}
-                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
-                    #{listItem}
-                  </foreach>
-                </when>
-              </choose>
+    <resultMap id="BaseResultMap" type="run.app.entity.model.BloggerAccount">
+        <id column="ID" jdbcType="BIGINT" property="id"/>
+        <result column="PASSWORD" jdbcType="VARCHAR" property="password"/>
+        <result column="REGISTER_DATE" jdbcType="TIMESTAMP" property="registerDate"/>
+        <result column="EMAIL" jdbcType="VARCHAR" property="email"/>
+        <result column="IS_ENABLED" jdbcType="VARCHAR" property="isEnabled"/>
+    </resultMap>
+    <sql id="Example_Where_Clause">
+        <where>
+            <foreach collection="oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" prefixOverrides="and" suffix=")">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach close=")" collection="criterion.value" item="listItem" open="("
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
             </foreach>
-          </trim>
-        </if>
-      </foreach>
-    </where>
-  </sql>
-  <sql id="Update_By_Example_Where_Clause">
-    <where>
-      <foreach collection="example.oredCriteria" item="criteria" separator="or">
-        <if test="criteria.valid">
-          <trim prefix="(" prefixOverrides="and" suffix=")">
-            <foreach collection="criteria.criteria" item="criterion">
-              <choose>
-                <when test="criterion.noValue">
-                  and ${criterion.condition}
-                </when>
-                <when test="criterion.singleValue">
-                  and ${criterion.condition} #{criterion.value}
-                </when>
-                <when test="criterion.betweenValue">
-                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
-                </when>
-                <when test="criterion.listValue">
-                  and ${criterion.condition}
-                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
-                    #{listItem}
-                  </foreach>
-                </when>
-              </choose>
+        </where>
+    </sql>
+    <sql id="Update_By_Example_Where_Clause">
+        <where>
+            <foreach collection="example.oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" prefixOverrides="and" suffix=")">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach close=")" collection="criterion.value" item="listItem" open="("
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
             </foreach>
-          </trim>
+        </where>
+    </sql>
+    <sql id="Base_Column_List">
+        ID, PASSWORD, REGISTER_DATE, EMAIL, IS_ENABLED
+    </sql>
+    <select id="selectByExample" parameterType="run.app.entity.model.BloggerAccountExample" resultMap="BaseResultMap">
+        select
+        <if test="distinct">
+            distinct
         </if>
-      </foreach>
-    </where>
-  </sql>
-  <sql id="Base_Column_List">
-    ID, PASSWORD, REGISTER_DATE, EMAIL, IS_ENABLED
-  </sql>
-  <select id="selectByExample" parameterType="run.app.entity.model.BloggerAccountExample" resultMap="BaseResultMap">
-    select
-    <if test="distinct">
-      distinct
-    </if>
-    <include refid="Base_Column_List" />
-    from blogger_account
-    <if test="_parameter != null">
-      <include refid="Example_Where_Clause" />
-    </if>
-    <if test="orderByClause != null">
-      order by ${orderByClause}
-    </if>
-  </select>
+        <include refid="Base_Column_List"/>
+        from blogger_account
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
 
-  <resultMap id="SelfResultMap" type="run.app.entity.DTO.UserInfo">
-    <id column="ID" jdbcType="BIGINT" property="id" />
-    <result column="USERNAME" jdbcType="VARCHAR" property="username" />
-    <result column="REGISTER_DATE" jdbcType="TIMESTAMP" property="registerDate" />
-    <result column="PHONE" jdbcType="VARCHAR" property="phone" />
-    <result column="EMAIL" jdbcType="VARCHAR" property="email" />
-    <result column="IS_ENABLED" jdbcType="VARCHAR" property="isEnabled" />
-    <result column="ABOUT_ME" jdbcType="VARCHAR" property="aboutMe" />
-    <result column="NICKNAME" jdbcType="VARCHAR" property="nickname" />
-    <result column="AVATAR_ID" jdbcType="BIGINT" property="avatarId" />
-  </resultMap>
+    <resultMap id="SelfResultMap" type="run.app.entity.DTO.UserInfo">
+        <id column="ID" jdbcType="BIGINT" property="id"/>
+        <result column="USERNAME" jdbcType="VARCHAR" property="username"/>
+        <result column="REGISTER_DATE" jdbcType="TIMESTAMP" property="registerDate"/>
+        <result column="PHONE" jdbcType="VARCHAR" property="phone"/>
+        <result column="EMAIL" jdbcType="VARCHAR" property="email"/>
+        <result column="IS_ENABLED" jdbcType="VARCHAR" property="isEnabled"/>
+        <result column="ABOUT_ME" jdbcType="VARCHAR" property="aboutMe"/>
+        <result column="NICKNAME" jdbcType="VARCHAR" property="nickname"/>
+        <result column="AVATAR_ID" jdbcType="BIGINT" property="avatarId"/>
+    </resultMap>
 
-  <select id="selectByQueryParams" parameterType="run.app.entity.VO.QueryParams" resultMap="SelfResultMap">
-    select
-    b.id,a.ABOUT_ME, a.NICKNAME, b.IS_ENABLED, b.REGISTER_DATE, b.EMAIL
-    from blogger_profile as a,blogger_account as b
-    <where>
-      <if test="query.keyword != '' and query.keyword != null">
-        <bind name="pattern" value="'%' + query.keyword + '%'"></bind>
-        and a.NICKNAME like #{pattern}
-      </if>
-      <if test="query.status != '' and query.status != null">
-        and b.IS_ENABLED = #{query.status}
-      </if>
-      and a.BLOGGER_ID = b.ID
-    </where>
-    order by b.REGISTER_DATE desc
-  </select>
+    <select id="selectByQueryParams" parameterType="run.app.entity.VO.QueryParams" resultMap="SelfResultMap">
+        select
+        b.id,a.ABOUT_ME, a.NICKNAME, b.IS_ENABLED, b.REGISTER_DATE, b.EMAIL
+        from blogger_profile as a,blogger_account as b
+        <where>
+            <if test="query.keyword != '' and query.keyword != null">
+                <bind name="pattern" value="'%' + query.keyword + '%'"></bind>
+                and a.NICKNAME like #{pattern}
+            </if>
+            <if test="query.status != '' and query.status != null">
+                and b.IS_ENABLED = #{query.status}
+            </if>
+            and a.BLOGGER_ID = b.ID
+        </where>
+        order by b.REGISTER_DATE desc
+    </select>
 
 
-  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select 
-    <include refid="Base_Column_List" />
-    from blogger_account
-    where ID = #{id,jdbcType=BIGINT}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from blogger_account
-    where ID = #{id,jdbcType=BIGINT}
-  </delete>
-  <delete id="deleteByExample" parameterType="run.app.entity.model.BloggerAccountExample">
-    delete from blogger_account
-    <if test="_parameter != null">
-      <include refid="Example_Where_Clause" />
-    </if>
-  </delete>
-  <insert id="insert" parameterType="run.app.entity.model.BloggerAccount">
-    insert into blogger_account (ID, PASSWORD, REGISTER_DATE, 
-      EMAIL, IS_ENABLED)
-    values (#{id,jdbcType=BIGINT}, #{password,jdbcType=VARCHAR}, #{registerDate,jdbcType=TIMESTAMP}, 
-      #{email,jdbcType=VARCHAR}, #{isEnabled,jdbcType=VARCHAR})
-  </insert>
-  <insert id="insertSelective" parameterType="run.app.entity.model.BloggerAccount">
-    insert into blogger_account
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        ID,
-      </if>
-      <if test="password != null">
-        PASSWORD,
-      </if>
-      <if test="registerDate != null">
-        REGISTER_DATE,
-      </if>
-      <if test="email != null">
-        EMAIL,
-      </if>
-      <if test="isEnabled != null">
-        IS_ENABLED,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        #{id,jdbcType=BIGINT},
-      </if>
-      <if test="password != null">
-        #{password,jdbcType=VARCHAR},
-      </if>
-      <if test="registerDate != null">
-        #{registerDate,jdbcType=TIMESTAMP},
-      </if>
-      <if test="email != null">
-        #{email,jdbcType=VARCHAR},
-      </if>
-      <if test="isEnabled != null">
-        #{isEnabled,jdbcType=VARCHAR},
-      </if>
-    </trim>
-  </insert>
-  <select id="countByExample" parameterType="run.app.entity.model.BloggerAccountExample" resultType="java.lang.Long">
-    select count(*) from blogger_account
-    <if test="_parameter != null">
-      <include refid="Example_Where_Clause" />
-    </if>
-  </select>
-  <update id="updateByExampleSelective" parameterType="map">
-    update blogger_account
-    <set>
-      <if test="record.id != null">
-        ID = #{record.id,jdbcType=BIGINT},
-      </if>
-      <if test="record.password != null">
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from blogger_account
+        where ID = #{id,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from blogger_account
+        where ID = #{id,jdbcType=BIGINT}
+    </delete>
+    <delete id="deleteByExample" parameterType="run.app.entity.model.BloggerAccountExample">
+        delete from blogger_account
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </delete>
+    <insert id="insert" parameterType="run.app.entity.model.BloggerAccount">
+        insert into blogger_account (ID, PASSWORD, REGISTER_DATE,
+        EMAIL, IS_ENABLED)
+        values (#{id,jdbcType=BIGINT}, #{password,jdbcType=VARCHAR}, #{registerDate,jdbcType=TIMESTAMP},
+        #{email,jdbcType=VARCHAR}, #{isEnabled,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insertSelective" parameterType="run.app.entity.model.BloggerAccount">
+        insert into blogger_account
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                ID,
+            </if>
+            <if test="password != null">
+                PASSWORD,
+            </if>
+            <if test="registerDate != null">
+                REGISTER_DATE,
+            </if>
+            <if test="email != null">
+                EMAIL,
+            </if>
+            <if test="isEnabled != null">
+                IS_ENABLED,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="password != null">
+                #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="registerDate != null">
+                #{registerDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="email != null">
+                #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="isEnabled != null">
+                #{isEnabled,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <select id="countByExample" parameterType="run.app.entity.model.BloggerAccountExample" resultType="java.lang.Long">
+        select count(*) from blogger_account
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </select>
+    <update id="updateByExampleSelective" parameterType="map">
+        update blogger_account
+        <set>
+            <if test="record.id != null">
+                ID = #{record.id,jdbcType=BIGINT},
+            </if>
+            <if test="record.password != null">
+                PASSWORD = #{record.password,jdbcType=VARCHAR},
+            </if>
+            <if test="record.registerDate != null">
+                REGISTER_DATE = #{record.registerDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.email != null">
+                EMAIL = #{record.email,jdbcType=VARCHAR},
+            </if>
+            <if test="record.isEnabled != null">
+                IS_ENABLED = #{record.isEnabled,jdbcType=VARCHAR},
+            </if>
+        </set>
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByExample" parameterType="map">
+        update blogger_account
+        set ID = #{record.id,jdbcType=BIGINT},
         PASSWORD = #{record.password,jdbcType=VARCHAR},
-      </if>
-      <if test="record.registerDate != null">
         REGISTER_DATE = #{record.registerDate,jdbcType=TIMESTAMP},
-      </if>
-      <if test="record.email != null">
         EMAIL = #{record.email,jdbcType=VARCHAR},
-      </if>
-      <if test="record.isEnabled != null">
-        IS_ENABLED = #{record.isEnabled,jdbcType=VARCHAR},
-      </if>
-    </set>
-    <if test="_parameter != null">
-      <include refid="Update_By_Example_Where_Clause" />
-    </if>
-  </update>
-  <update id="updateByExample" parameterType="map">
-    update blogger_account
-    set ID = #{record.id,jdbcType=BIGINT},
-      PASSWORD = #{record.password,jdbcType=VARCHAR},
-      REGISTER_DATE = #{record.registerDate,jdbcType=TIMESTAMP},
-      EMAIL = #{record.email,jdbcType=VARCHAR},
-      IS_ENABLED = #{record.isEnabled,jdbcType=VARCHAR}
-    <if test="_parameter != null">
-      <include refid="Update_By_Example_Where_Clause" />
-    </if>
-  </update>
-  <update id="updateByPrimaryKeySelective" parameterType="run.app.entity.model.BloggerAccount">
-    update blogger_account
-    <set>
-      <if test="password != null">
-        PASSWORD = #{password,jdbcType=VARCHAR},
-      </if>
-      <if test="registerDate != null">
+        IS_ENABLED = #{record.isEnabled,jdbcType=VARCHAR}
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByPrimaryKeySelective" parameterType="run.app.entity.model.BloggerAccount">
+        update blogger_account
+        <set>
+            <if test="password != null">
+                PASSWORD = #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="registerDate != null">
+                REGISTER_DATE = #{registerDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="email != null">
+                EMAIL = #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="isEnabled != null">
+                IS_ENABLED = #{isEnabled,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where ID = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="run.app.entity.model.BloggerAccount">
+        update blogger_account
+        set PASSWORD = #{password,jdbcType=VARCHAR},
         REGISTER_DATE = #{registerDate,jdbcType=TIMESTAMP},
-      </if>
-      <if test="email != null">
         EMAIL = #{email,jdbcType=VARCHAR},
-      </if>
-      <if test="isEnabled != null">
-        IS_ENABLED = #{isEnabled,jdbcType=VARCHAR},
-      </if>
-    </set>
-    where ID = #{id,jdbcType=BIGINT}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="run.app.entity.model.BloggerAccount">
-    update blogger_account
-    set PASSWORD = #{password,jdbcType=VARCHAR},
-      REGISTER_DATE = #{registerDate,jdbcType=TIMESTAMP},
-      EMAIL = #{email,jdbcType=VARCHAR},
-      IS_ENABLED = #{isEnabled,jdbcType=VARCHAR}
-    where ID = #{id,jdbcType=BIGINT}
-  </update>
+        IS_ENABLED = #{isEnabled,jdbcType=VARCHAR}
+        where ID = #{id,jdbcType=BIGINT}
+    </update>
 </mapper>

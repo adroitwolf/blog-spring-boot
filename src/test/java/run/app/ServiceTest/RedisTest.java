@@ -33,8 +33,8 @@ public class RedisTest {
     RedisService redisService;
 
     @Test
-    public void getTest(){
-        redisService.incrementBlogClickedCount(new ClickStatus(1234L,"123","123",1));
+    public void getTest() {
+        redisService.incrementBlogClickedCount(new ClickStatus(1234L, "123", "123", 1));
         Integer countFrmRedis = redisService.getBlogClickedCount(123L);
         Assert.assertNotNull(countFrmRedis);
         System.out.println(countFrmRedis);
@@ -44,25 +44,25 @@ public class RedisTest {
 
 
     @Test
-    public void listTest(){
+    public void listTest() {
         List<BlogStatus> statuses = redisService.listBlogClickedCounts();
     }
 
     @Test
-    public void testListTop5(){
+    public void testListTop5() {
         Set<PopularBlog> statuses = redisService.listTop5FrmRedis();
         System.out.println(statuses);
     }
 
     @Test
-    public void testTop5(){
+    public void testTop5() {
         List<PopularBlog> list = new ArrayList<>();
 
-        for(int i=0;i<5;i++){
+        for (int i = 0; i < 5; i++) {
             PopularBlog popularBlog = new PopularBlog();
             popularBlog.setId((long) i);
             popularBlog.setBlogName(String.valueOf(i));
-            popularBlog.setClickcount(RandomUtils.nextInt(10,100));
+            popularBlog.setClickcount(RandomUtils.nextInt(10, 100));
             list.add(popularBlog);
         }
         redisService.transTop5Posts2Redis(list);

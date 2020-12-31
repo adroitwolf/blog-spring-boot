@@ -35,92 +35,94 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 
     private AntPathMatcher antPathMatcher = new AntPathMatcher();
 
-    private Set<String> excludeUrlPatterns  = new HashSet<>();
+    private Set<String> excludeUrlPatterns = new HashSet<>();
 
-    private Map<RoleEnum,List<String>> authorityPatterns = new HashMap<>();
+    private Map<RoleEnum, List<String>> authorityPatterns = new HashMap<>();
 
 
-    public AuthenticationFilter(TokenService tokenService){
+    public AuthenticationFilter(TokenService tokenService) {
         this.tokenService = tokenService;
     }
 
 
     /**
-    * 功能描述: 取代spring security的认证功能 单体应用下的认证
-    * @Return: void
-    * @Author: WHOAMI
-    * @Date: 2020/2/15 12:47
+     * 功能描述: 取代spring security的认证功能 单体应用下的认证
+     *
+     * @Return: void
+     * @Author: WHOAMI
+     * @Date: 2020/2/15 12:47
      */
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
         String authentication = httpServletRequest.getHeader("Authentication");
 
 
-        if(shouldNotFilter(httpServletRequest)){
-            filterChain.doFilter(httpServletRequest,httpServletResponse);
-            return ;
-        }
-
-
-        if(StringUtils.isEmpty(authentication)){
-            handlerOnFailure(httpServletRequest,httpServletResponse, new UnAuthenticationException("用户未登录，请先登录！").setErrorData(authentication));
+        if (shouldNotFilter(httpServletRequest)) {
+            filterChain.doFilter(httpServletRequest, httpServletResponse);
             return;
         }
 
 
-        if(!tokenService.verifierToken(authentication)){
-            handlerOnFailure(httpServletRequest,httpServletResponse, new UnAuthenticationException("用户Token无效").setErrorData(authentication));
+        if (StringUtils.isEmpty(authentication)) {
+            handlerOnFailure(httpServletRequest, httpServletResponse, new UnAuthenticationException("用户未登录，请先登录！").setErrorData(authentication));
             return;
         }
 
-        if(tokenService.isExpire(authentication)){
-            handlerOnFailure(httpServletRequest,httpServletResponse, new UnAuthenticationException("用户Token已经过期").setErrorData(authentication));
+
+        if (!tokenService.verifierToken(authentication)) {
+            handlerOnFailure(httpServletRequest, httpServletResponse, new UnAuthenticationException("用户Token无效").setErrorData(authentication));
+            return;
+        }
+
+        if (tokenService.isExpire(authentication)) {
+            handlerOnFailure(httpServletRequest, httpServletResponse, new UnAuthenticationException("用户Token已经过期").setErrorData(authentication));
             return;
         }
 
 
 //        验证用户角色
-        if(verifyAuthority(tokenService.getRoles(authentication),httpServletRequest)){
-            handlerOnFailure(httpServletRequest,httpServletResponse,new UnAccessException("用户没有权限"));
+        if (verifyAuthority(tokenService.getRoles(authentication), httpServletRequest)) {
+            handlerOnFailure(httpServletRequest, httpServletResponse, new UnAccessException("用户没有权限"));
             return;
         }
 
 
-        filterChain.doFilter(httpServletRequest,httpServletResponse);
+        filterChain.doFilter(httpServletRequest, httpServletResponse);
 
     }
 
 
-    public boolean shouldNotFilter(HttpServletRequest httpServletRequest){
-        return excludeUrlPatterns.stream().anyMatch(p->antPathMatcher.match(p,httpServletRequest.getServletPath()));
+    public boolean shouldNotFilter(HttpServletRequest httpServletRequest) {
+        return excludeUrlPatterns.stream().anyMatch(p -> antPathMatcher.match(p, httpServletRequest.getServletPath()));
     }
 
 
-    public void addExcludePatterns(String ...excludePattern){
-        Collections.addAll(this.excludeUrlPatterns,excludePattern);
+    public void addExcludePatterns(String... excludePattern) {
+        Collections.addAll(this.excludeUrlPatterns, excludePattern);
     }
 
 
-        /**
-        * 功能描述: 判断过滤  false表示有权限
-        * @Param: [roles, request]
-        * @Return: boolean
-        * @Author: WHOAMI
-        * @Date: 2020/2/15 12:47
-         */
-    private boolean verifyAuthority(List<RoleEnum> roles, HttpServletRequest request){
-            return roles.stream()
-                    .filter(p->
+    /**
+     * 功能描述: 判断过滤  false表示有权限
+     *
+     * @Param: [roles, request]
+     * @Return: boolean
+     * @Author: WHOAMI
+     * @Date: 2020/2/15 12:47
+     */
+    private boolean verifyAuthority(List<RoleEnum> roles, HttpServletRequest request) {
+        return roles.stream()
+                .filter(p ->
                         authorityPatterns.get(p)
-                                .stream().anyMatch(x-> antPathMatcher
-                                .match(x,request.getServletPath()))).count()>0?false:true;
+                                .stream().anyMatch(x -> antPathMatcher
+                                .match(x, request.getServletPath()))).count() > 0 ? false : true;
     }
 
     /**
-    * 功能描述: 添加权限控制
+     * 功能描述: 添加权限控制
      * 这里由于功能简单，只有管理员和用户，所以权限应该分别对待
      */
-    public void addAuthorityPatterns(Map<RoleEnum,List<String>>url){
+    public void addAuthorityPatterns(Map<RoleEnum, List<String>> url) {
         this.authorityPatterns = url;
     }
 

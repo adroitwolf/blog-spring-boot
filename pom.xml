@@ -28,9 +28,9 @@
 
         <!--热部署-->
         <!--<dependency>-->
-            <!--<groupId>org.springframework.boot</groupId>-->
-            <!--<artifactId>spring-boot-devtools</artifactId>-->
-            <!--<optional>true</optional>-->
+        <!--<groupId>org.springframework.boot</groupId>-->
+        <!--<artifactId>spring-boot-devtools</artifactId>-->
+        <!--<optional>true</optional>-->
         <!--</dependency>-->
         <!--资源监控-->
         <dependency>
@@ -65,17 +65,17 @@
 
 
         <!--<dependency>-->
-            <!--<groupId>org.springframework.boot</groupId>-->
-            <!--<artifactId>spring-boot-starter-security</artifactId>-->
+        <!--<groupId>org.springframework.boot</groupId>-->
+        <!--<artifactId>spring-boot-starter-security</artifactId>-->
         <!--</dependency>-->
 
 
         <!--数据库方面-->
         <!--自动建表-->
         <!--<dependency>-->
-            <!--<groupId>com.gitee.sunchenbin.mybatis.actable</groupId>-->
-            <!--<artifactId>mybatis-enhance-actable</artifactId>-->
-            <!--<version>1.0.6.RELEASE</version>-->
+        <!--<groupId>com.gitee.sunchenbin.mybatis.actable</groupId>-->
+        <!--<artifactId>mybatis-enhance-actable</artifactId>-->
+        <!--<version>1.0.6.RELEASE</version>-->
         <!--</dependency>-->
 
         <!--分页-->
@@ -84,7 +84,6 @@
             <artifactId>pagehelper-spring-boot-starter</artifactId>
             <version>1.2.12</version>
         </dependency>
-
 
 
         <dependency>
@@ -142,9 +141,9 @@
         </dependency>
 
         <!--<dependency>-->
-            <!--<groupId>org.redisson</groupId>-->
-            <!--<artifactId>redisson-spring-boot-starter</artifactId>-->
-            <!--<version>3.10.4</version>-->
+        <!--<groupId>org.redisson</groupId>-->
+        <!--<artifactId>redisson-spring-boot-starter</artifactId>-->
+        <!--<version>3.10.4</version>-->
         <!--</dependency>-->
 
 

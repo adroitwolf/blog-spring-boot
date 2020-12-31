@@ -49,9 +49,9 @@ public class QMailServiceImpl implements QMailService {
 
         simpleMailMessage.setText(content);
 
-        try{
+        try {
             javaMailSender.send(simpleMailMessage);
-        }catch (Exception e){
+        } catch (Exception e) {
             log.error("发送失败");
             log.error(e.getMessage());
 

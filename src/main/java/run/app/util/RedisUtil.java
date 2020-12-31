@@ -17,13 +17,13 @@ import java.util.concurrent.TimeUnit;
 public class RedisUtil {
 
 
-
     /**
-    * 功能描述: 通过客户端生成文章点击量的key值
-    * @Author: WHOAMI
-    * @Date: 2019/11/29 17:00
+     * 功能描述: 通过客户端生成文章点击量的key值
+     *
+     * @Author: WHOAMI
+     * @Date: 2019/11/29 17:00
      */
-    public static String getClickSetKey(ClickStatus clickStatus){
+    public static String getClickSetKey(ClickStatus clickStatus) {
         StringBuilder builder = new StringBuilder();
         builder.append(clickStatus.getSessionId());
         builder.append("-");

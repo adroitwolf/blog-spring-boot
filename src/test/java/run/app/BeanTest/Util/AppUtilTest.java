@@ -12,14 +12,14 @@ import run.app.util.AppUtil;
 public class AppUtilTest {
 
     @Test
-    public void IdTest(){
+    public void IdTest() {
 
         System.out.println(AppUtil.nextId());
     }
 
 
     @Test
-    public void codeTest(){
+    public void codeTest() {
         System.out.println(AppUtil.getCode());
     }
 }

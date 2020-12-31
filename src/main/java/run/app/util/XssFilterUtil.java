@@ -20,8 +20,11 @@ public class XssFilterUtil {
      */
     private static final Whitelist whitelist = Whitelist.basicWithImages();
 
-    /** 配置过滤化参数,不对代码进行格式化 */
+    /**
+     * 配置过滤化参数,不对代码进行格式化
+     */
     private static final Document.OutputSettings outputSettings = new Document.OutputSettings().prettyPrint(false);
+
     static {
         // 富文本编辑时一些样式是使用style来进行实现的
         // 比如红色字体 style="color:red;"

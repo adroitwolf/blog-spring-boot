@@ -36,6 +36,7 @@ public class SnowFlake {
         this.datacenterId = datacenterId;
         this.machineId = machineId;
     }
+
     //产生下一个ID
     public synchronized long nextId() {
         long currStmp = getNewstmp();

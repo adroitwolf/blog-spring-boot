@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @Transactional
-public class AccountServiceImpl implements AccountService{
+public class AccountServiceImpl implements AccountService {
 
 
     @Autowired
@@ -70,16 +70,17 @@ public class AccountServiceImpl implements AccountService{
     QMailService qMailService;
 
 
-    private final static  String PASSERROR = "用户名或密码不正确";
+    private final static String PASSERROR = "用户名或密码不正确";
 
-    private final static  String LOGINSUCCESS ="用户登陆成功";
+    private final static String LOGINSUCCESS = "用户登陆成功";
 
     private final static String BLOCKED = "账号被封禁";
 
-    private final static String NOTFOUND= "账号未找到";
+    private final static String NOTFOUND = "账号未找到";
 
     @Override
-    public @NonNull BaseResponse loginService(@NonNull LoginParams loginParams) {
+    public @NonNull
+    BaseResponse loginService(@NonNull LoginParams loginParams) {
 
 //        if(tokenService.islogined(loginParams.getUsername())){
 ////            throw new BadRequestException("用户已经在别处登陆！");
@@ -92,22 +93,22 @@ public class AccountServiceImpl implements AccountService{
 //        Optional<String> token = Optional.ofNullable(null);
 
         try {
-            user =loginWithEmail(loginParams.getP());
-        }catch (NotFoundException e){
-                throw new BadRequestException(PASSERROR);
+            user = loginWithEmail(loginParams.getP());
+        } catch (NotFoundException e) {
+            throw new BadRequestException(PASSERROR);
         }
 
-        if(user.getPassword().equals(loginParams.getPassword())){ //判断密码是否正确
+        if (user.getPassword().equals(loginParams.getPassword())) { //判断密码是否正确
 
 //            这里应该判断账户是否被封禁
             log.info(user.toString());
-            if(!UserStatusEnum.YES.getName().equals(user.getIsEnabled())){ //说明被封禁
+            if (!UserStatusEnum.YES.getName().equals(user.getIsEnabled())) { //说明被封禁
                 throw new BadRequestException(BLOCKED);
             }
             userRs = convertBloggerAccount2User(user);
 
-        }else{
-                throw new BadRequestException(PASSERROR);
+        } else {
+            throw new BadRequestException(PASSERROR);
         }
 
         BaseResponse baseResponse = new BaseResponse();
@@ -162,12 +163,12 @@ public class AccountServiceImpl implements AccountService{
 
         List<BloggerAccount> bloggerAccounts = bloggerAccountMapper.selectByExample(bloggerAccountExample);
 
-        if(bloggerAccounts.isEmpty()){
+        if (bloggerAccounts.isEmpty()) {
             throw new BadRequestException("密码错误！");
         }
 
 
-        for (BloggerAccount bloggerAccount:bloggerAccounts) {
+        for (BloggerAccount bloggerAccount : bloggerAccounts) {
             bloggerAccount.setPassword(newPassword);
             bloggerAccountMapper.updateByPrimaryKey(bloggerAccount);
             baseResponse.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -217,9 +218,9 @@ public class AccountServiceImpl implements AccountService{
     public void getMailCode(String mail) {
 
         //邮箱是否合法
-        if(!Validator.isEmail(mail)){ //不是邮箱直接舍弃
+        if (!Validator.isEmail(mail)) { //不是邮箱直接舍弃
             log.error("该账号非邮箱");
-            return ;
+            return;
         }
 
         StringBuilder mailContent = new StringBuilder();
@@ -233,21 +234,21 @@ public class AccountServiceImpl implements AccountService{
 
         List<BloggerAccount> bloggerAccounts = bloggerAccountMapper.selectByExample(bloggerAccountExample);
 
-        if(bloggerAccounts.size()>0){
+        if (bloggerAccounts.size() > 0) {
             mailContent.append("该邮箱已被注册");
             log.error("该邮箱已被注册");
-        }else{
+        } else {
             //生成验证码
             String code = AppUtil.getCode();
             //存储到缓存中 有效期一天
-            redisService.putEmailCode(mail,code,2, TimeUnit.HOURS);
+            redisService.putEmailCode(mail, code, 2, TimeUnit.HOURS);
             mailContent.append("验证码为：");
             mailContent.append(code);
             mailContent.append("            ");
             mailContent.append("验证码有效期为2小时,请尽快完成注册");
         }
 
-        qMailService.sendSimpleMail(mail,"用户注册",mailContent.toString());
+        qMailService.sendSimpleMail(mail, "用户注册", mailContent.toString());
 
     }
 
@@ -264,13 +265,13 @@ public class AccountServiceImpl implements AccountService{
 
         List<BloggerAccount> bloggerAccounts = bloggerAccountMapper.selectByExample(bloggerAccountExample);
 
-        if(bloggerAccounts.size()>0){
+        if (bloggerAccounts.size() > 0) {
             throw new BadRequestException("此邮箱已被注册");
         }
 
         //验证验证码是否正确
-        if(!registerParams.getEmail().equals(redisService.getEmailByCode(registerParams.getCode()))){
-            throw  new BadRequestException("验证码不正确！");
+        if (!registerParams.getEmail().equals(redisService.getEmailByCode(registerParams.getCode()))) {
+            throw new BadRequestException("验证码不正确！");
         }
 ////        先查询是否账号是否可用
 //
@@ -282,7 +283,7 @@ public class AccountServiceImpl implements AccountService{
 //
         BloggerAccount bloggerAccount = new BloggerAccount();
 
-        BeanUtils.copyProperties(registerParams,bloggerAccount);
+        BeanUtils.copyProperties(registerParams, bloggerAccount);
 
         bloggerAccount.setId(AppUtil.nextId());
 //        bloggerAccount.setUsername(registerParams.getAccount());
@@ -293,7 +294,7 @@ public class AccountServiceImpl implements AccountService{
         log.debug(bloggerAccount.toString());
 
 
-        if( bloggerAccountMapper.insertSelective(bloggerAccount) == 0){
+        if (bloggerAccountMapper.insertSelective(bloggerAccount) == 0) {
             baseResponse.setStatus(HttpStatus.BAD_REQUEST.value());
             baseResponse.setData("服务异常，请稍后重试");
             return baseResponse;
@@ -314,7 +315,7 @@ public class AccountServiceImpl implements AccountService{
         List<RoleEnum> roles = new ArrayList<>();
         roles.add(RoleEnum.USER);
 
-        roleService.setRolesWithUserId(roles,bloggerAccount.getId());
+        roleService.setRolesWithUserId(roles, bloggerAccount.getId());
 //
         return baseResponse;
     }
@@ -347,9 +348,9 @@ public class AccountServiceImpl implements AccountService{
 
 
     @Override
-    public BaseResponse updateUserStatus(Long bloggerId,String status,String token){
+    public BaseResponse updateUserStatus(Long bloggerId, String status, String token) {
 //      不允许封禁自己的账户
-        if (bloggerId.equals(tokenService.getUserIdWithToken(token))){
+        if (bloggerId.equals(tokenService.getUserIdWithToken(token))) {
             throw new UnAccessException("不允许对自身账号进行任何操作");
         }
 
@@ -357,22 +358,22 @@ public class AccountServiceImpl implements AccountService{
         BloggerAccount bloggerAccount = new BloggerAccount();
         bloggerAccount.setId(bloggerId);
         bloggerAccount.setIsEnabled(UserStatusEnum.valueOf(status).getName()); //这里防止了非法字符注入
-        if(bloggerAccountMapper.updateByPrimaryKeySelective(bloggerAccount) ==0){
+        if (bloggerAccountMapper.updateByPrimaryKeySelective(bloggerAccount) == 0) {
             throw new BadRequestException(NOTFOUND);
         }
-        return new BaseResponse(HttpStatus.OK.value(),"账号状态更改成功",null);
+        return new BaseResponse(HttpStatus.OK.value(), "账号状态更改成功", null);
     }
 
     @Override
-    public BaseResponse deleteUser(Long bloggerId,String token) { //删除用户需要权限
+    public BaseResponse deleteUser(Long bloggerId, String token) { //删除用户需要权限
         //todo 需要在用户验证 验证码之后的操作
 //       1.不能删除自己 2.同水平之间不能删除
 
         log.info(String.valueOf(bloggerId));
 
-        log.info("经过token解释过的id:"+tokenService.getUserIdWithToken(token));
+        log.info("经过token解释过的id:" + tokenService.getUserIdWithToken(token));
 
-        if (bloggerId.equals(tokenService.getUserIdWithToken(token))){
+        if (bloggerId.equals(tokenService.getUserIdWithToken(token))) {
 
             throw new UnAccessException("不允许删除自己");
         }
@@ -390,35 +391,35 @@ public class AccountServiceImpl implements AccountService{
 
 
         //这里并没有删除该用户发布的所有文章
-        return new BaseResponse(HttpStatus.OK.value(),"账删除成功",null);
+        return new BaseResponse(HttpStatus.OK.value(), "账删除成功", null);
     }
 
     @Override
     public BaseResponse selectUserByExample(run.app.entity.VO.PageInfo pageInfo, QueryParams queryParams) {
-        if(!StringUtils.isEmpty(queryParams.getStatus())){
+        if (!StringUtils.isEmpty(queryParams.getStatus())) {
             UserStatusEnum.valueOf(queryParams.getStatus());
         }
 
-        PageHelper.startPage(pageInfo.getPageNum(),pageInfo.getPageSize());
+        PageHelper.startPage(pageInfo.getPageNum(), pageInfo.getPageSize());
         List<UserInfo> accounts = bloggerAccountMapper.selectByQueryParams(queryParams);
 
         PageInfo<UserInfo> pageInfoObject = new PageInfo<>(accounts);
 
         DataGrid dataGrid = new DataGrid();
 
-        List<UserInfo> lists = pageInfoObject.getList().stream().map(item->{
+        List<UserInfo> lists = pageInfoObject.getList().stream().map(item -> {
 
             UserInfo userInfo = new UserInfo();
 
-            BeanUtils.copyProperties(item,userInfo);
+            BeanUtils.copyProperties(item, userInfo);
 
-            if(null != item.getAvatarId()){ //查询是否头像为空
+            if (null != item.getAvatarId()) { //查询是否头像为空
 
                 userInfo.setAvatar(attachmentService.getPathById(item.getAvatarId()));
             }
 
             //查询当前用户角色
-            userInfo.setRoles(roleService.getRolesByUserId(userInfo.getId()).stream().map(n->n.getAuthority()).collect(Collectors.toList()));
+            userInfo.setRoles(roleService.getRolesByUserId(userInfo.getId()).stream().map(n -> n.getAuthority()).collect(Collectors.toList()));
 
             return userInfo;
         }).collect(Collectors.toList());
@@ -429,12 +430,14 @@ public class AccountServiceImpl implements AccountService{
         dataGrid.setTotal(pageInfoObject.getTotal());
 
 
-
-        return new BaseResponse(HttpStatus.OK.value(),null,dataGrid);
+        return new BaseResponse(HttpStatus.OK.value(), null, dataGrid);
     }
 
     @Override
-    public BaseResponse logout(String token) {
+    public BaseResponse logout(AutoToken autoToken) {
+
+        //消除redis缓存
+        redisService.delete(autoToken.getRefreshToken());
         return new BaseResponse();
     }
 
@@ -442,12 +445,11 @@ public class AccountServiceImpl implements AccountService{
     public User convertBloggerAccount2User(BloggerAccount user) {
         User userRs = new User();
 
-        BeanUtils.copyProperties(user,userRs);
-
+        BeanUtils.copyProperties(user, userRs);
 
 
         userRs.setRoles(roleService.getRolesByUserId(userRs.getId())
-                .stream().map(n->n.getAuthority()).collect(Collectors.toList()));
+                .stream().map(n -> n.getAuthority()).collect(Collectors.toList()));
 
 
         return userRs;

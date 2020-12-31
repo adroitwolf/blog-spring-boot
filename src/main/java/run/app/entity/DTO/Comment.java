@@ -35,10 +35,10 @@ public class Comment {
     @JsonSerialize(using = ToStringSerializer.class)
     private Long pid;
 
-    @DateTimeFormat(pattern="yyyy-mm-dd hh:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-mm-dd hh:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date createTime;
 
     private UserDTO user;
-    
+
 }

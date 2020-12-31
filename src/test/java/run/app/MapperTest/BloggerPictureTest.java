@@ -23,11 +23,11 @@ public class BloggerPictureTest {
     BloggerPictureMapper bloggerPictureMapper;
 
     @Test
-    public void findAllMediaType(){
+    public void findAllMediaType() {
         System.out.println(bloggerPictureMapper.findAllMediaType(387193717087272960L));
     }
 
     @Test
-    public void updatePictureByAddCiteNum(){
+    public void updatePictureByAddCiteNum() {
     }
 }

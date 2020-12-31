@@ -48,7 +48,7 @@ public class LogManagerAspect {
         blogLog.setUsername(accountService.getEmailByToken(token));
         blogLog.setRomoteip(ip);
         blogLog.setRomotetime(new Date());
-        blogLog.setOperation(targetName+"."+methodName);
+        blogLog.setOperation(targetName + "." + methodName);
         logService.storageLog(blogLog);
 
         return joinPoint.proceed();

@@ -1,196 +1,198 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="run.app.mapper.BloggerProfileMapper">
-  <resultMap id="BaseResultMap" type="run.app.entity.model.BloggerProfile">
-    <id column="BLOGGER_ID" jdbcType="BIGINT" property="bloggerId" />
-    <result column="ABOUT_ME" jdbcType="VARCHAR" property="aboutMe" />
-    <result column="NICKNAME" jdbcType="VARCHAR" property="nickname" />
-    <result column="AVATAR_ID" jdbcType="BIGINT" property="avatarId" />
-  </resultMap>
-  <sql id="Example_Where_Clause">
-    <where>
-      <foreach collection="oredCriteria" item="criteria" separator="or">
-        <if test="criteria.valid">
-          <trim prefix="(" prefixOverrides="and" suffix=")">
-            <foreach collection="criteria.criteria" item="criterion">
-              <choose>
-                <when test="criterion.noValue">
-                  and ${criterion.condition}
-                </when>
-                <when test="criterion.singleValue">
-                  and ${criterion.condition} #{criterion.value}
-                </when>
-                <when test="criterion.betweenValue">
-                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
-                </when>
-                <when test="criterion.listValue">
-                  and ${criterion.condition}
-                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
-                    #{listItem}
-                  </foreach>
-                </when>
-              </choose>
+    <resultMap id="BaseResultMap" type="run.app.entity.model.BloggerProfile">
+        <id column="BLOGGER_ID" jdbcType="BIGINT" property="bloggerId"/>
+        <result column="ABOUT_ME" jdbcType="VARCHAR" property="aboutMe"/>
+        <result column="NICKNAME" jdbcType="VARCHAR" property="nickname"/>
+        <result column="AVATAR_ID" jdbcType="BIGINT" property="avatarId"/>
+    </resultMap>
+    <sql id="Example_Where_Clause">
+        <where>
+            <foreach collection="oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" prefixOverrides="and" suffix=")">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach close=")" collection="criterion.value" item="listItem" open="("
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
             </foreach>
-          </trim>
-        </if>
-      </foreach>
-    </where>
-  </sql>
-  <sql id="Update_By_Example_Where_Clause">
-    <where>
-      <foreach collection="example.oredCriteria" item="criteria" separator="or">
-        <if test="criteria.valid">
-          <trim prefix="(" prefixOverrides="and" suffix=")">
-            <foreach collection="criteria.criteria" item="criterion">
-              <choose>
-                <when test="criterion.noValue">
-                  and ${criterion.condition}
-                </when>
-                <when test="criterion.singleValue">
-                  and ${criterion.condition} #{criterion.value}
-                </when>
-                <when test="criterion.betweenValue">
-                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
-                </when>
-                <when test="criterion.listValue">
-                  and ${criterion.condition}
-                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
-                    #{listItem}
-                  </foreach>
-                </when>
-              </choose>
+        </where>
+    </sql>
+    <sql id="Update_By_Example_Where_Clause">
+        <where>
+            <foreach collection="example.oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" prefixOverrides="and" suffix=")">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach close=")" collection="criterion.value" item="listItem" open="("
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
             </foreach>
-          </trim>
+        </where>
+    </sql>
+    <sql id="Base_Column_List">
+        BLOGGER_ID, ABOUT_ME, NICKNAME, AVATAR_ID
+    </sql>
+    <select id="selectByExample" parameterType="run.app.entity.model.BloggerProfileExample" resultMap="BaseResultMap">
+        select
+        <if test="distinct">
+            distinct
         </if>
-      </foreach>
-    </where>
-  </sql>
-  <sql id="Base_Column_List">
-    BLOGGER_ID, ABOUT_ME, NICKNAME, AVATAR_ID
-  </sql>
-  <select id="selectByExample" parameterType="run.app.entity.model.BloggerProfileExample" resultMap="BaseResultMap">
-    select
-    <if test="distinct">
-      distinct
-    </if>
-    <include refid="Base_Column_List" />
-    from blogger_profile
-    <if test="_parameter != null">
-      <include refid="Example_Where_Clause" />
-    </if>
-    <if test="orderByClause != null">
-      order by ${orderByClause}
-    </if>
-  </select>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select 
-    <include refid="Base_Column_List" />
-    from blogger_profile
-    where BLOGGER_ID = #{bloggerId,jdbcType=BIGINT}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from blogger_profile
-    where BLOGGER_ID = #{bloggerId,jdbcType=BIGINT}
-  </delete>
-  <delete id="deleteByExample" parameterType="run.app.entity.model.BloggerProfileExample">
-    delete from blogger_profile
-    <if test="_parameter != null">
-      <include refid="Example_Where_Clause" />
-    </if>
-  </delete>
-  <insert id="insert" parameterType="run.app.entity.model.BloggerProfile">
-    insert into blogger_profile (BLOGGER_ID, ABOUT_ME, NICKNAME, 
-      AVATAR_ID)
-    values (#{bloggerId,jdbcType=BIGINT}, #{aboutMe,jdbcType=VARCHAR}, #{nickname,jdbcType=VARCHAR}, 
-      #{avatarId,jdbcType=BIGINT})
-  </insert>
-  <insert id="insertSelective" parameterType="run.app.entity.model.BloggerProfile">
-    insert into blogger_profile
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="bloggerId != null">
-        BLOGGER_ID,
-      </if>
-      <if test="aboutMe != null">
-        ABOUT_ME,
-      </if>
-      <if test="nickname != null">
-        NICKNAME,
-      </if>
-      <if test="avatarId != null">
-        AVATAR_ID,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="bloggerId != null">
-        #{bloggerId,jdbcType=BIGINT},
-      </if>
-      <if test="aboutMe != null">
-        #{aboutMe,jdbcType=VARCHAR},
-      </if>
-      <if test="nickname != null">
-        #{nickname,jdbcType=VARCHAR},
-      </if>
-      <if test="avatarId != null">
-        #{avatarId,jdbcType=BIGINT},
-      </if>
-    </trim>
-  </insert>
-  <select id="countByExample" parameterType="run.app.entity.model.BloggerProfileExample" resultType="java.lang.Long">
-    select count(*) from blogger_profile
-    <if test="_parameter != null">
-      <include refid="Example_Where_Clause" />
-    </if>
-  </select>
-  <update id="updateByExampleSelective" parameterType="map">
-    update blogger_profile
-    <set>
-      <if test="record.bloggerId != null">
-        BLOGGER_ID = #{record.bloggerId,jdbcType=BIGINT},
-      </if>
-      <if test="record.aboutMe != null">
+        <include refid="Base_Column_List"/>
+        from blogger_profile
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from blogger_profile
+        where BLOGGER_ID = #{bloggerId,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from blogger_profile
+        where BLOGGER_ID = #{bloggerId,jdbcType=BIGINT}
+    </delete>
+    <delete id="deleteByExample" parameterType="run.app.entity.model.BloggerProfileExample">
+        delete from blogger_profile
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </delete>
+    <insert id="insert" parameterType="run.app.entity.model.BloggerProfile">
+        insert into blogger_profile (BLOGGER_ID, ABOUT_ME, NICKNAME,
+        AVATAR_ID)
+        values (#{bloggerId,jdbcType=BIGINT}, #{aboutMe,jdbcType=VARCHAR}, #{nickname,jdbcType=VARCHAR},
+        #{avatarId,jdbcType=BIGINT})
+    </insert>
+    <insert id="insertSelective" parameterType="run.app.entity.model.BloggerProfile">
+        insert into blogger_profile
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="bloggerId != null">
+                BLOGGER_ID,
+            </if>
+            <if test="aboutMe != null">
+                ABOUT_ME,
+            </if>
+            <if test="nickname != null">
+                NICKNAME,
+            </if>
+            <if test="avatarId != null">
+                AVATAR_ID,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="bloggerId != null">
+                #{bloggerId,jdbcType=BIGINT},
+            </if>
+            <if test="aboutMe != null">
+                #{aboutMe,jdbcType=VARCHAR},
+            </if>
+            <if test="nickname != null">
+                #{nickname,jdbcType=VARCHAR},
+            </if>
+            <if test="avatarId != null">
+                #{avatarId,jdbcType=BIGINT},
+            </if>
+        </trim>
+    </insert>
+    <select id="countByExample" parameterType="run.app.entity.model.BloggerProfileExample" resultType="java.lang.Long">
+        select count(*) from blogger_profile
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </select>
+    <update id="updateByExampleSelective" parameterType="map">
+        update blogger_profile
+        <set>
+            <if test="record.bloggerId != null">
+                BLOGGER_ID = #{record.bloggerId,jdbcType=BIGINT},
+            </if>
+            <if test="record.aboutMe != null">
+                ABOUT_ME = #{record.aboutMe,jdbcType=VARCHAR},
+            </if>
+            <if test="record.nickname != null">
+                NICKNAME = #{record.nickname,jdbcType=VARCHAR},
+            </if>
+            <if test="record.avatarId != null">
+                AVATAR_ID = #{record.avatarId,jdbcType=BIGINT},
+            </if>
+        </set>
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByExample" parameterType="map">
+        update blogger_profile
+        set BLOGGER_ID = #{record.bloggerId,jdbcType=BIGINT},
         ABOUT_ME = #{record.aboutMe,jdbcType=VARCHAR},
-      </if>
-      <if test="record.nickname != null">
         NICKNAME = #{record.nickname,jdbcType=VARCHAR},
-      </if>
-      <if test="record.avatarId != null">
-        AVATAR_ID = #{record.avatarId,jdbcType=BIGINT},
-      </if>
-    </set>
-    <if test="_parameter != null">
-      <include refid="Update_By_Example_Where_Clause" />
-    </if>
-  </update>
-  <update id="updateByExample" parameterType="map">
-    update blogger_profile
-    set BLOGGER_ID = #{record.bloggerId,jdbcType=BIGINT},
-      ABOUT_ME = #{record.aboutMe,jdbcType=VARCHAR},
-      NICKNAME = #{record.nickname,jdbcType=VARCHAR},
-      AVATAR_ID = #{record.avatarId,jdbcType=BIGINT}
-    <if test="_parameter != null">
-      <include refid="Update_By_Example_Where_Clause" />
-    </if>
-  </update>
-  <update id="updateByPrimaryKeySelective" parameterType="run.app.entity.model.BloggerProfile">
-    update blogger_profile
-    <set>
-      <if test="aboutMe != null">
-        ABOUT_ME = #{aboutMe,jdbcType=VARCHAR},
-      </if>
-      <if test="nickname != null">
+        AVATAR_ID = #{record.avatarId,jdbcType=BIGINT}
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByPrimaryKeySelective" parameterType="run.app.entity.model.BloggerProfile">
+        update blogger_profile
+        <set>
+            <if test="aboutMe != null">
+                ABOUT_ME = #{aboutMe,jdbcType=VARCHAR},
+            </if>
+            <if test="nickname != null">
+                NICKNAME = #{nickname,jdbcType=VARCHAR},
+            </if>
+            <if test="avatarId != null">
+                AVATAR_ID = #{avatarId,jdbcType=BIGINT},
+            </if>
+        </set>
+        where BLOGGER_ID = #{bloggerId,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="run.app.entity.model.BloggerProfile">
+        update blogger_profile
+        set ABOUT_ME = #{aboutMe,jdbcType=VARCHAR},
         NICKNAME = #{nickname,jdbcType=VARCHAR},
-      </if>
-      <if test="avatarId != null">
-        AVATAR_ID = #{avatarId,jdbcType=BIGINT},
-      </if>
-    </set>
-    where BLOGGER_ID = #{bloggerId,jdbcType=BIGINT}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="run.app.entity.model.BloggerProfile">
-    update blogger_profile
-    set ABOUT_ME = #{aboutMe,jdbcType=VARCHAR},
-      NICKNAME = #{nickname,jdbcType=VARCHAR},
-      AVATAR_ID = #{avatarId,jdbcType=BIGINT}
-    where BLOGGER_ID = #{bloggerId,jdbcType=BIGINT}
-  </update>
+        AVATAR_ID = #{avatarId,jdbcType=BIGINT}
+        where BLOGGER_ID = #{bloggerId,jdbcType=BIGINT}
+    </update>
 </mapper>

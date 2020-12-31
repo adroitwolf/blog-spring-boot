@@ -23,12 +23,12 @@ spring:
       max-file-size: 10MB
   mail:
     properties.mail.smtp.port: 587
-    password: aoswvsdtfcoeeabf
+    password: scnbktlewhjgebdh
     host: smtp.qq.com
-    username: 2301520611@qq.com
+    username: 2532601658@qq.com
     default-encoding: UTF-8
     nickname: 逝痕枫舞
-    from: 2301520611@qq.com
+    from: 2532601658@qq.com
 
 
 
@@ -82,7 +82,7 @@ jwt:
   # 密钥, 经过Base64加密,去等 可自行替换 默认development
   base64Secret: ZGV2ZWxvcG1lbnQ
   #jwt中过期时间设置(s)
-  jwtExpires: 7200
+  jwtExpires: 20
   # refresh过期时间(day)
   refreshExpires: 5
 

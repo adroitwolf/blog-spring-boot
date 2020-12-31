@@ -27,16 +27,16 @@ public class FastJsonRedisSerializer<T> implements RedisSerializer<T> {
     }
 
     @Override
-    public byte[] serialize(T t)  {
-        if(null == t){
+    public byte[] serialize(T t) {
+        if (null == t) {
 
             return new byte[0];
         }
-        try{
+        try {
 
             return JSON.toJSONString(t, SerializerFeature.WriteClassName).getBytes(DEFAULT_CHARSET);
-        }catch (SerializationException ex){
-            throw new SerializationException("Something wrong..." + ex.getMessage(),ex);
+        } catch (SerializationException ex) {
+            throw new SerializationException("Something wrong..." + ex.getMessage(), ex);
         }
 
     }

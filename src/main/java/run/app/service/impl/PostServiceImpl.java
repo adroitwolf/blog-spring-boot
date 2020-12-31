@@ -35,6 +35,7 @@ public class PostServiceImpl implements PostService {
 
     /**
      * 功能描述: 新增两个标签服务的mapper层
+     *
      * @Author: WHOAMI
      * @Date: 2019/8/23 17:37
      */
@@ -51,9 +52,9 @@ public class PostServiceImpl implements PostService {
     BlogStatusService blogStatusService;
 
     /*
-    * 功能描述: 新增博客图片功能
-    * @Author: WHOAMI
-    * @Date: 2019/9/3 18:08
+     * 功能描述: 新增博客图片功能
+     * @Author: WHOAMI
+     * @Date: 2019/9/3 18:08
      */
     @Autowired
     AttachmentService attachmentService;
@@ -83,18 +84,18 @@ public class PostServiceImpl implements PostService {
         criteria.andStatusEqualTo("PUBLISHED");
 
 
-        PageHelper.startPage(pageInfo.getPageNum(),pageInfo.getPageSize());
+        PageHelper.startPage(pageInfo.getPageNum(), pageInfo.getPageSize());
         List<Blog> blogs = blogMapper.selectByExample(blogExample);
 
         PageInfo<Blog> list = new PageInfo<>(blogs);
 
-        List<run.app.entity.DTO.Blog> resultX= transDtoFrmModel(list);
+        List<run.app.entity.DTO.Blog> resultX = transDtoFrmModel(list);
         DataGrid dataGrid = new DataGrid();
 
         dataGrid.setRows(resultX);
         dataGrid.setTotal(list.getTotal());
 
-        return  new BaseResponse(HttpStatus.OK.value(),"",dataGrid);
+        return new BaseResponse(HttpStatus.OK.value(), "", dataGrid);
     }
 
     @Override
@@ -104,7 +105,7 @@ public class PostServiceImpl implements PostService {
 
         postQueryParams.setKeyword(keyword);
         postQueryParams.setStatus("PUBLISHED");
-        PageHelper.startPage(pageInfo.getPageNum(),pageInfo.getPageSize());
+        PageHelper.startPage(pageInfo.getPageNum(), pageInfo.getPageSize());
 
         List<Blog> blogList = blogMapper.selectByUserExample(postQueryParams, null);
 
@@ -119,7 +120,7 @@ public class PostServiceImpl implements PostService {
 
         dataGrid.setTotal(list.getTotal());
 
-        return new BaseResponse(HttpStatus.OK.value(),"",dataGrid);
+        return new BaseResponse(HttpStatus.OK.value(), "", dataGrid);
     }
 
     @Override
@@ -128,10 +129,9 @@ public class PostServiceImpl implements PostService {
         BaseResponse baseResponse = new BaseResponse();
 
 
-
         Blog blog = blogMapper.selectByPrimaryKey(blogId);
 
-        if(null == blog) { //当博客id不存在时
+        if (null == blog) { //当博客id不存在时
             throw new NotFoundException("没有相关博客信息");
         }
 
@@ -139,13 +139,13 @@ public class PostServiceImpl implements PostService {
 
         BlogContent blogContent = blogContentMapper.selectByPrimaryKey(blogId);
 
-        BeanUtils.copyProperties(blog,blogDetailWithAuthor);
+        BeanUtils.copyProperties(blog, blogDetailWithAuthor);
 
-        BeanUtils.copyProperties(blogContent,blogDetailWithAuthor);
+        BeanUtils.copyProperties(blogContent, blogDetailWithAuthor);
 
         //todo: tags
         List<String> nowTags = new ArrayList<>();
-        if(!StringUtils.isBlank(blog.getTagTitle())){
+        if (!StringUtils.isBlank(blog.getTagTitle())) {
 
             nowTags = tagService.selectTagTitleByIdString(blog.getTagTitle());
         }
@@ -178,9 +178,9 @@ public class PostServiceImpl implements PostService {
         DataGrid dataGrid = new DataGrid();
 
 
-        if(null != id) {
-            List<Long> list = tagService.selectBlogIdByTagId(pageInfo,id);
-            log.debug("tag集合"+list.size());
+        if (null != id) {
+            List<Long> list = tagService.selectBlogIdByTagId(pageInfo, id);
+            log.debug("tag集合" + list.size());
             PageInfo<Long> longPageInfo = new PageInfo<>(list);
 //          采取分页的方式 10-9 -19
 //            List<Long> list1 = list.subList((pageNum - 1) * pageSize, list.size()>pageNum * pageSize?pageNum*pageSize:list.size());
@@ -190,13 +190,13 @@ public class PostServiceImpl implements PostService {
             list.stream().forEach(x -> {
                 run.app.entity.DTO.Blog blogx = new run.app.entity.DTO.Blog();
                 Blog blog = blogMapper.selectByPrimaryKey(x);
-                BeanUtils.copyProperties(blog,blogx);
+                BeanUtils.copyProperties(blog, blogx);
 
                 if (!StringUtils.isBlank(blog.getTagTitle())) {
                     blogx.setTagsTitle(tagService.selectTagTitleByIdString(blog.getTagTitle()));
                 }
 
-                if(null != blog.getPictureId()){
+                if (null != blog.getPictureId()) {
                     blogx.setPicture(attachmentService.covertAttachmentPath(attachmentService.selectPicById(blog.getPictureId())));
                 }
 
@@ -207,45 +207,44 @@ public class PostServiceImpl implements PostService {
 
             dataGrid.setRows(blogs);
             dataGrid.setTotal(longPageInfo.getTotal());
-            return new BaseResponse(HttpStatus.OK.value(),"",dataGrid);
+            return new BaseResponse(HttpStatus.OK.value(), "", dataGrid);
         }
 
         dataGrid.setTotal(0);
 
-        return new BaseResponse(HttpStatus.OK.value(),"",dataGrid);
+        return new BaseResponse(HttpStatus.OK.value(), "", dataGrid);
     }
 
     @Override
     public BaseResponse getTopPosts() {
         Set<PopularBlog> popularPosts = redisService.listTop5FrmRedis();
-        if (null == popularPosts || popularPosts.size()<5){ //说明redis不准确,需要查询数据库
+        if (null == popularPosts || popularPosts.size() < 5) { //说明redis不准确,需要查询数据库
 //            todo  这里有可能会出现线程击穿
             popularPosts = new HashSet<>(blogStatusService.listTop5Posts());
 
         }
         log.info(popularPosts.toString());
-        return new BaseResponse(HttpStatus.OK.value(),null,popularPosts);
+        return new BaseResponse(HttpStatus.OK.value(), null, popularPosts);
     }
 
 
-
-    private List<run.app.entity.DTO.Blog> transDtoFrmModel(PageInfo<Blog> list){
-        return list.getList().stream().map(item->{
+    private List<run.app.entity.DTO.Blog> transDtoFrmModel(PageInfo<Blog> list) {
+        return list.getList().stream().map(item -> {
             List<String> tagsTitle = new ArrayList<>();
-            if(!StringUtils.isBlank(item.getTagTitle())){
+            if (!StringUtils.isBlank(item.getTagTitle())) {
 
                 tagsTitle = tagService.selectTagTitleByIdString(item.getTagTitle());
             }
 
             String pic = "";
 
-            if(null != item.getPictureId()){
+            if (null != item.getPictureId()) {
                 pic = attachmentService.getPathById(item.getPictureId());
             }
 
             run.app.entity.DTO.Blog blog = new run.app.entity.DTO.Blog();
 
-            BeanUtils.copyProperties(item,blog);
+            BeanUtils.copyProperties(item, blog);
             blog.setTagsTitle(tagsTitle);
             blog.setPicture(pic);
             return blog;

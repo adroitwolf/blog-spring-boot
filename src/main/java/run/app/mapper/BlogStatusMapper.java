@@ -1,11 +1,12 @@
 package run.app.mapper;
 
 import java.util.List;
+
 import org.apache.ibatis.annotations.Param;
 import run.app.entity.model.BlogStatus;
 import run.app.entity.model.BlogStatusExample;
 
-public interface BlogStatusMapper extends BaseMapper<BlogStatus,Long> {
+public interface BlogStatusMapper extends BaseMapper<BlogStatus, Long> {
     long countByExample(BlogStatusExample example);
 
     int deleteByExample(BlogStatusExample example);

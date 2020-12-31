@@ -40,12 +40,11 @@ import java.util.stream.Collectors;
 public class ArtcileServiceImpl implements ArticleService {
 
 
-
-
     /**
-    * 功能描述: 新增两个标签服务的mapper层
-    * @Author: WHOAMI
-    * @Date: 2019/8/23 17:37
+     * 功能描述: 新增两个标签服务的mapper层
+     *
+     * @Author: WHOAMI
+     * @Date: 2019/8/23 17:37
      */
     @Autowired
     BlogTagMapMapper blogTagMapMapper;
@@ -55,9 +54,9 @@ public class ArtcileServiceImpl implements ArticleService {
     /*代码修改结束*/
 
     /*
-    * 功能描述: 添加博客图片功能
-    * @Author: WHOAMI
-    * @Date: 2019/9/3 18:05
+     * 功能描述: 添加博客图片功能
+     * @Author: WHOAMI
+     * @Date: 2019/9/3 18:05
      */
 
     @Autowired
@@ -67,7 +66,7 @@ public class ArtcileServiceImpl implements ArticleService {
     @Autowired
     BlogMapper blogMapper;
 
-//    @Autowired
+    //    @Autowired
 //    UserService userService;
     @Autowired
     TokenService tokenService;
@@ -94,19 +93,20 @@ public class ArtcileServiceImpl implements ArticleService {
 
     @Override
     @Transactional
-    public @NonNull BaseResponse submitArticle(@NonNull ArticleParams articleParams,@NonNull String token) {
+    public @NonNull
+    BaseResponse submitArticle(@NonNull ArticleParams articleParams, @NonNull String token) {
 
         Blog blog = new Blog();
 
         Long bloggerId;
 //        if((bloggerId =userService.getUserIdByToken(token)) == -1){
-        if((bloggerId =tokenService.getUserIdWithToken(token)) == -1){
-            throw  new BadRequestException("用户信息错误！");
+        if ((bloggerId = tokenService.getUserIdWithToken(token)) == -1) {
+            throw new BadRequestException("用户信息错误！");
         }
         blog.setBloggerId(bloggerId);
         blog.setReleaseDate(new Date());
         blog.setNearestModifyDate(new Date());
-        BeanUtils.copyProperties(articleParams,blog);
+        BeanUtils.copyProperties(articleParams, blog);
 
         /*生成文章id 10-9 - 2019 WHOAMI*/
         Long blog_id = AppUtil.nextId();
@@ -120,7 +120,7 @@ public class ArtcileServiceImpl implements ArticleService {
          * @Date: 2019/9/4 20:17
          */
 
-        if(null != articleParams.getPictureId()){
+        if (null != articleParams.getPictureId()) {
             blog.setPictureId(articleParams.getPictureId());
 //            相对应的应该让改图片引用人数+1
             attachmentService.changePictureStatus(blog.getPictureId(), CiteNumEnum.ADD);
@@ -130,12 +130,12 @@ public class ArtcileServiceImpl implements ArticleService {
 
 //        blog.setTagTitle(articleParams.getTag());
         /**
-        * 功能描述: 这里增加文章逻辑，需要管理员审核通过后文章才会使用户可见，但是管理员的文章会直接发布
-        * @Author: WHOAMI
-        * @Date: 2020/1/10 20:29
+         * 功能描述: 这里增加文章逻辑，需要管理员审核通过后文章才会使用户可见，但是管理员的文章会直接发布
+         * @Author: WHOAMI
+         * @Date: 2020/1/10 20:29
          */
         List<RoleEnum> roles = roleService.getRolesByUserId(bloggerId);
-        String status = roles.contains(RoleEnum.ADMIN) ? ArticleStatusEnum.PUBLISHED.getName(): ArticleStatusEnum.CHECK.getName();
+        String status = roles.contains(RoleEnum.ADMIN) ? ArticleStatusEnum.PUBLISHED.getName() : ArticleStatusEnum.CHECK.getName();
 
         blog.setStatus(status);
 
@@ -147,11 +147,11 @@ public class ArtcileServiceImpl implements ArticleService {
         String tag = tagService.submitArticleWithTagString(articleParams.getTagList(), blog_id);
 
         blog.setTagTitle(tag);
-        try{
+        try {
             blogMapper.insertSelective(blog);
-        }catch (Exception e){
+        } catch (Exception e) {
             log.info(e.getMessage());
-            if(e.getCause() instanceof SQLIntegrityConstraintViolationException){
+            if (e.getCause() instanceof SQLIntegrityConstraintViolationException) {
                 throw new BadRequestException("您已经发布过类似文章，请仔细查询");
             }
         }
@@ -159,13 +159,13 @@ public class ArtcileServiceImpl implements ArticleService {
 
         BlogContent blogContent = new BlogContent();
 
-        BeanUtils.copyProperties(articleParams,blogContent);
+        BeanUtils.copyProperties(articleParams, blogContent);
         blogContent.setId(blog.getId());
 
         blogContentMapper.insert(blogContent);
 
 
-        return new BaseResponse(HttpStatus.OK.value(),"上传成功",null);
+        return new BaseResponse(HttpStatus.OK.value(), "上传成功", null);
     }
 
     @Override
@@ -174,40 +174,39 @@ public class ArtcileServiceImpl implements ArticleService {
 
         Blog blog1 = blogMapper.selectByPrimaryKey(blogId);
 
-        tokenService.authentication(blog1.getBloggerId(),token);
+        tokenService.authentication(blog1.getBloggerId(), token);
 
 
         /**
-        * 功能描述: 增加文章标签功能
-        * @Author: WHOAMI
+         * 功能描述: 增加文章标签功能
+         * @Author: WHOAMI
          */
-        String nowTagsString = tagService.updateTagsWithId(blogId,articleParams.getTagList());
+        String nowTagsString = tagService.updateTagsWithId(blogId, articleParams.getTagList());
 
         /*增加代码结束*/
 
         /**
-        * 功能描述: 增加文章缩略图
-        * @Author: WHOAMI
-        * @Date: 2019/9/4 20:17
+         * 功能描述: 增加文章缩略图
+         * @Author: WHOAMI
+         * @Date: 2019/9/4 20:17
          */
 
         Long picture_id = -1L;
 
-        if(null != articleParams.getPictureId()){
+        if (null != articleParams.getPictureId()) {
 //            picture_id = attachmentService.getIdByTitle(articleParams.getPictureId());
             picture_id = articleParams.getPictureId();
             /**
-            * 功能描述: 相应当前所引用的博客图片人数进行更新
-            * @Author: WHOAMI
-            * @Date: 2019/11/10 13:22
+             * 功能描述: 相应当前所引用的博客图片人数进行更新
+             * @Author: WHOAMI
+             * @Date: 2019/11/10 13:22
              */
-            if(null == blog1.getPictureId() ){
+            if (null == blog1.getPictureId()) {
                 attachmentService.changePictureStatus(picture_id, CiteNumEnum.ADD);
-            }else if(picture_id != blog1.getPictureId()){
+            } else if (picture_id != blog1.getPictureId()) {
                 attachmentService.changePictureStatus(picture_id, CiteNumEnum.ADD);
                 attachmentService.changePictureStatus(blog1.getPictureId(), CiteNumEnum.REDUCE);
             }
-
 
 
         }
@@ -217,22 +216,22 @@ public class ArtcileServiceImpl implements ArticleService {
         Blog blog = new Blog();
         blog.setId(blogId);
         blog.setNearestModifyDate(new Date());
-        BeanUtils.copyProperties(articleParams,blog);
-        String status = tokenService.getRoles(token).contains(RoleEnum.ADMIN) ? ArticleStatusEnum.PUBLISHED.getName():ArticleStatusEnum.CHECK.getName();
+        BeanUtils.copyProperties(articleParams, blog);
+        String status = tokenService.getRoles(token).contains(RoleEnum.ADMIN) ? ArticleStatusEnum.PUBLISHED.getName() : ArticleStatusEnum.CHECK.getName();
         blog.setStatus(status);
         //todo tag问题
         blog.setTagTitle(nowTagsString);
 //        blog.setTagTitle(articleParams.getTag());
 
-        if(picture_id != -1){
+        if (picture_id != -1) {
             blog.setPictureId(picture_id);
         }
-        try{
+        try {
             blogMapper.updateByPrimaryKeySelective(blog);
 
-        }catch (Exception e){
+        } catch (Exception e) {
             log.info(e.getMessage());
-            if(e.getCause() instanceof SQLIntegrityConstraintViolationException){
+            if (e.getCause() instanceof SQLIntegrityConstraintViolationException) {
                 throw new BadRequestException("您已经发布过类似文章，请仔细查询");
             }
         }
@@ -241,32 +240,32 @@ public class ArtcileServiceImpl implements ArticleService {
 
         blogContent.setId(blogId);
 
-        BeanUtils.copyProperties(articleParams,blogContent);
+        BeanUtils.copyProperties(articleParams, blogContent);
 
         blogContentMapper.updateByPrimaryKey(blogContent);
 
-        return new BaseResponse(HttpStatus.OK.value(),"文章更新成功",null);
+        return new BaseResponse(HttpStatus.OK.value(), "文章更新成功", null);
     }
 
     @Override
-    public BaseResponse updateArticleStatus(@NonNull Long blogId, @NonNull String status,String token) {
+    public BaseResponse updateArticleStatus(@NonNull Long blogId, @NonNull String status, String token) {
 
 
         Blog blog1 = blogMapper.selectByPrimaryKey(blogId); //这里应该会有空指针异常 应该制止
 
-        if (ArticleStatusEnum.NO.getName().equals(blog1.getStatus())){ //审核失败的文章只允许删除操作
+        if (ArticleStatusEnum.NO.getName().equals(blog1.getStatus())) { //审核失败的文章只允许删除操作
             throw new UnAccessException("请不要尝试非法操作");
         }
 
-        tokenService.authentication(blog1.getBloggerId(),token);
+        tokenService.authentication(blog1.getBloggerId(), token);
         Blog blog = new Blog();
         //检测是否有非法字符注入
 //        String articleStatus =ArticleStatusEnum.valueOf(status).equals(ArticleStatusEnum.PUBLISHED) ?
 //                (tokenService.getRoles(token).contains(RoleEnum.ADMIN)?ArticleStatusEnum.PUBLISHED.getName():ArticleStatusEnum.CHECK.getName()):ArticleStatusEnum.RECYCLE.getName();
         StringBuilder articleStatus = new StringBuilder();
-        if(tokenService.getRoles(token).contains(RoleEnum.ADMIN)){
-           articleStatus.append(ArticleStatusEnum.valueOf(status));
-       }
+        if (tokenService.getRoles(token).contains(RoleEnum.ADMIN)) {
+            articleStatus.append(ArticleStatusEnum.valueOf(status));
+        }
 
         blog.setStatus(articleStatus.toString());
         blog.setId(blogId);
@@ -274,8 +273,8 @@ public class ArtcileServiceImpl implements ArticleService {
         blogMapper.updateByPrimaryKeySelective(blog);
         BaseResponse baseResponse = new BaseResponse();
         baseResponse.setStatus(HttpStatus.OK.value());
-        Map<String,String> updateStatus = new HashMap<>();
-        updateStatus.put("status",articleStatus.toString());
+        Map<String, String> updateStatus = new HashMap<>();
+        updateStatus.put("status", articleStatus.toString());
         baseResponse.setData(updateStatus);
         return baseResponse;
     }
@@ -289,37 +288,37 @@ public class ArtcileServiceImpl implements ArticleService {
 //        }
         //这里有一个问题就是审核失败的文章怎么办？ 删还是不删
         // 2020-1-30补充
-        return updateArticleStatus(blogId,status,token);
+        return updateArticleStatus(blogId, status, token);
     }
 
     @Override
-    public BaseResponse getArticleDetail(@NonNull Long blogId,String token) {
+    public BaseResponse getArticleDetail(@NonNull Long blogId, String token) {
 
         BaseResponse baseResponse = new BaseResponse();
         baseResponse.setStatus(HttpStatus.OK.value());
 
         Blog blog = blogMapper.selectByPrimaryKey(blogId);
-        if(null == blog){ //查询没有相关博客
+        if (null == blog) { //查询没有相关博客
             throw new NotFoundException("没有相关博客信息");
         }
-        tokenService.authentication(blog.getBloggerId(),token);
+        tokenService.authentication(blog.getBloggerId(), token);
 
         BlogContent blogContent = blogContentMapper.selectByPrimaryKey(blogId);
 
         BlogDetail blogDetail = new BlogDetail();
 
-        BeanUtils.copyProperties(blog,blogDetail);
+        BeanUtils.copyProperties(blog, blogDetail);
 
-        BeanUtils.copyProperties(blogContent,blogDetail);
+        BeanUtils.copyProperties(blogContent, blogDetail);
 
 //        todo tag标签问题
 
-        if(!StringUtils.isBlank(blog.getTagTitle())) {
+        if (!StringUtils.isBlank(blog.getTagTitle())) {
             blogDetail.setTagsTitle(tagService.selectTagTitleByIdString(blog.getTagTitle()));
         }
 
 //        博客缩略图问题
-        if(null != blog.getPictureId()){
+        if (null != blog.getPictureId()) {
             blogDetail.setPicture(attachmentService.getPathById(blog.getPictureId()));
         }
 
@@ -331,43 +330,42 @@ public class ArtcileServiceImpl implements ArticleService {
     }
 
 
-
     @Override
     public BaseResponse getArticleListByExample(run.app.entity.VO.PageInfo pageInfo, QueryParams postQueryParams, @NonNull String token) {
 
-        if(!StringUtils.isEmpty(postQueryParams.getStatus())){
+        if (!StringUtils.isEmpty(postQueryParams.getStatus())) {
 
             ArticleStatusEnum.valueOf(postQueryParams.getStatus());
         }
         log.info("查询目标" + postQueryParams.toString());
 
-        PageHelper.startPage(pageInfo.getPageNum(),pageInfo.getPageSize());
+        PageHelper.startPage(pageInfo.getPageNum(), pageInfo.getPageSize());
         List<Blog> blogList = blogMapper.selectByUserExample(postQueryParams, tokenService.getUserIdWithToken(token));
 
         PageInfo<Blog> list = new PageInfo<>(blogList);
 
         DataGrid dataGrid = new DataGrid();
 
-        List<run.app.entity.DTO.Blog> blogs = list.getList().stream().map(item->{
+        List<run.app.entity.DTO.Blog> blogs = list.getList().stream().map(item -> {
 
 
             List<String> tagsTitle = new ArrayList<>();
-            if(!StringUtils.isBlank(item.getTagTitle())){
+            if (!StringUtils.isBlank(item.getTagTitle())) {
 
                 tagsTitle = tagService.selectTagTitleByIdString(item.getTagTitle());
             }
             String pic = "";
 //            获取博客图片逻辑路径
-            if(null != item.getPictureId()){
+            if (null != item.getPictureId()) {
                 pic = attachmentService.getPathById(item.getPictureId());
             }
             run.app.entity.DTO.Blog blog = new run.app.entity.DTO.Blog();
-            BeanUtils.copyProperties(item,blog);
+            BeanUtils.copyProperties(item, blog);
             blog.setPicture(pic);
             blog.setTagsTitle(tagsTitle);
 
 
-            return  blog;
+            return blog;
         }).collect(Collectors.toList());
 
 
@@ -385,21 +383,21 @@ public class ArtcileServiceImpl implements ArticleService {
 
     @Override
     /**
-    * 功能描述: 面向管理员的文章查询功能，其中默认是查询审核中的
-    * @Return: run.app.entity.DTO.BaseResponse
-    * @Author: WHOAMI
-    * @Date: 2020/1/11 10:58
+     * 功能描述: 面向管理员的文章查询功能，其中默认是查询审核中的
+     * @Return: run.app.entity.DTO.BaseResponse
+     * @Author: WHOAMI
+     * @Date: 2020/1/11 10:58
      */
     public BaseResponse getArticleListToAdminByExample(run.app.entity.VO.PageInfo pageInfo, QueryParams postQueryParams, @NonNull String token) {
-        if(!StringUtils.isEmpty(postQueryParams.getStatus())){
+        if (!StringUtils.isEmpty(postQueryParams.getStatus())) {
 
             ArticleStatusEnum.valueOf(postQueryParams.getStatus());
 
-        }else{
+        } else {
             postQueryParams.setStatus(ArticleStatusEnum.CHECK.getName());
         }
 
-        PageHelper.startPage(pageInfo.getPageNum(),pageInfo.getPageSize());
+        PageHelper.startPage(pageInfo.getPageNum(), pageInfo.getPageSize());
 
         List<Blog> blogList = blogMapper.selectByUserExample(postQueryParams, null);
 
@@ -407,25 +405,25 @@ public class ArtcileServiceImpl implements ArticleService {
 
         DataGrid dataGrid = new DataGrid();
 
-        List<run.app.entity.DTO.BlogDetailWithAuthor> blogs = list.getList().stream().map(item->{
+        List<run.app.entity.DTO.BlogDetailWithAuthor> blogs = list.getList().stream().map(item -> {
 
 
             List<String> tagsTitle = new ArrayList<>();
 
-            if(!StringUtils.isBlank(item.getTagTitle())){
+            if (!StringUtils.isBlank(item.getTagTitle())) {
 
                 tagsTitle = tagService.selectTagTitleByIdString(item.getTagTitle());
             }
 
             String pic = "";
 //            获取博客图片逻辑路径
-            if(null != item.getPictureId()){
+            if (null != item.getPictureId()) {
                 pic = attachmentService.getPathById(item.getPictureId());
             }
 
             run.app.entity.DTO.BlogDetailWithAuthor blog = new run.app.entity.DTO.BlogDetailWithAuthor();
 
-            BeanUtils.copyProperties(item,blog);
+            BeanUtils.copyProperties(item, blog);
 
             blog.setPicture(pic);
 
@@ -436,7 +434,7 @@ public class ArtcileServiceImpl implements ArticleService {
 
             blog.setAuthor(author);
 
-            return  blog;
+            return blog;
         }).collect(Collectors.toList());
 
 
@@ -461,29 +459,29 @@ public class ArtcileServiceImpl implements ArticleService {
 
     @Override
     @Transactional
-    public BaseResponse deleteBlog(@NonNull Long blogId,String token) {
+    public BaseResponse deleteBlog(@NonNull Long blogId, String token) {
 
         Blog blog1 = blogMapper.selectByPrimaryKey(blogId);
 
-        tokenService.authentication(blog1.getBloggerId(),token);
+        tokenService.authentication(blog1.getBloggerId(), token);
 
         /**
-        * 功能描述:这里应该先查询此文章的所有标签，然后删除，顺序不可以变
-        * @Author: WHOAMI
-        * @Date: 2019/8/28 7:35
+         * 功能描述:这里应该先查询此文章的所有标签，然后删除，顺序不可以变
+         * @Author: WHOAMI
+         * @Date: 2019/8/28 7:35
          */
 
 //        todo:这里应该也减少tag标签
         Blog blog = blogMapper.selectByPrimaryKey(blogId);
 
-        if(!StringUtils.isBlank(blog.getTagTitle())){
+        if (!StringUtils.isBlank(blog.getTagTitle())) {
             tagService.deleteTagsKeyByBlogId(blogId);
-            tagService.dealWithNumByIdString(blog.getTagTitle(),false);
+            tagService.dealWithNumByIdString(blog.getTagTitle(), false);
         }
         blogMapper.deleteByPrimaryKey(blogId);
         blogContentMapper.deleteByPrimaryKey(blogId);
 
-        return new BaseResponse(HttpStatus.OK.value(),"删除成功",null);
+        return new BaseResponse(HttpStatus.OK.value(), "删除成功", null);
     }
 
     @Override
@@ -499,7 +497,7 @@ public class ArtcileServiceImpl implements ArticleService {
         long count = blogMapper.countByExample(blogExample);
         baseResponse.setStatus(HttpStatus.OK.value());
         baseResponse.setData(count);
-       return baseResponse;
+        return baseResponse;
 
     }
 
@@ -515,7 +513,7 @@ public class ArtcileServiceImpl implements ArticleService {
     @Transactional
     public void deleteQuotePic(Long picId) {
         blogMapper.deletePicByPicId(picId);
-}
+    }
 
     @Override
     public Blog getBlogByBlogId(Long id) {
@@ -527,9 +525,9 @@ public class ArtcileServiceImpl implements ArticleService {
         Blog blog = blogMapper.selectByPrimaryKey(id);
         BaseBlog baseBlog = new BaseBlog();
 
-        BeanUtils.copyProperties(blog,baseBlog);
+        BeanUtils.copyProperties(blog, baseBlog);
 
-        if(null != blog.getPictureId()){
+        if (null != blog.getPictureId()) {
 
             baseBlog.setPicture(attachmentService.getPathById(blog.getPictureId()));
         }

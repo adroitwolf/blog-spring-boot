@@ -34,3 +34,7 @@ build/
 *.gz
 logs/spring.log
 *.jpg
+/.idea/*
+/.img/*
+/.mvn/*
+/.logs/*

@@ -8,6 +8,8 @@
         <version>2.1.4.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
+
+
     <groupId>run.whoami</groupId>
     <artifactId>app</artifactId>
     <version>0.0.1-SNAPSHOT</version>
@@ -19,6 +21,13 @@
     </properties>
 
     <dependencies>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
+
         <!--邮箱发送邮件-->
 
         <dependency>
@@ -32,6 +41,7 @@
         <!--<artifactId>spring-boot-devtools</artifactId>-->
         <!--<optional>true</optional>-->
         <!--</dependency>-->
+
         <!--资源监控-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -105,12 +115,12 @@
         </dependency>
 
 
-        <!--单元测试-->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
+            <!--单元测试-->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-test</artifactId>
+                <scope>test</scope>
+            </dependency>
 
         <!--快速生成API-->
         <!--swagger2-->
@@ -133,6 +143,9 @@
             <artifactId>jsoup</artifactId>
             <version>1.10.2</version>
         </dependency>
+
+        <!--xss end -->
+
 
         <!--redis 框架接管高并发-->
         <dependency>

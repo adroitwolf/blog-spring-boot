@@ -33,9 +33,9 @@ public class Swagger2Config {
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("WHOAMI博客API")
+                .title("ADROITWOLF博客API")
                 .description("多用户博客门户网站")
-                .termsOfServiceUrl("https://whoami1231.github.io")
+                .termsOfServiceUrl("https://adroitwolf.github.io")
                 .version("1.0")
                 .build();
     }
